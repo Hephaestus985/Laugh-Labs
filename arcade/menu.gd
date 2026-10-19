@@ -40,11 +40,82 @@ func _ready() -> void:
 	_on_resized()
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	# follow phone rotation (checked every frame; cheap, and more reliable than signals)
 	var ws := DisplayServer.window_get_size()
 	if (ws.y > ws.x) != portrait:
 		_on_resized()
+	# keep gliding a little after a swipe
+	if not drag_down and absf(fling) > 20.0 and is_instance_valid(drag_scroll):
+		drag_scroll.scroll_vertical -= int(fling * delta)
+		fling *= pow(0.04, delta)
+
+
+# ---------------------------------------------------------------- swipe to scroll
+# Swipes are handled here, before any card or button sees them, so a swipe
+# that starts anywhere (card background, label, button) scrolls the list.
+# A touch that doesn't move is passed on unchanged as a normal tap.
+
+const DRAG_START := 14.0
+var drag_down := false
+var dragging := false
+var drag_from := Vector2.ZERO
+var drag_start_scroll := 0
+var drag_scroll: ScrollContainer = null
+var drag_press: InputEventMouseButton = null
+var fling := 0.0
+var last_drag_y := 0.0
+var last_drag_t := 0
+
+
+func current_scroll() -> ScrollContainer:
+	return body.find_child("Scroll", true, false) as ScrollContainer if body else null
+
+
+func _input(event: InputEvent) -> void:
+	if event.has_meta("replay"):
+		return
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			var sc := current_scroll()
+			if sc == null or not sc.get_global_rect().has_point(event.position):
+				return
+			drag_down = true
+			dragging = false
+			fling = 0.0
+			drag_scroll = sc
+			drag_from = event.position
+			drag_start_scroll = sc.scroll_vertical
+			drag_press = event.duplicate()
+			last_drag_y = event.position.y
+			last_drag_t = Time.get_ticks_msec()
+			get_viewport().set_input_as_handled()
+		elif drag_down:
+			drag_down = false
+			get_viewport().set_input_as_handled()
+			if not dragging and drag_press != null:
+				# it was a tap: hand the press and release to the buttons
+				drag_press.set_meta("replay", true)
+				var rel: InputEventMouseButton = event.duplicate()
+				rel.set_meta("replay", true)
+				Input.parse_input_event(drag_press)
+				Input.parse_input_event(rel)
+			dragging = false
+	elif event is InputEventMouseMotion and drag_down:
+		var dy: float = event.position.y - drag_from.y
+		if not dragging and absf(dy) > DRAG_START:
+			dragging = true
+		if dragging and is_instance_valid(drag_scroll):
+			drag_scroll.scroll_vertical = drag_start_scroll - int(dy)
+			var now := Time.get_ticks_msec()
+			var dt := maxf(1.0, now - last_drag_t) / 1000.0
+			fling = lerpf(fling, (event.position.y - last_drag_y) / dt, 0.5)
+			last_drag_y = event.position.y
+			last_drag_t = now
+		get_viewport().set_input_as_handled()
+	elif (event is InputEventScreenTouch or event is InputEventScreenDrag) and drag_down:
+		# the emulated mouse events above do the work on phones
+		get_viewport().set_input_as_handled()
 
 
 # ---------------------------------------------------------------- settings + stats
@@ -246,6 +317,7 @@ func chip(txt: String, c := Color(0, 0, 0, 0.28)) -> Control:
 
 func scroll_box() -> VBoxContainer:
 	var scroll := ScrollContainer.new()
+	scroll.name = "Scroll"
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	body.add_child(scroll)

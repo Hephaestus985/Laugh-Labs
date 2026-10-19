@@ -2,6 +2,10 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.5 (2026-10-19)
+- Fixed: swiping the launcher on a touch screen only worked when the swipe started on a button. Now it scrolls wherever you start, and keeps gliding a little
+- Tests: swipe scrolling from cards, labels and buttons; taps still press buttons
+
 ## Lab Arcade 1.4 (2026-10-19)
 - New launcher layout: each game card shows run length, best score, times played, effort and saved progress, with Play / Continue, Difficulty and Info buttons
 - Info page per game: story, controls, facts, difficulty, all versions

@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-19T18:32:01
-143 checks, 0 failed
+Lab Arcade test report  2026-10-19T19:12:57
+146 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
 PASS  menu                       a card per game                10 cards
@@ -7,6 +7,9 @@ PASS  menu                       every card has Play, Info, Difficulty
 PASS  menu                       renders                        
 PASS  menu                       has difficulty buttons         
 PASS  menu                       difficulty button cycles       Difficulty: Normal -> Difficulty: Hard
+PASS  menu                       swipe scrolls from card, label or button 
+PASS  menu                       a tap (no swipe) still presses buttons 
+PASS  menu                       info page scrolls by swipe     
 PASS  menu                       all sort orders work           
 PASS  menu                       shortest first sorts by length sock_escape .. the_last_knight
 PASS  menu                       play count is recorded         

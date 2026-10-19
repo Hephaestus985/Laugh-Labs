@@ -71,6 +71,30 @@ func tap(pos: Vector2, index := 0) -> void:
 	Input.parse_input_event(r)
 
 
+func mouse(pos: Vector2, down: bool) -> void:
+	var e := InputEventMouseButton.new()
+	e.button_index = MOUSE_BUTTON_LEFT
+	e.position = pos
+	e.global_position = pos
+	e.pressed = down
+	Input.parse_input_event(e)
+
+
+## A finger swipe as the phone reports it (emulated mouse press, moves, release).
+func swipe(from: Vector2, dy: float) -> void:
+	mouse(from, true)
+	await frames(1)
+	for i in 12:
+		var d := InputEventMouseMotion.new()
+		d.position = from + Vector2(0, dy * (i + 1) / 12.0)
+		d.global_position = d.position
+		d.button_mask = MOUSE_BUTTON_MASK_LEFT
+		Input.parse_input_event(d)
+		await frames(1)
+	mouse(from + Vector2(0, dy), false)
+	await frames(5)
+
+
 func release_all_keys() -> void:
 	for k in [KEY_SPACE, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_SHIFT, KEY_X, KEY_Z]:
 		key(k, false)
@@ -179,6 +203,35 @@ func test_menu() -> void:
 		check("menu", "difficulty button cycles", db.text != before, "%s -> %s" % [before, db.text])
 		for g in Games.LIST:
 			ArcadeGame.set_difficulty(g["id"], 1)
+	# swiping scrolls the list, wherever the finger starts
+	var sc: ScrollContainer = m.find_child("Scroll", true, false)
+	var swipe_ok := sc != null
+	if sc:
+		var first_card: Control = cards.get_child(0)
+		var r := first_card.get_global_rect()
+		var spots := [r.position + Vector2(r.size.x * 0.5, 20), first_card.find_child("Play", true, false).get_global_rect().get_center(), r.position + Vector2(r.size.x * 0.5, r.size.y * 0.45)]
+		for spot in spots:
+			sc.scroll_vertical = 0
+			await frames(1)
+			await swipe(spot, -200)
+			swipe_ok = swipe_ok and sc.scroll_vertical > 100
+		sc.scroll_vertical = 0
+		await frames(2)
+	check("menu", "swipe scrolls from card, label or button", swipe_ok)
+	var info_btn: Button = cards.get_child(0).find_child("Info", true, false)
+	var ic := info_btn.get_global_rect().get_center()
+	mouse(ic, true)
+	await frames(1)
+	mouse(ic, false)
+	await frames(4)
+	check("menu", "a tap (no swipe) still presses buttons", m.page == "info")
+	var isc: ScrollContainer = m.find_child("Scroll", true, false)
+	if isc:
+		await swipe(isc.get_global_rect().get_center(), -200)
+	check("menu", "info page scrolls by swipe", isc != null and isc.scroll_vertical > 50)
+	m.go_back()
+	await frames(3)
+	cards = m.find_child("Cards", true, false)
 	# every sort order still lists every game
 	var sorts_ok := true
 	for i in m.SORTS.size():
