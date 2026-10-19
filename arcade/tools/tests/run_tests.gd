@@ -7,7 +7,7 @@ extends Node
 # Player high scores, saves and settings are backed up first and restored after.
 
 const Games := preload("res://games.gd")
-const USER_FILES := ["settings.cfg", "the_last_knight_save.json", "sock_escape_best.dat", "open_rpg_inventory.tres"]
+const USER_FILES := ["settings.cfg", "the_last_knight_save.json", "sock_escape_best.dat", "open_rpg_inventory.tres", "sokoban_level.dat"]
 
 class ErrorCounter extends Logger:
 	var errors: Array[String] = []
@@ -802,6 +802,75 @@ func win_lights_out(n: PuzzleGame) -> void:
 	for i in need.size():
 		if need[i] and n.state == 1:
 			n.call("tap_cell", i)
+
+
+func play_sliding_puzzle(n: PuzzleGame, name: String) -> void:
+	var tiles: Array = n.get("tiles")
+	var nn: int = n.get("n")
+	var g := tiles.find(0)
+	var pick := g - 1 if g % nn > 0 else g + 1
+	var o: Vector2 = n.get("origin")
+	var c: float = n.get("cell")
+	await tap(o + Vector2(pick % nn + 0.5, pick / nn + 0.5) * c)
+	await frames(2)
+	check(name, "tap a tile next to the gap slides it (phone)", n.get("tiles")[pick] == 0)
+
+
+func win_sliding_puzzle(n: PuzzleGame) -> void:
+	var nn: int = n.get("n")
+	var tiles := []
+	for i in nn * nn - 1:
+		tiles.append(i + 1)
+	tiles.append(0)
+	# one step away from solved: the gap one to the left
+	tiles[nn * nn - 1] = nn * nn - 1
+	tiles[nn * nn - 2] = 0
+	n.set("tiles", tiles)
+	n.call("slide", nn * nn - 1)
+
+
+func play_mahjong(n: PuzzleGame, name: String) -> void:
+	var pair: Array = n.call("_pairs")
+	if pair.is_empty():
+		n.call("_shuffle")
+		pair = n.call("_pairs")
+	var left: int = n.call("_alive").size()
+	for i in pair:
+		await tap(n.call("tile_rect", i).get_center())
+		await frames(2)
+	check(name, "tap two matching free tiles removes them (phone)", n.call("_alive").size() == left - 2)
+
+
+func win_mahjong(n: PuzzleGame) -> void:
+	# the deal is built to be clearable: keep taking pairs (shuffle if stuck)
+	var guard := 0
+	while n.state == 1 and guard < 300:
+		guard += 1
+		var pair: Array = n.call("_pairs")
+		if pair.is_empty():
+			n.call("_shuffle")
+			continue
+		n.call("pick", pair[0])
+		n.call("pick", pair[1])
+
+
+func play_sokoban(n: PuzzleGame, name: String) -> void:
+	var p0: int = n.get("player")
+	var w: int = n.get("w")
+	var o: Vector2 = n.get("origin")
+	var c: float = n.get("cell")
+	# swipe in every direction until one step works
+	for d in [Vector2(200, 0), Vector2(-200, 0), Vector2(0, 200), Vector2(0, -200)]:
+		await touch_swipe(Vector2(500, 380), d)
+		await frames(2)
+		if n.get("player") != p0:
+			break
+	check(name, "swipe walks the worker (phone)", n.get("player") != p0)
+
+
+func win_sokoban(n: PuzzleGame) -> void:
+	n.set("boxes", n.get("goals").duplicate())
+	n.call("_check")
 
 
 func test_knight_flows() -> void:

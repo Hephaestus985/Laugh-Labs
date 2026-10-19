@@ -2,6 +2,9 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.16 (2026-10-19)
+- New games: **Sliding Puzzle** (3x3 to 5x5), **Mahjong Solitaire** (deals that can always be cleared, hint, shuffle) and **Sokoban** (levels built backwards from the solution so they can always be solved; tap to walk, swipe to push)
+
 ## Lab Arcade 1.15 (2026-10-19)
 - New games: **Solitaire** (Klondike; tap or drag cards, draw 3 on Hard, auto finish), **Nonogram** (hidden pictures from number clues; drag to paint, cross mode) and **Lights Out** (every board solvable, hints)
 

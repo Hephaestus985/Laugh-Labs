@@ -1,9 +1,9 @@
-Lab Arcade test report  2026-10-19T23:16:35
-385 checks, 0 failed
+Lab Arcade test report  2026-10-19T23:19:43
+448 checks, 0 failed
 
-PASS  menu                       games.gd is complete           16 games
+PASS  menu                       games.gd is complete           19 games
 PASS  menu                       opens on the Library without picks 
-PASS  menu                       Library has a card per game    21 cards
+PASS  menu                       Library has a card per game    24 cards
 PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
 PASS  menu                       has difficulty buttons         
@@ -26,7 +26,7 @@ PASS  menu                       More games (by others) filter
 PASS  menu                       Lab Arcade publisher filter    
 PASS  menu                       publisher filter (Kenney)      
 PASS  menu                       genre filter (RPG)             
-PASS  menu                       length filters split the games 21 of 21
+PASS  menu                       length filters split the games 24 of 24
 PASS  menu                       choosing a genre in the drop-down filters 
 PASS  menu                       filters are kept after playing a game genre 'Racing'
 PASS  menu                       all sort orders work           
@@ -283,9 +283,72 @@ PASS  lights_out v1              touch play changes the board (phone)
 PASS  lights_out v1              Continue restores the board    
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1440
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1640
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
+PASS  sliding_puzzle v1          scene loads                    
+PASS  sliding_puzzle v1          has its game code              script missing from scene
+PASS  sliding_puzzle v1          uses the landscape game screen 
+PASS  sliding_puzzle v1          title screen renders           not checked: running headless
+PASS  sliding_puzzle v1          starts on the title            
+PASS  sliding_puzzle v1          tap starts the game            state 1
+PASS  sliding_puzzle v1          survives 20 s of play          
+PASS  sliding_puzzle v1          screen still renders           not checked: running headless
+PASS  sliding_puzzle v1          high score is saved            
+PASS  sliding_puzzle v1          difficulty setting is used     
+PASS  sliding_puzzle v1          has a way back to the menu     
+PASS  sliding_puzzle v1          no errors                      0: 
+PASS  sliding_puzzle v1          tap starts a round             
+PASS  sliding_puzzle v1          tap a tile next to the gap slides it (phone) 
+PASS  sliding_puzzle v1          touch play changes the board (phone) 
+PASS  sliding_puzzle v1          Continue restores the board    
+PASS  sliding_puzzle v1          new Easy round starts          
+PASS  sliding_puzzle v1          new Normal round starts        
+PASS  sliding_puzzle v1          solving it wins and saves the best score state 2 won true best 1798
+PASS  sliding_puzzle v1          new Hard round starts          
+PASS  sliding_puzzle v1          no errors while solving        0: 
+PASS  mahjong v1                 scene loads                    
+PASS  mahjong v1                 has its game code              script missing from scene
+PASS  mahjong v1                 uses the landscape game screen 
+PASS  mahjong v1                 title screen renders           not checked: running headless
+PASS  mahjong v1                 starts on the title            
+PASS  mahjong v1                 tap starts the game            state 1
+PASS  mahjong v1                 survives 20 s of play          
+PASS  mahjong v1                 screen still renders           not checked: running headless
+PASS  mahjong v1                 high score is saved            
+PASS  mahjong v1                 difficulty setting is used     
+PASS  mahjong v1                 has a way back to the menu     
+PASS  mahjong v1                 no errors                      0: 
+PASS  mahjong v1                 tap starts a round             
+PASS  mahjong v1                 tap two matching free tiles removes them (phone) 
+PASS  mahjong v1                 touch play changes the board (phone) 
+PASS  mahjong v1                 Continue restores the board    
+PASS  mahjong v1                 new Easy round starts          
+PASS  mahjong v1                 new Normal round starts        
+PASS  mahjong v1                 solving it wins and saves the best score state 2 won true best 2350
+PASS  mahjong v1                 new Hard round starts          
+PASS  mahjong v1                 no errors while solving        0: 
+PASS  sokoban v1                 scene loads                    
+PASS  sokoban v1                 has its game code              script missing from scene
+PASS  sokoban v1                 uses the landscape game screen 
+PASS  sokoban v1                 title screen renders           not checked: running headless
+PASS  sokoban v1                 starts on the title            
+PASS  sokoban v1                 tap starts the game            state 1
+PASS  sokoban v1                 survives 20 s of play          
+PASS  sokoban v1                 screen still renders           not checked: running headless
+PASS  sokoban v1                 high score is saved            
+PASS  sokoban v1                 difficulty setting is used     
+PASS  sokoban v1                 has a way back to the menu     
+PASS  sokoban v1                 no errors                      0: 
+PASS  sokoban v1                 tap starts a round             
+PASS  sokoban v1                 swipe walks the worker (phone) 
+PASS  sokoban v1                 touch play changes the board (phone) 
+PASS  sokoban v1                 Continue restores the board    
+PASS  sokoban v1                 new Easy round starts          
+PASS  sokoban v1                 new Normal round starts        
+PASS  sokoban v1                 solving it wins and saves the best score state 2 won true best 400
+PASS  sokoban v1                 new Hard round starts          
+PASS  sokoban v1                 no errors while solving        0: 
 PASS  the_last_knight            all 5 levels load              
 PASS  the_last_knight            boss fight starts              
 PASS  the_last_knight            boss has 3 phases              [1, 2, 3]
