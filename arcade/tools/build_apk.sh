@@ -19,7 +19,7 @@ OUT=${1:-/tmp/labarcade-tests}
 mkdir -p "$OUT"
 # Headless by default so no game windows pop up; VISUAL=1 also checks drawing.
 HEADLESS="--headless"; [ "${VISUAL:-0}" = "1" ] && HEADLESS=""
-timeout 1200 ../builds/linux/LabArcade.x86_64 $HEADLESS --fixed-fps 60 -- "$OUT" > "$OUT/log.txt" 2>&1 || true
+timeout 1200 ../builds/linux/LabArcade.x86_64 $HEADLESS --audio-driver Dummy --fixed-fps 60 -- "$OUT" > "$OUT/log.txt" 2>&1 || true
 grep -E "^FAIL|^TESTS|SCRIPT ERROR" "$OUT/log.txt" || true
 if ! grep -q "^TESTS: .*, 0 failed" "$OUT/log.txt"; then
   echo "TESTS FAILED - see $OUT/report.txt"

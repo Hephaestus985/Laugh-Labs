@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="InputCaptureResource" load_steps=2 format=3 uid="uid://3bycamg76443"]
+
+[ext_resource type="Script" path="res://external/tactical_rpg/data/models/view/control/input/capture/capture_res.gd" id="1_pmp6t"]
+
+[resource]
+script = ExtResource("1_pmp6t")
+mouse_sensitivity = 1.0
+joystick_deadzone = 0.1
+camera_move_speed = 10.0
+camera_rotate_speed = 5.0
+camera_zoom_speed = 0.1

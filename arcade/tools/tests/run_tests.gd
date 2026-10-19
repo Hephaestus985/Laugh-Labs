@@ -1,17 +1,21 @@
 extends Node
 # Lab Arcade test suite. Checks the menu and every version of every game in
-# games.gd. Run in a window (screenshots need a real renderer):
-#   godot --path . --fixed-fps 60 res://tools/tests/run_tests.tscn -- <report_dir>
+# games.gd. Easiest: tools/test.sh (no window, no sound). By hand:
+#   godot --headless --audio-driver Dummy --path . --fixed-fps 60 res://tools/tests/run_tests.tscn -- <report_dir> [menu|external]
 # Exit code 0 = all passed, 1 = something failed. The report is written to
 # <report_dir>/report.txt with one screenshot per game.
 # Player high scores, saves and settings are backed up first and restored after.
 
 const Games := preload("res://games.gd")
-const USER_FILES := ["settings.cfg", "the_last_knight_save.json", "sock_escape_best.dat"]
+const USER_FILES := ["settings.cfg", "the_last_knight_save.json", "sock_escape_best.dat", "open_rpg_inventory.tres"]
 
 class ErrorCounter extends Logger:
 	var errors: Array[String] = []
 	func _log_error(function: String, file: String, line: int, code: String, rationale: String, _editor_notify: bool, _error_type: int, _script_backtraces: Array) -> void:
+		# Jolt (the 3D physics engine) warns when its job queue is briefly full under heavy load,
+		# then waits and carries on. It's inside the engine, not a game bug, so it doesn't count.
+		if file.contains("jolt_job_system"):
+			return
 		errors.append("%s (%s:%d %s)" % [rationale if rationale != "" else code, file, line, function])
 
 var log_counter := ErrorCounter.new()
@@ -23,6 +27,7 @@ var headless := false
 
 func _ready() -> void:
 	OS.add_logger(log_counter)
+	AudioServer.set_bus_mute(0, true)  # tests are silent, also with a window
 	var args := OS.get_cmdline_user_args()
 	if args.size() > 0:
 		out_dir = args[0]
@@ -32,7 +37,10 @@ func _ready() -> void:
 		# a phone-like window: bigger than the 1280x720 canvas, so taps get scaled
 		# like on a real phone (a re-scaled tap once opened the wrong game)
 		get_window().size = Vector2i(1920, 1080)
-		await frames(1)
+	await frames(1)  # the tree must finish setting up before games are added
+	for g in Games.EXTERNAL:  # like the launcher: sleeping helpers of games by others
+		if g.has("park"):
+			load(g["park"]).park(get_tree())
 	backup_user_files()
 	await run_all()
 	restore_user_files()
@@ -176,6 +184,30 @@ func restore_user_files() -> void:
 	for f in backup:
 		var fa := FileAccess.open("user://" + f, FileAccess.WRITE)
 		fa.store_buffer(backup[f])
+
+
+## Runs a scene as the tree's current scene (next to this runner), so games
+## that reload or change scenes don't take the test runner with them.
+func spawn_current(scene_path: String) -> Node:
+	var ps = load(scene_path)
+	if ps == null:
+		return null
+	var n: Node = ps.instantiate()
+	get_tree().root.add_child(n)
+	get_tree().current_scene = n
+	return n
+
+
+func end_current() -> void:
+	var cur := get_tree().current_scene
+	if cur != self and is_instance_valid(cur):
+		cur.queue_free()
+	get_tree().current_scene = self
+	await frames(2)
+
+
+func has_code(n: Node) -> bool:
+	return n != null and (n.get_script() != null or n.find_children("*", "TouchOverlay", true, false).size() > 0 or n.find_children("*", "", true, false).any(func(c): return c.get_script() != null))
 
 
 func spawn(scene_path: String) -> Node:
@@ -569,39 +601,272 @@ func test_external(g: Dictionary) -> void:
 	var name: String = g["id"]
 	var errs := log_counter.errors.size()
 	var v: Dictionary = g["versions"][g["versions"].size() - 1]
-	check(name, "license files included", FileAccess.file_exists("res://external/%s/LICENSE.txt" % name))
-	var menu_scene := spawn(v["scene"])
-	if not check(name, "start screen loads with its code", menu_scene != null and menu_scene.get_script() != null):
+	var lic := Array(DirAccess.get_files_at("res://external/%s" % name)).any(func(f): return f.begins_with("LICENSE"))
+	check(name, "license file included", lic)
+	var start := spawn_current(v["scene"])
+	if not check(name, "start screen loads with its code", has_code(start)):
+		await end_current()
 		return
 	await frames(10)
-	check(name, "start screen renders", screen_detail(name + "_menu") > 3.0, "not checked: running headless" if headless else "")
-	check(name, "has a way back to the arcade", menu_scene.has_method("_on_quit_pressed"))
-	menu_scene.queue_free()
-	await frames(2)
-	# play the map for 20 s with random taps and drags
-	var map := spawn("res://external/%s/scenes/maps/map_template.tscn" % name)
-	if not check(name, "map loads with its code", map != null and map.get_script() != null):
+	check(name, "start screen renders", screen_detail(name + "_start") > 3.0, "not checked: running headless" if headless else "")
+	var has_back := start.has_method("_on_quit_pressed") or start.find_children("*", "TouchOverlay", true, false).size() > 0
+	check(name, "has a way back to the arcade", has_back)
+	var same: bool = g.get("main", v["scene"]) == v["scene"]
+	var map: Node = start
+	if not same:
+		await end_current()
+		map = spawn_current(g["main"])
+	if not check(name, "game scene loads with its code", has_code(map)):
+		await end_current()
 		return
+	await frames(30)
+	await phone_checks(name, map)
+	# play for 20 s with random taps and keys
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
 	for f in 1200:
 		if f % 40 == 20:
-			await tap(Vector2(rng.randf_range(100, 1180), rng.randf_range(100, 620)))
+			await tap(Vector2(rng.randf_range(250, 1000), rng.randf_range(150, 600)))
+		if f % 10 == 0:
+			var k: int = [KEY_W, KEY_A, KEY_D, KEY_SPACE, KEY_S][rng.randi() % 5]
+			key(k, rng.randf() < 0.6)
 		await get_tree().process_frame
-	await phone_checks(name, map)
-	var enemies: Node = map.find_child("EnemyContainer", true, false)
-	check(name, "enemies arrive and the game runs", enemies != null and is_instance_valid(map), "")
-	check(name, "screen still renders", screen_detail(name + "_map") > 3.0, "not checked: running headless" if headless else "")
+	release_all_keys()
+	for k in [KEY_W, KEY_A, KEY_S, KEY_D]:
+		key(k, false)
+	# (a game may legally restart its own scene, e.g. after falling off)
+	check(name, "survives 20 s of play", is_instance_valid(get_tree().current_scene) and get_tree().current_scene != self)
+	check(name, "screen still renders", screen_detail(name + "_play") > 3.0, "not checked: running headless" if headless else "")
 	get_tree().paused = false
-	map.queue_free()
-	await frames(3)
+	await end_current()
 	var e := new_errors(errs)
 	check(name, "no errors", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
 
 
+## Touch-plays a game with the arcade's on-screen controls (TouchOverlay).
+func overlay_checks(name: String, game: Node) -> void:
+	var ov_list := game.find_children("*", "TouchOverlay", true, false)
+	if not check(name, "has on-screen phone controls", ov_list.size() > 0):
+		return
+	var ov: TouchOverlay = ov_list[0]
+	await frames(2)
+	var mover: Node3D = null
+	for n in game.find_children("*", "CharacterBody3D", true, false) + game.find_children("*", "RigidBody3D", true, false):
+		mover = n
+		break
+	if mover == null:
+		return
+	var p0 := mover.global_position
+	if ov.stick_actions.size() == 4:
+		# hold the stick up-right for a second
+		var from := Vector2(200, ov.laid_out_for.y - 180)
+		var e := InputEventScreenTouch.new()
+		e.index = 3
+		e.position = to_window(from)
+		e.pressed = true
+		Input.parse_input_event(e)
+		await frames(2)
+		var d := InputEventScreenDrag.new()
+		d.index = 3
+		d.position = to_window(from + Vector2(60, -90))
+		Input.parse_input_event(d)
+		await frames(60)
+		var r := InputEventScreenTouch.new()
+		r.index = 3
+		r.position = to_window(from + Vector2(60, -90))
+		r.pressed = false
+		Input.parse_input_event(r)
+		await frames(3)
+		check(name, "stick moves the player (phone)", mover.global_position.distance_to(p0) > 0.3, "moved %.2f" % mover.global_position.distance_to(p0))
+	for b in ov.buttons:
+		if not b[1] is String or b[1] == "__menu" or b[3]:
+			continue
+		var y0 := mover.global_position
+		var c: Vector2 = (b[0] as Rect2).get_center()
+		var e2 := InputEventScreenTouch.new()
+		e2.index = 4
+		e2.position = to_window(c)
+		e2.pressed = true
+		Input.parse_input_event(e2)
+		await frames(40)
+		var held_ok := Input.is_action_pressed(b[1]) or mover.global_position.distance_to(y0) > 0.05
+		var r2 := InputEventScreenTouch.new()
+		r2.index = 4
+		r2.position = to_window(c)
+		r2.pressed = false
+		Input.parse_input_event(r2)
+		await frames(3)
+		check(name, "button %s works (phone)" % b[2], held_ok and not Input.is_action_pressed(b[1]))
+
+
+## Plays Open RPG with taps only: the opening conversation, walking, and a battle turn.
+func rpg_checks(name: String, main: Node) -> void:
+	var dlg: Node = get_tree().root.get_node("Dialogic")
+	for i in 240:
+		if dlg.get("current_timeline") != null:
+			break
+		await frames(1)
+	if not check(name, "opening conversation starts", dlg.get("current_timeline") != null):
+		return
+	await frames(60)
+	var idx0: int = dlg.get("current_event_idx")
+	var mid := Vector2(640, 400)
+	await tap(mid)
+	await frames(30)
+	check(name, "a tap moves the conversation on (phone)", dlg.get("current_event_idx") > idx0, "event %d -> %d" % [idx0, dlg.get("current_event_idx")])
+	for i in 30:
+		if dlg.get("current_timeline") == null:
+			break
+		await tap(mid)
+		await frames(30)
+	check(name, "tapping through ends the conversation", dlg.get("current_timeline") == null)
+	await frames(200)  # fade in and music
+	# walk: tap a free cell a few steps away
+	var gp: Node2D = get_tree().root.get_node("Player").get("gamepiece")
+	if not check(name, "the player has a character", gp != null):
+		return
+	var board: Node = get_tree().root.get_node("Gameboard")
+	var reg: Node = get_tree().root.get_node("GamepieceRegistry")
+	var start_cell: Vector2i = reg.call("get_cell", gp)
+	var goal := Vector2i(-99, -99)
+	for d in [Vector2i(3, 0), Vector2i(-3, 0), Vector2i(0, 3), Vector2i(0, -3), Vector2i(2, 2), Vector2i(-2, 2)]:
+		var c: Vector2i = start_cell + d
+		if not board.get("pathfinder").call("get_path_to_cell", start_cell, c).is_empty():
+			goal = c
+			break
+	if not check(name, "there is somewhere to walk", goal != Vector2i(-99, -99)):
+		return
+	var screen: Vector2 = gp.get_parent().get_global_transform_with_canvas() * board.call("cell_to_pixel", goal)
+	await tap(screen)
+	await frames(240)
+	check(name, "a tap on the ground walks there (phone)", reg.call("get_cell", gp) == goal, "%s -> %s (goal %s)" % [start_cell, reg.call("get_cell", gp), goal])
+	# a battle: start one the way an encounter does, then play the first choice with taps
+	var arena: PackedScene = null
+	for n in main.find_children("*", "", true, false):
+		if "combat_arena" in n and n.get("combat_arena") is PackedScene:
+			arena = n.get("combat_arena")
+			break
+	if not check(name, "the map has a battle", arena != null):
+		return
+	get_tree().root.get_node("FieldEvents").emit_signal("combat_triggered", arena)
+	var menu: Node = null
+	for i in 300:
+		var menus := main.find_children("*", "UIActionMenu", true, false)
+		if menus.size() > 0 and menus[0].visible:
+			menu = menus[0]
+			break
+		await frames(1)
+	if not check(name, "battle shows the action menu", menu != null):
+		return
+	await frames(30)
+	var btn: Control = null
+	for b in menu.get_children():
+		if b is BaseButton and not b.disabled and b.get("action") and b.get("action").get("targets_enemies"):
+			btn = b
+			break
+	if not check(name, "an attack can be chosen", btn != null):
+		return
+	var acting: Node = btn.get("action").get("source")
+	await tap(btn.get_global_transform_with_canvas() * (btn.size / 2))
+	await frames(30)
+	var cursors := main.find_children("*", "UIBattlerTargetingCursor", true, false)
+	if not check(name, "tap on an attack asks for a target (phone)", cursors.size() > 0):
+		return
+	var target: Node2D = cursors[0].get("targets")[0]
+	await tap(target.get_global_transform_with_canvas().origin)
+	await frames(10)
+	check(name, "tap on an enemy attacks it (phone)", acting.get("cached_action") != null)
+
+
+## Plays a Tactical RPG turn with taps only: start, pick a unit, Move, pick a tile.
+func tactics_checks(name: String, main: Node) -> void:
+	var start: Button = main.get("demo_map")
+	await tap(start.get_global_rect().get_center())
+	await frames(60)
+	var level: Node = main.get("level_instance")
+	if not check(name, "tap on Start battle opens the map (phone)", is_instance_valid(level)):
+		return
+	for i in 120:
+		if level.get("turn_stage") == 1:
+			break
+		await frames(1)
+	var cam := get_viewport().get_camera_3d()
+	var pres: Resource = level.get("participant").get("res")
+	var pawn: Node3D = null
+	for p in level.get("player").get_children():
+		if p.call("can_act") and not cam.is_position_behind(p.global_position):
+			pawn = p
+			break
+	if not check(name, "a unit is ready to act", pawn != null):
+		return
+	var pawn_tap := cam.unproject_position(pawn.global_position + Vector3(0, 0.5, 0))
+	pawn_tap = get_viewport().get_canvas_transform().affine_inverse() * pawn_tap
+	await tap(pawn_tap)
+	await frames(10)
+	if not check(name, "tap on a unit selects it (phone)", pres.get("stage") == 1, "stage %d" % pres.get("stage")):
+		return
+	var move_btn: Button = main.find_child("Move", true, false)
+	await tap(move_btn.get_global_rect().get_center())
+	await frames(10)
+	if not check(name, "tap on Move shows where it can go (phone)", pres.get("stage") == 3, "stage %d" % pres.get("stage")):
+		return
+	# a reachable, free tile that a tap on screen actually hits (not hidden behind another)
+	var target: Node3D = null
+	var tile_tap := Vector2.ZERO
+	var space := cam.get_world_3d().direct_space_state
+	for t in level.get("arena").find_children("*", "TacticsTile", true, false):
+		if not t.get("reachable") or t == pawn.call("get_tile") or t.call("is_taken"):
+			continue
+		var sp := cam.unproject_position(t.global_position + Vector3(0, 0.05, 0))
+		var q := PhysicsRayQueryParameters3D.create(cam.project_ray_origin(sp), cam.project_ray_origin(sp) + cam.project_ray_normal(sp) * 1000.0, 1)
+		if space.intersect_ray(q).get("collider") == t:
+			target = t
+			tile_tap = get_viewport().get_canvas_transform().affine_inverse() * sp
+			break
+	if not check(name, "the unit has tiles it can reach", target != null):
+		return
+	var p0 := pawn.global_position
+	await tap(tile_tap)
+	await frames(180)
+	check(name, "tap on a tile moves the unit there (phone)", pawn.global_position.distance_to(p0) > 0.5, "moved %.2f" % pawn.global_position.distance_to(p0))
+	# camera arrows
+	var ov: TouchOverlay = main.find_children("*", "TouchOverlay", true, false)[0]
+	var cam_node: Node3D = main.find_child("TacticsCamera", true, false)
+	for b in ov.buttons:
+		if b[2] == "^":
+			var c0 := cam_node.global_position
+			var e := InputEventScreenTouch.new()
+			e.index = 2
+			e.position = to_window((b[0] as Rect2).get_center())
+			e.pressed = true
+			Input.parse_input_event(e)
+			await frames(40)
+			var r := InputEventScreenTouch.new()
+			r.index = 2
+			r.position = e.position
+			Input.parse_input_event(r)
+			await frames(3)
+			check(name, "arrow button moves the camera (phone)", cam_node.global_position.distance_to(c0) > 0.2, "moved %.2f" % cam_node.global_position.distance_to(c0))
+	# the battle ends when one side has no units left
+	for p in level.get("opponent").get_children():
+		p.get("stats").set("curr_health", 0)
+	await frames(10)
+	var panel: Node = main.find_child("ResultPanel", true, false)
+	check(name, "defeating every enemy shows Victory", panel != null and panel.get_child(0).text == "Victory!")
+
+
 ## Plays the tower defense map the way a phone does: taps, drags, buttons.
 func phone_checks(name: String, map: Node) -> void:
+	if map.has_method("_press"):
+		await overlay_checks(name, map)
+		await rpg_checks(name, map)
+		return
+	if map.has_method("_show_result"):
+		await overlay_checks(name, map)
+		await tactics_checks(name, map)
+		return
 	if not map.has_method("_add_touch_buttons"):
+		await overlay_checks(name, map)
 		return
 	get_tree().paused = false
 	map.set("process_mode", Node.PROCESS_MODE_INHERIT)

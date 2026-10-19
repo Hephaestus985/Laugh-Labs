@@ -34,6 +34,9 @@ const LENGTHS := ["Any length", "Quick (3 min or less)", "Longer"]
 
 func _ready() -> void:
 	get_tree().paused = false  # in case a game was left while paused
+	for g in Games.EXTERNAL:  # games whose always-loaded helpers must sleep in the launcher
+		if g.has("park"):
+			load(g["park"]).park(get_tree())
 	tab = int(get_setting("ui", "tab", 0 if favorites().size() > 0 else 1))
 	get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 	apply_orientation()

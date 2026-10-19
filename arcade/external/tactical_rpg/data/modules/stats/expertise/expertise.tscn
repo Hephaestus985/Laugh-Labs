@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://8x2rssxosm7i"]
+
+[ext_resource type="Script" path="res://external/tactical_rpg/data/modules/stats/expertise/expertise.gd" id="1_6aq7s"]
+[ext_resource type="Script" path="res://external/tactical_rpg/data/modules/stats/stats.gd" id="2_18or5"]
+[ext_resource type="Resource" uid="uid://14x26y1535he" path="res://external/tactical_rpg/data/models/world/stats/hero/knight.tres" id="2_seymp"]
+
+[node name="Expertise" type="Node"]
+script = ExtResource("1_6aq7s")
+starting_stats = ExtResource("2_seymp")
+
+[node name="Stats" type="Node" parent="."]
+script = ExtResource("2_18or5")
+
+[node name="Skills" type="Node" parent="."]

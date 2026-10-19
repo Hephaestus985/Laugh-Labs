@@ -1,16 +1,16 @@
-Lab Arcade test report  2026-10-19T20:33:11
-177 checks, 0 failed
+Lab Arcade test report  2026-10-19T21:22:34
+237 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
 PASS  menu                       opens on the Library without picks 
-PASS  menu                       Library has a card per game    11 cards
+PASS  menu                       Library has a card per game    15 cards
 PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
 PASS  menu                       has difficulty buttons         
 PASS  menu                       difficulty button cycles       Difficulty: Normal -> Difficulty: Hard
 PASS  menu                       tap on Play opens that card's game 
 PASS  menu                       swipe scrolls from card, label or button 
-PASS  menu                       tap on Info opens that card's page page cleanroom_parkour
+PASS  menu                       tap on Info opens that card's page page bend_it_like_einstein
 PASS  menu                       info page scrolls by swipe     
 PASS  menu                       Home is empty until you pick games 
 PASS  menu                       Home shows your picks          
@@ -23,7 +23,7 @@ PASS  menu                       More games filter
 PASS  menu                       Lab games filter               
 PASS  menu                       Quick filter only shows short games 9 games
 PASS  menu                       all sort orders work           
-PASS  menu                       shortest first sorts by length sock_escape .. the_last_knight
+PASS  menu                       shortest first sorts by length sock_escape .. racing
 PASS  menu                       play count is recorded         
 PASS  menu                       info page for every game       
 PASS  menu                       settings page builds           
@@ -159,11 +159,11 @@ PASS  the_last_knight            playing a level saves progress
 PASS  the_last_knight            New game clears the save       
 PASS  the_last_knight            losing all lives = game over   state 6
 PASS  the_last_knight            flows: no errors               
-PASS  outpost_assault            license files included         
+PASS  outpost_assault            license file included          
 PASS  outpost_assault            start screen loads with its code 
 PASS  outpost_assault            start screen renders           not checked: running headless
 PASS  outpost_assault            has a way back to the arcade   
-PASS  outpost_assault            map loads with its code        
+PASS  outpost_assault            game scene loads with its code 
 PASS  outpost_assault            map has turret slots           
 PASS  outpost_assault            drag moves the map (phone)     moved 639
 PASS  outpost_assault            a drag doesn't open the build menu 
@@ -175,6 +175,66 @@ PASS  outpost_assault            has on-screen zoom buttons
 PASS  outpost_assault            zoom button zooms in (phone)   
 PASS  outpost_assault            has an on-screen pause button  
 PASS  outpost_assault            pause button pauses (phone)    
-PASS  outpost_assault            enemies arrive and the game runs 
+PASS  outpost_assault            survives 20 s of play          
 PASS  outpost_assault            screen still renders           not checked: running headless
 PASS  outpost_assault            no errors                      0: 
+PASS  platformer_3d              license file included          
+PASS  platformer_3d              start screen loads with its code 
+PASS  platformer_3d              start screen renders           not checked: running headless
+PASS  platformer_3d              has a way back to the arcade   
+PASS  platformer_3d              game scene loads with its code 
+PASS  platformer_3d              has on-screen phone controls   
+PASS  platformer_3d              stick moves the player (phone) moved 6.73
+PASS  platformer_3d              button JUMP works (phone)      
+PASS  platformer_3d              survives 20 s of play          
+PASS  platformer_3d              screen still renders           not checked: running headless
+PASS  platformer_3d              no errors                      0: 
+PASS  racing                     license file included          
+PASS  racing                     start screen loads with its code 
+PASS  racing                     start screen renders           not checked: running headless
+PASS  racing                     has a way back to the arcade   
+PASS  racing                     game scene loads with its code 
+PASS  racing                     has on-screen phone controls   
+PASS  racing                     stick moves the player (phone) moved 2.93
+PASS  racing                     button GAS works (phone)       
+PASS  racing                     button BRAKE works (phone)     
+PASS  racing                     survives 20 s of play          
+PASS  racing                     screen still renders           not checked: running headless
+PASS  racing                     no errors                      0: 
+PASS  tactical_rpg               license file included          
+PASS  tactical_rpg               start screen loads with its code 
+PASS  tactical_rpg               start screen renders           not checked: running headless
+PASS  tactical_rpg               has a way back to the arcade   
+PASS  tactical_rpg               game scene loads with its code 
+PASS  tactical_rpg               has on-screen phone controls   
+PASS  tactical_rpg               tap on Start battle opens the map (phone) 
+PASS  tactical_rpg               a unit is ready to act         
+PASS  tactical_rpg               tap on a unit selects it (phone) stage 1
+PASS  tactical_rpg               tap on Move shows where it can go (phone) stage 3
+PASS  tactical_rpg               the unit has tiles it can reach 
+PASS  tactical_rpg               tap on a tile moves the unit there (phone) moved 3.25
+PASS  tactical_rpg               arrow button moves the camera (phone) moved 6.03
+PASS  tactical_rpg               defeating every enemy shows Victory 
+PASS  tactical_rpg               survives 20 s of play          
+PASS  tactical_rpg               screen still renders           not checked: running headless
+PASS  tactical_rpg               no errors                      0: 
+PASS  open_rpg                   license file included          
+PASS  open_rpg                   start screen loads with its code 
+PASS  open_rpg                   start screen renders           not checked: running headless
+PASS  open_rpg                   has a way back to the arcade   
+PASS  open_rpg                   game scene loads with its code 
+PASS  open_rpg                   has on-screen phone controls   
+PASS  open_rpg                   opening conversation starts    
+PASS  open_rpg                   a tap moves the conversation on (phone) event 0 -> 1
+PASS  open_rpg                   tapping through ends the conversation 
+PASS  open_rpg                   the player has a character     
+PASS  open_rpg                   there is somewhere to walk     
+PASS  open_rpg                   a tap on the ground walks there (phone) (1, 13) -> (4, 13) (goal (4, 13))
+PASS  open_rpg                   the map has a battle           
+PASS  open_rpg                   battle shows the action menu   
+PASS  open_rpg                   an attack can be chosen        
+PASS  open_rpg                   tap on an attack asks for a target (phone) 
+PASS  open_rpg                   tap on an enemy attacks it (phone) 
+PASS  open_rpg                   survives 20 s of play          
+PASS  open_rpg                   screen still renders           not checked: running headless
+PASS  open_rpg                   no errors                      0: 
