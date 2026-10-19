@@ -107,6 +107,29 @@ func swipe(from: Vector2, dy: float) -> void:
 	await frames(5)
 
 
+## A one-finger drag as a touch screen sends it (touch, drags, lift).
+func touch_swipe(from: Vector2, delta: Vector2) -> void:
+	var e := InputEventScreenTouch.new()
+	e.position = to_window(from)
+	e.pressed = true
+	Input.parse_input_event(e)
+	await frames(1)
+	var last := from
+	for i in 12:
+		var d := InputEventScreenDrag.new()
+		var p := from + delta * (i + 1) / 12.0
+		d.position = to_window(p)
+		d.relative = to_window(p) - to_window(last)
+		last = p
+		Input.parse_input_event(d)
+		await frames(1)
+	var r := InputEventScreenTouch.new()
+	r.position = to_window(from + delta)
+	r.pressed = false
+	Input.parse_input_event(r)
+	await frames(3)
+
+
 func release_all_keys() -> void:
 	for k in [KEY_SPACE, KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_SHIFT, KEY_X, KEY_Z]:
 		key(k, false)
@@ -167,6 +190,10 @@ func spawn(scene_path: String) -> Node:
 # ---------------------------------------------------------------- the tests
 
 func run_all() -> void:
+	if "external" in OS.get_cmdline_user_args():
+		for g in Games.EXTERNAL:
+			await test_external(g)
+		return  # quick run: games by others only
 	await test_menu()
 	if "menu" in OS.get_cmdline_user_args():
 		return  # quick run: launcher only
@@ -553,7 +580,7 @@ func test_external(g: Dictionary) -> void:
 	await frames(2)
 	# play the map for 20 s with random taps and drags
 	var map := spawn("res://external/%s/scenes/maps/map_template.tscn" % name)
-	if not check(name, "map loads", map != null):
+	if not check(name, "map loads with its code", map != null and map.get_script() != null):
 		return
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 11
@@ -561,6 +588,7 @@ func test_external(g: Dictionary) -> void:
 		if f % 40 == 20:
 			await tap(Vector2(rng.randf_range(100, 1180), rng.randf_range(100, 620)))
 		await get_tree().process_frame
+	await phone_checks(name, map)
 	var enemies: Node = map.find_child("EnemyContainer", true, false)
 	check(name, "enemies arrive and the game runs", enemies != null and is_instance_valid(map), "")
 	check(name, "screen still renders", screen_detail(name + "_map") > 3.0, "not checked: running headless" if headless else "")
@@ -569,6 +597,67 @@ func test_external(g: Dictionary) -> void:
 	await frames(3)
 	var e := new_errors(errs)
 	check(name, "no errors", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
+
+
+## Plays the tower defense map the way a phone does: taps, drags, buttons.
+func phone_checks(name: String, map: Node) -> void:
+	if not map.has_method("_add_touch_buttons"):
+		return
+	get_tree().paused = false
+	map.set("process_mode", Node.PROCESS_MODE_INHERIT)
+	var cam: Camera2D = map.get("camera")
+	var slots: Array = map.find_children("*", "Area2D", true, false).filter(func(a): return a.has_method("_on_input_event"))
+	if not check(name, "map has turret slots", slots.size() > 0):
+		return
+	var slot: Area2D = slots[0]
+	var popup: CanvasLayer = slot.get("turret_popup")
+	popup.hide()
+	var spot: Vector2 = slot.get_global_transform_with_canvas().origin
+	# a drag that starts on a slot moves the map and does not open the build menu
+	var cam_before := cam.position
+	await touch_swipe(spot, Vector2(-160, 0))
+	await frames(3)
+	check(name, "drag moves the map (phone)", cam.position.distance_to(cam_before) > 50, "moved %d" % cam.position.distance_to(cam_before))
+	check(name, "a drag doesn't open the build menu", not popup.visible)
+	cam.position = cam_before
+	await frames(3)
+	spot = slot.get_global_transform_with_canvas().origin
+	# a tap on the slot opens the build menu
+	await tap(spot)
+	await frames(4)
+	if not check(name, "tap on a turret slot opens the build menu (phone)", popup.visible):
+		return
+	# tap the cheapest turret
+	var money_before: int = Global.money
+	var gat: Button = popup.find_child("Gatling", true, false).find_child("Button", true, false)
+	await tap(gat.get_global_rect().get_center())
+	await frames(4)
+	check(name, "tap on a turret in the menu builds it (phone)", is_instance_valid(slot.get("turret")) and Global.money < money_before, "money %d -> %d" % [money_before, Global.money])
+	# tap the built turret: its repair / remove buttons appear at a usable size
+	await tap(slot.get_global_transform_with_canvas().origin)
+	await frames(4)
+	var actions: Control = slot.get("turret_actions")
+	check(name, "tap on a turret shows its actions (phone)", actions.visible)
+	var rem: Control = actions.find_child("Remove", true, false)
+	var real_h: float = (rem.get_global_transform_with_canvas() * Rect2(Vector2.ZERO, rem.size)).size.y if rem else 0.0
+	check(name, "turret buttons are finger-sized", real_h >= 48.0, "%d px tall" % real_h)
+	actions.hide()
+	# on-screen zoom and pause buttons
+	var zin: Button = map.find_child("ZoomIn", true, false)
+	var z0: float = cam.get("target_zoom")
+	if check(name, "has on-screen zoom buttons", zin != null):
+		await tap(zin.get_global_rect().get_center())
+		await frames(4)
+		check(name, "zoom button zooms in (phone)", float(cam.get("target_zoom")) > z0)
+	var pb: Button = map.find_child("PauseButton", true, false)
+	if check(name, "has an on-screen pause button", pb != null):
+		await tap(pb.get_global_rect().get_center())
+		await frames(4)
+		check(name, "pause button pauses (phone)", get_tree().paused)
+		var pause_menu: Node = cam.get("hud").find_child("Pause", true, false)
+		pause_menu.call("_enable", false)
+		await frames(2)
+	get_tree().paused = false
 
 
 func write_report() -> void:

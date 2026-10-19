@@ -25,18 +25,27 @@ func _physics_process(delta: float) -> void:
 # [Lab Arcade] touch screens: drag with one finger to move, pinch to zoom
 var _touches := {}
 var _pinch_dist := 0.0
+var _press_pos := Vector2.ZERO
+const TAP_SLOP := 18.0  # finger movement (screen px) that still counts as a tap
 
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			_touches[event.index] = event.position
+			if _touches.size() == 1:
+				_press_pos = event.position
+				Global.pan_moved = false
+			else:
+				Global.pan_moved = true  # two fingers: a pinch, never a tap
 		else:
 			_touches.erase(event.index)
 		_pinch_dist = 0.0
 	elif event is InputEventScreenDrag and _touches.has(event.index):
 		_touches[event.index] = event.position
 		if _touches.size() == 1:
+			if event.position.distance_to(_press_pos) > TAP_SLOP:
+				Global.pan_moved = true
 			position -= event.relative / zoom
 			position = position.clamp(Vector2(limit_left, limit_top), Vector2(limit_right, limit_bottom))
 		elif _touches.size() == 2:
@@ -64,6 +73,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.set_default_cursor_shape(Input.CURSOR_DRAG)
 	if event.is_action_released("middle_mouse"):
 		Input.set_default_cursor_shape(Input.CURSOR_ARROW)
+
+
+# [Lab Arcade] used by the on-screen zoom buttons
+func zoom_by(factor: float) -> void:
+	target_zoom = clampf(target_zoom * factor, min_zoom, max_zoom)
+	set_physics_process(true)
 
 
 func zoom_in() -> void:

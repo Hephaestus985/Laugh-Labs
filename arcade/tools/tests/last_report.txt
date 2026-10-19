@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-19T20:05:11
-166 checks, 0 failed
+Lab Arcade test report  2026-10-19T20:33:11
+177 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
 PASS  menu                       opens on the Library without picks 
@@ -163,7 +163,18 @@ PASS  outpost_assault            license files included
 PASS  outpost_assault            start screen loads with its code 
 PASS  outpost_assault            start screen renders           not checked: running headless
 PASS  outpost_assault            has a way back to the arcade   
-PASS  outpost_assault            map loads                      
+PASS  outpost_assault            map loads with its code        
+PASS  outpost_assault            map has turret slots           
+PASS  outpost_assault            drag moves the map (phone)     moved 639
+PASS  outpost_assault            a drag doesn't open the build menu 
+PASS  outpost_assault            tap on a turret slot opens the build menu (phone) 
+PASS  outpost_assault            tap on a turret in the menu builds it (phone) money 5000 -> 4750
+PASS  outpost_assault            tap on a turret shows its actions (phone) 
+PASS  outpost_assault            turret buttons are finger-sized 77 px tall
+PASS  outpost_assault            has on-screen zoom buttons     
+PASS  outpost_assault            zoom button zooms in (phone)   
+PASS  outpost_assault            has an on-screen pause button  
+PASS  outpost_assault            pause button pauses (phone)    
 PASS  outpost_assault            enemies arrive and the game runs 
 PASS  outpost_assault            screen still renders           not checked: running headless
 PASS  outpost_assault            no errors                      0: 

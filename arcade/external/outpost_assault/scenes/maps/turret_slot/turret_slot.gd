@@ -12,8 +12,23 @@ var turret: Turret  # turret assigned to this slot
 @onready var turret_actions := $UI/TurretActions as VBoxContainer
 
 
+func _ready() -> void:
+	# [Lab Arcade] fingers are less precise than a mouse: a bigger tap area
+	var cs := $CollisionShape2D as CollisionShape2D
+	cs.shape = cs.shape.duplicate()
+	(cs.shape as RectangleShape2D).size *= 1.4
+
+
+# [Lab Arcade] keep the turret buttons a usable size at any zoom level
+func _process(_delta: float) -> void:
+	var cam := get_viewport().get_camera_2d()
+	if cam and turret_actions.visible:
+		$UI.scale = Vector2.ONE * (0.5 / cam.zoom.x)
+
+
+# [Lab Arcade] react when the finger lifts, and not after dragging the map
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	if event is InputEventMouseButton and event.pressed and \
+	if event is InputEventMouseButton and not event.pressed and not Global.pan_moved and \
 			event.button_index == MOUSE_BUTTON_LEFT:
 		if is_instance_valid(turret):
 			turret_actions.visible = not turret_actions.visible
@@ -68,6 +83,9 @@ func _on_turret_popup_visibility_changed() -> void:
 
 
 func _on_turret_actions_visibility_changed() -> void:
+	# [Lab Arcade] phones can't hover: show the turret's range while it's selected
+	if is_instance_valid(turret):
+		turret.shooter.is_mouse_hovering = turret_actions.visible
 	if turret_actions.visible:
 		turret_popup.hide()
 		Global.turret_actions = turret_actions
