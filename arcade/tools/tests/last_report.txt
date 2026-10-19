@@ -1,4 +1,4 @@
-Lab Arcade test report  2026-10-19T19:12:57
+Lab Arcade test report  2026-10-19T19:42:06
 146 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games

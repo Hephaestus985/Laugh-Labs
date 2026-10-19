@@ -210,11 +210,16 @@ func test_menu() -> void:
 		var first_card: Control = cards.get_child(0)
 		var r := first_card.get_global_rect()
 		var spots := [r.position + Vector2(r.size.x * 0.5, 20), first_card.find_child("Play", true, false).get_global_rect().get_center(), r.position + Vector2(r.size.x * 0.5, r.size.y * 0.45)]
+		var got := []
 		for spot in spots:
+			m.fling = 0.0
 			sc.scroll_vertical = 0
-			await frames(1)
+			await frames(3)
 			await swipe(spot, -200)
+			got.append(sc.scroll_vertical)
 			swipe_ok = swipe_ok and sc.scroll_vertical > 100
+		m.fling = 0.0
+		print("  swipe results ", got)
 		sc.scroll_vertical = 0
 		await frames(2)
 	check("menu", "swipe scrolls from card, label or button", swipe_ok)

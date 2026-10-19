@@ -102,6 +102,8 @@ func _input(event: InputEvent) -> void:
 				Input.parse_input_event(rel)
 			dragging = false
 	elif event is InputEventMouseMotion and drag_down:
+		if not (event.button_mask & MOUSE_BUTTON_MASK_LEFT):
+			return  # a stray pointer move (e.g. a real mouse hovering), not the finger
 		var dy: float = event.position.y - drag_from.y
 		if not dragging and absf(dy) > DRAG_START:
 			dragging = true

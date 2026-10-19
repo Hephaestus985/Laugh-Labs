@@ -2,6 +2,10 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.6 (2026-10-19)
+- New app icon: a lab flask with a game controller, with proper Android adaptive icon layers (no more cropped sock)
+- Swipes ignore stray pointer moves, so a swipe or tap is never misread
+
 ## Lab Arcade 1.5 (2026-10-19)
 - Fixed: swiping the launcher on a touch screen only worked when the swipe started on a button. Now it scrolls wherever you start, and keeps gliding a little
 - Tests: swipe scrolling from cards, labels and buttons; taps still press buttons
