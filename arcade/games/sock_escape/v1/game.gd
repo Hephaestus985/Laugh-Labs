@@ -84,6 +84,7 @@ var is_mobile := false
 
 func _ready() -> void:
 	randomize()
+	ArcadeGame.use_game_screen(get_window())
 	font = ThemeDB.fallback_font
 	is_mobile = OS.has_feature("mobile")
 	if FileAccess.file_exists(SAVE_PATH):

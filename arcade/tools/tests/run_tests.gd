@@ -163,25 +163,80 @@ func test_menu() -> void:
 	check("menu", "games.gd is complete", ok_meta, "%d games" % Games.LIST.size())
 	var m := spawn("res://menu.tscn")
 	await frames(5)
-	var cards := m.find_children("*", "Button", true, false).size()
-	check("menu", "builds a card per game", cards >= Games.LIST.size() * 3, "%d buttons" % cards)
-	check("menu", "renders", screen_detail("menu") > 3.0)
-	# difficulty button cycles and is stored
-	var db: Button = null
-	for b in m.find_children("*", "Button", true, false):
-		if (b as Button).text.begins_with("Difficulty"):
-			db = b
-			break
+	var cards: Node = m.find_child("Cards", true, false)
+	check("menu", "a card per game", cards != null and cards.get_child_count() == Games.LIST.size(), "%d cards" % (cards.get_child_count() if cards else 0))
+	var plays_ok := cards != null
+	if cards:
+		for c in cards.get_children():
+			plays_ok = plays_ok and c.find_child("Play", true, false) != null and c.find_child("Info", true, false) != null and c.find_child("Difficulty", true, false) != null
+	check("menu", "every card has Play, Info, Difficulty", plays_ok)
+	check("menu", "renders", screen_detail("menu_landscape") > 3.0)
+	var db: Button = cards.get_child(0).find_child("Difficulty", true, false) if cards else null
 	if check("menu", "has difficulty buttons", db != null):
-		var before := (db as Button).text
+		var before := db.text
 		db.emit_signal("pressed")
 		await frames(1)
 		check("menu", "difficulty button cycles", db.text != before, "%s -> %s" % [before, db.text])
-		ArcadeGame.set_difficulty(Games.LIST[0]["id"], 1)
+		for g in Games.LIST:
+			ArcadeGame.set_difficulty(g["id"], 1)
+	# every sort order still lists every game
+	var sorts_ok := true
+	for i in m.SORTS.size():
+		m.set_setting("ui", "sort", i)
+		var sids = m.sorted_games().map(func(g): return g["id"])
+		sorts_ok = sorts_ok and sids.size() == Games.LIST.size()
+	m.set_setting("ui", "sort", 0)
+	var az: Array = m.sorted_games().map(func(g): return g["name"])
+	var az_sorted := az.duplicate()
+	az_sorted.sort()
+	check("menu", "all sort orders work", sorts_ok and az == az_sorted)
+	m.set_setting("ui", "sort", 3)
+	var short: Array = m.sorted_games()
+	check("menu", "shortest first sorts by length", m.minutes(short[0]) <= m.minutes(short[short.size() - 1]), "%s .. %s" % [short[0]["id"], short[short.size() - 1]["id"]])
+	m.set_setting("ui", "sort", 0)
+	# play statistics
+	var p0: int = m.plays("sock_escape")
+	m.record_play("sock_escape")
+	check("menu", "play count is recorded", m.plays("sock_escape") == p0 + 1 and m.last_played("sock_escape") > 0)
+	# info page for every game
+	var info_ok := true
 	for g in Games.LIST:
-		m.show_versions(g)
+		m.show_info(g)
 		await frames(1)
-	check("menu", "versions pages build", true)
+		info_ok = info_ok and m.body.get_child_count() >= 2
+	check("menu", "info page for every game", info_ok)
+	m.show_info(Games.LIST[Games.LIST.size() - 1])
+	await frames(3)
+	screen_detail("menu_info")
+	m.show_settings()
+	await frames(3)
+	check("menu", "settings page builds", m.page == "settings" and m.body.get_child_count() >= 2)
+	screen_detail("menu_settings")
+	m.go_back()
+	await frames(2)
+	check("menu", "back returns to the list", m.page == "list")
+	# portrait layout: turning the screen gives one column of cards
+	if headless:
+		check("menu", "portrait layout = 1 column", true, "skipped without a window")
+	else:
+		var old: Vector2i = DisplayServer.window_get_size()
+		DisplayServer.window_set_size(Vector2i(540, 960))
+		await frames(10)
+		cards = m.find_child("Cards", true, false)
+		check("menu", "portrait layout = 1 column", cards != null and cards.columns == 1)
+		screen_detail("menu_portrait")
+		m.show_info(Games.LIST[Games.LIST.size() - 1])
+		await frames(4)
+		screen_detail("menu_portrait_info")
+		m.go_back()
+		DisplayServer.window_set_size(old)
+		for i in 60:
+			await frames(1)
+			cards = m.find_child("Cards", true, false)
+			if cards != null and cards.columns == 2:
+				break
+	cards = m.find_child("Cards", true, false)
+	check("menu", "landscape layout = 2 columns", cards != null and cards.columns == 2)
 	m.queue_free()
 	await frames(2)
 	check("menu", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))
@@ -198,6 +253,7 @@ func test_game(g: Dictionary, v: Dictionary) -> void:
 		n.queue_free()
 		return
 	await frames(10)
+	check(name, "uses the landscape game screen", get_window().content_scale_size == Vector2i(1280, 720))
 	check(name, "title screen renders", screen_detail() > 3.0)
 	check(name, "starts on the title", int(n.get("state")) == 0)
 	# a tap in the middle of the screen must start the game

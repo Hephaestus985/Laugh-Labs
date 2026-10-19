@@ -52,6 +52,17 @@ var _shake := 0.0
 func _enter_tree() -> void:
 	font = ThemeDB.fallback_font
 	is_mobile = OS.has_feature("mobile")
+	use_game_screen(get_window())
+
+
+## Games are drawn for a 1280x720 landscape screen; the menu may have been in portrait.
+static func use_game_screen(win: Window) -> void:
+	if win.content_scale_size != Vector2i(1280, 720):
+		win.content_scale_size = Vector2i(1280, 720)
+	if win.content_scale_aspect != Window.CONTENT_SCALE_ASPECT_KEEP:
+		win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
+	if OS.has_feature("mobile"):
+		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR_LANDSCAPE)
 
 
 func best_path() -> String:

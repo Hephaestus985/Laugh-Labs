@@ -1,15 +1,24 @@
-Lab Arcade test report  2026-10-19T15:59:45
-125 checks, 0 failed
+Lab Arcade test report  2026-10-19T18:32:01
+143 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
-PASS  menu                       builds a card per game         30 buttons
+PASS  menu                       a card per game                10 cards
+PASS  menu                       every card has Play, Info, Difficulty 
 PASS  menu                       renders                        
 PASS  menu                       has difficulty buttons         
 PASS  menu                       difficulty button cycles       Difficulty: Normal -> Difficulty: Hard
-PASS  menu                       versions pages build           
+PASS  menu                       all sort orders work           
+PASS  menu                       shortest first sorts by length sock_escape .. the_last_knight
+PASS  menu                       play count is recorded         
+PASS  menu                       info page for every game       
+PASS  menu                       settings page builds           
+PASS  menu                       back returns to the list       
+PASS  menu                       portrait layout = 1 column     
+PASS  menu                       landscape layout = 2 columns   
 PASS  menu                       no errors                      
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene
+PASS  sock_escape v1             uses the landscape game screen 
 PASS  sock_escape v1             title screen renders           
 PASS  sock_escape v1             starts on the title            
 PASS  sock_escape v1             tap starts the game            state 1
@@ -20,6 +29,7 @@ PASS  sock_escape v1             has a way back to the menu
 PASS  sock_escape v1             no errors                      0: 
 PASS  waveguide_snake v1         scene loads                    
 PASS  waveguide_snake v1         has its game code              script missing from scene
+PASS  waveguide_snake v1         uses the landscape game screen 
 PASS  waveguide_snake v1         title screen renders           
 PASS  waveguide_snake v1         starts on the title            
 PASS  waveguide_snake v1         tap starts the game            state 1
@@ -31,6 +41,7 @@ PASS  waveguide_snake v1         has a way back to the menu
 PASS  waveguide_snake v1         no errors                      0: 
 PASS  cleanroom_parkour v1       scene loads                    
 PASS  cleanroom_parkour v1       has its game code              script missing from scene
+PASS  cleanroom_parkour v1       uses the landscape game screen 
 PASS  cleanroom_parkour v1       title screen renders           
 PASS  cleanroom_parkour v1       starts on the title            
 PASS  cleanroom_parkour v1       tap starts the game            state 1
@@ -42,6 +53,7 @@ PASS  cleanroom_parkour v1       has a way back to the menu
 PASS  cleanroom_parkour v1       no errors                      0: 
 PASS  escape_the_cavity v2       scene loads                    
 PASS  escape_the_cavity v2       has its game code              script missing from scene
+PASS  escape_the_cavity v2       uses the landscape game screen 
 PASS  escape_the_cavity v2       title screen renders           
 PASS  escape_the_cavity v2       starts on the title            
 PASS  escape_the_cavity v2       tap starts the game            state 1
@@ -53,6 +65,7 @@ PASS  escape_the_cavity v2       has a way back to the menu
 PASS  escape_the_cavity v2       no errors                      0: 
 PASS  bend_it_like_einstein v2   scene loads                    
 PASS  bend_it_like_einstein v2   has its game code              script missing from scene
+PASS  bend_it_like_einstein v2   uses the landscape game screen 
 PASS  bend_it_like_einstein v2   title screen renders           
 PASS  bend_it_like_einstein v2   starts on the title            
 PASS  bend_it_like_einstein v2   tap starts the game            state 1
@@ -64,6 +77,7 @@ PASS  bend_it_like_einstein v2   has a way back to the menu
 PASS  bend_it_like_einstein v2   no errors                      0: 
 PASS  orbit_courier v1           scene loads                    
 PASS  orbit_courier v1           has its game code              script missing from scene
+PASS  orbit_courier v1           uses the landscape game screen 
 PASS  orbit_courier v1           title screen renders           
 PASS  orbit_courier v1           starts on the title            
 PASS  orbit_courier v1           tap starts the game            state 1
@@ -75,6 +89,7 @@ PASS  orbit_courier v1           has a way back to the menu
 PASS  orbit_courier v1           no errors                      0: 
 PASS  never_ask_for_directions v1 scene loads                    
 PASS  never_ask_for_directions v1 has its game code              script missing from scene
+PASS  never_ask_for_directions v1 uses the landscape game screen 
 PASS  never_ask_for_directions v1 title screen renders           
 PASS  never_ask_for_directions v1 starts on the title            
 PASS  never_ask_for_directions v1 tap starts the game            state 1
@@ -86,6 +101,7 @@ PASS  never_ask_for_directions v1 has a way back to the menu
 PASS  never_ask_for_directions v1 no errors                      0: 
 PASS  lighthouse_keeper v1       scene loads                    
 PASS  lighthouse_keeper v1       has its game code              script missing from scene
+PASS  lighthouse_keeper v1       uses the landscape game screen 
 PASS  lighthouse_keeper v1       title screen renders           
 PASS  lighthouse_keeper v1       starts on the title            
 PASS  lighthouse_keeper v1       tap starts the game            state 1
@@ -97,6 +113,7 @@ PASS  lighthouse_keeper v1       has a way back to the menu
 PASS  lighthouse_keeper v1       no errors                      0: 
 PASS  escape_velocity v1         scene loads                    
 PASS  escape_velocity v1         has its game code              script missing from scene
+PASS  escape_velocity v1         uses the landscape game screen 
 PASS  escape_velocity v1         title screen renders           
 PASS  escape_velocity v1         starts on the title            
 PASS  escape_velocity v1         tap starts the game            state 1
@@ -108,6 +125,7 @@ PASS  escape_velocity v1         has a way back to the menu
 PASS  escape_velocity v1         no errors                      0: 
 PASS  the_last_knight v2         scene loads                    
 PASS  the_last_knight v2         has its game code              script missing from scene
+PASS  the_last_knight v2         uses the landscape game screen 
 PASS  the_last_knight v2         title screen renders           
 PASS  the_last_knight v2         starts on the title            
 PASS  the_last_knight v2         tap starts the game            state 1

@@ -2,6 +2,14 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.4 (2026-10-19)
+- New launcher layout: each game card shows run length, best score, times played, effort and saved progress, with Play / Continue, Difficulty and Info buttons
+- Info page per game: story, controls, facts, difficulty, all versions
+- Settings page: difficulty for all games, sort order, menu orientation, reset high scores, about
+- Sorting: A to Z, recently played, most played, shortest / longest first, most effort, newest
+- Portrait support: the menu turns with the phone (one column); games always play in landscape
+- Tests: 143 checks, now also covering the launcher pages, sorting and portrait layout
+
 ## Lab Arcade 1.3 (2026-10-19)
 - Fixed: The Last Knight, Escape Velocity and Lighthouse Keeper did not start in 1.2 (a stale build cache shipped their scenes without code)
 - Renamed the app to Lab Arcade (high scores are kept)

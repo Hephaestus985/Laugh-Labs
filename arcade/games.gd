@@ -10,6 +10,8 @@
 const LIST := [
 	{
 		"id": "sock_escape",
+		"about": "A runaway sock flees the washing machine through the laundry room: rubber ducks, soap bars, cats, bubbles and a hairdryer. It speeds up every second.",
+		"controls": "Phone: tap the right side to jump (again for a double jump), hold the left side to duck. PC: SPACE / up to jump, down to duck.",
 		"length": "1-3 min per run (endless, gets faster)",
 		"effort": "Original for the arcade",
 		"godot_time": "~10 min",
@@ -24,6 +26,8 @@ const LIST := [
 	},
 	{
 		"id": "waveguide_snake",
+		"about": "You are a light pulse in a waveguide. Collect photons and grow, but don't hit the walls, your own tail or scattering defects. Every 5 photons adds defects and speed.",
+		"controls": "Phone: swipe to steer. PC: arrows or WASD.",
 		"length": "1-3 min per run (endless)",
 		"effort": "Laugh Lab built-in game",
 		"godot_time": "~3 min",
@@ -37,6 +41,8 @@ const LIST := [
 	},
 	{
 		"id": "cleanroom_parkour",
+		"about": "You're late for your cleanroom slot. Every 14 seconds is a new room with new hazards: pits, flying deadlines, hopping HF, falling reviews. Grab wafers for bonus metres.",
+		"controls": "Phone: tap to jump, tap again in the air to double jump. PC: SPACE or up.",
 		"length": "1-2 min per run (endless, 5 rooms)",
 		"effort": "Laugh Lab built-in game",
 		"godot_time": "~3 min",
@@ -50,6 +56,8 @@ const LIST := [
 	},
 	{
 		"id": "escape_the_cavity",
+		"about": "You are a photon trapped in a VCSEL, and the only way out is to hop across Bragg mirrors while Reviewer 2 sweeps the room with a laser pointer. Survive 72 seconds and 6 levels.",
+		"controls": "Phone: drag on the left half to move, JUMP button to jump. PC: arrows to move, SPACE or up to jump.",
 		"length": "72 s round, 6 levels",
 		"effort": "Web effort 4 of 8: Polished",
 		"godot_time": "~5 min",
@@ -63,6 +71,8 @@ const LIST := [
 	},
 	{
 		"id": "bend_it_like_einstein",
+		"about": "Photons refuse to turn, so you summon a pocket black hole to bend them into the fiber. Don't let them fall in, and watch out for the goose, the monolith and the nebula.",
+		"controls": "Phone: touch and hold where the black hole should be. PC: hold the mouse, or move with arrows and hold SPACE.",
 		"length": "60 s round, 5 levels",
 		"effort": "Web effort 4 of 8: Polished",
 		"godot_time": "~4 min",
@@ -76,6 +86,8 @@ const LIST := [
 	},
 	{
 		"id": "orbit_courier",
+		"about": "Deliver party invitations across the galaxy by slingshotting between moving planets. Let go of your orbit at the right moment. You have to planet ahead.",
+		"controls": "Tap anywhere or press SPACE to let go of the orbit.",
 		"length": "2-4 min per run (endless)",
 		"effort": "Web effort 7 of 8: Studio (built and playtested)",
 		"godot_time": "~3 min",
@@ -89,6 +101,8 @@ const LIST := [
 	},
 	{
 		"id": "never_ask_for_directions",
+		"about": "Steer a Viking longship through fjords, gusts, icebergs and a kraken, without once asking for the way. Grab loot, keep your three shields.",
+		"controls": "Phone: hold the screen above or below the ship to steer. PC: up / down.",
 		"length": "2-4 min per run (endless, 5 zones)",
 		"effort": "Web effort 7 of 8: Studio (built and playtested)",
 		"godot_time": "~3 min",
@@ -102,6 +116,8 @@ const LIST := [
 	},
 	{
 		"id": "lighthouse_keeper",
+		"about": "Swing a very expensive laser beam across a night sea so captains can see the rocks, without lighting up the smugglers or feeding the sea serpent. Each night adds fog, storms, smugglers or the serpent.",
+		"controls": "Phone: touch where the beam should point. PC: move the mouse, or left / right.",
 		"length": "3-6 min per run (endless levels)",
 		"effort": "Web effort 7 of 8: Studio (built and playtested)",
 		"godot_time": "~5 min",
@@ -115,6 +131,8 @@ const LIST := [
 	},
 	{
 		"id": "escape_velocity",
+		"about": "Bounce from a Twente rooftop to the Moon, dodging honking geese, space junk and meteoroids, with stroopwafels as syrup-powered rocket fuel. Stomp geese from above.",
+		"controls": "Phone: hold the left or right side of the screen to steer. PC: left / right. Jumping is automatic.",
 		"length": "3-5 min to reach the Moon",
 		"effort": "Web effort 7 of 8: Studio (built and playtested)",
 		"godot_time": "~6 min",
@@ -128,6 +146,8 @@ const LIST := [
 	},
 	{
 		"id": "the_last_knight",
+		"about": "Eleven years of sword school, then someone invented the crossbow, so you chase the inventor through five eras of history: a castle, Viking seas, a Roman aqueduct, a Dutch polder and his tower. Progress saves at every level and at the boss.",
+		"controls": "Phone: drag on the left half to move, JUMP and SWORD buttons. PC: arrows, SPACE / up to jump, X or J to swing. Swing at bolts and axes to parry them.",
 		"save_file": "user://the_last_knight_save.json",
 		"length": "20-30 min: 5 levels and a boss, with saves",
 		"effort": "Web effort 8 of 8: Masterpiece (several playtest rounds)",

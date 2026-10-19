@@ -1,39 +1,201 @@
 extends Control
-# Lab Arcade: the start screen that lists every game, plus a version
-# history page per game where older versions can still be played.
+# Lab Arcade launcher: the game list (sortable, landscape or portrait), an
+# info page per game (story, controls, facts, difficulty, versions) and a
+# settings page. Play statistics live in user://settings.cfg next to the
+# per-game difficulty that ArcadeGame reads.
 
 const Games := preload("res://games.gd")
+const SETTINGS := "user://settings.cfg"
+const LANDSCAPE := Vector2i(1280, 720)
+const PORTRAIT := Vector2i(720, 1280)
+const SORTS := ["A to Z", "Recently played", "Most played", "Shortest first", "Longest first", "Most effort first", "Newest first"]
+const ORIENTS := ["Auto (turn the phone)", "Always landscape", "Always portrait"]
+const BG := Color(0.11, 0.10, 0.17)
+const PANEL := Color(0.17, 0.16, 0.25)
+const GOLD := Color(1.0, 0.85, 0.35)
+const MUTED := Color(0.75, 0.75, 0.85)
 
 var body: VBoxContainer
+var page := "list"
+var page_game: Dictionary = {}
+var confirm_reset := false
+var portrait := false
 
 
 func _ready() -> void:
+	get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+	apply_orientation()
 	var bg := ColorRect.new()
-	bg.color = Color(0.13, 0.12, 0.2)
+	bg.color = BG
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(bg)
-
 	var margin := MarginContainer.new()
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 32)
+		margin.add_theme_constant_override("margin_" + side, 22)
 	add_child(margin)
-
 	body = VBoxContainer.new()
-	body.add_theme_constant_override("separation", 14)
+	body.add_theme_constant_override("separation", 12)
 	margin.add_child(body)
-	show_list()
+	_on_resized()
 
+
+func _process(_delta: float) -> void:
+	# follow phone rotation (checked every frame; cheap, and more reliable than signals)
+	var ws := DisplayServer.window_get_size()
+	if (ws.y > ws.x) != portrait:
+		_on_resized()
+
+
+# ---------------------------------------------------------------- settings + stats
+
+func cfg() -> ConfigFile:
+	var c := ConfigFile.new()
+	c.load(SETTINGS)
+	return c
+
+
+func get_setting(section: String, key: String, default):
+	return cfg().get_value(section, key, default)
+
+
+func set_setting(section: String, key: String, value) -> void:
+	var c := cfg()
+	c.set_value(section, key, value)
+	c.save(SETTINGS)
+
+
+func plays(id: String) -> int:
+	return int(get_setting("stats", "plays_" + id, 0))
+
+
+func last_played(id: String) -> int:
+	return int(get_setting("stats", "last_" + id, 0))
+
+
+func record_play(id: String) -> void:
+	var c := cfg()
+	c.set_value("stats", "plays_" + id, int(c.get_value("stats", "plays_" + id, 0)) + 1)
+	c.set_value("stats", "last_" + id, int(Time.get_unix_time_from_system()))
+	c.save(SETTINGS)
+
+
+func best_path(g: Dictionary) -> String:
+	return g.get("best_file", "user://best_%s.dat" % g["id"])
+
+
+func read_best(g: Dictionary) -> int:
+	var path := best_path(g)
+	if not FileAccess.file_exists(path):
+		return 0
+	var f := FileAccess.open(path, FileAccess.READ)
+	return f.get_32() if f else 0
+
+
+func save_info(g: Dictionary) -> String:
+	# "level 3" / "the boss" for a game with a save, "" otherwise
+	if not g.has("save_file") or not FileAccess.file_exists(g["save_file"]):
+		return ""
+	var o = JSON.parse_string(FileAccess.get_file_as_string(g["save_file"]))
+	if typeof(o) != TYPE_DICTIONARY:
+		return "saved"
+	if o.get("boss", false):
+		return "at the boss"
+	return "level %d" % int(o.get("lv", 1))
+
+
+func newest(g: Dictionary) -> Dictionary:
+	var vs: Array = g["versions"]
+	return vs[vs.size() - 1]
+
+
+func minutes(g: Dictionary) -> float:
+	var m := RegEx.create_from_string("(\\d+)\\s*(?:-\\s*\\d+)?\\s*(s|min)").search(g.get("length", ""))
+	if m == null:
+		return 99.0
+	var n := float(m.get_string(1))
+	return n / 60.0 if m.get_string(2) == "s" else n
+
+
+func effort_level(g: Dictionary) -> int:
+	var m := RegEx.create_from_string("(\\d) of 8").search(g.get("effort", ""))
+	return int(m.get_string(1)) if m else 2
+
+
+func short_effort(e: String) -> String:
+	var m := RegEx.create_from_string("(\\d) of 8: ([A-Za-z]+)").search(e)
+	if m:
+		return "Effort %s/8 %s" % [m.get_string(1), m.get_string(2)]
+	return e
+
+
+func sorted_games() -> Array:
+	var list: Array = []
+	for i in Games.LIST.size():
+		var g: Dictionary = Games.LIST[i].duplicate()
+		g["_order"] = i
+		list.append(g)
+	match int(get_setting("ui", "sort", 0)):
+		0:
+			list.sort_custom(func(a, b): return String(a["name"]) < String(b["name"]))
+		1:
+			list.sort_custom(func(a, b): return last_played(a["id"]) > last_played(b["id"]) or (last_played(a["id"]) == last_played(b["id"]) and a["_order"] < b["_order"]))
+		2:
+			list.sort_custom(func(a, b): return plays(a["id"]) > plays(b["id"]) or (plays(a["id"]) == plays(b["id"]) and a["_order"] < b["_order"]))
+		3:
+			list.sort_custom(func(a, b): return minutes(a) < minutes(b))
+		4:
+			list.sort_custom(func(a, b): return minutes(a) > minutes(b))
+		5:
+			list.sort_custom(func(a, b): return effort_level(a) > effort_level(b) or (effort_level(a) == effort_level(b) and a["_order"] > b["_order"]))
+		6:
+			list.sort_custom(func(a, b): return a["_order"] > b["_order"])
+	return list
+
+
+# ---------------------------------------------------------------- orientation
+
+func apply_orientation() -> void:
+	if not OS.has_feature("mobile"):
+		return
+	var o := int(get_setting("ui", "orientation", 0))
+	DisplayServer.screen_set_orientation([DisplayServer.SCREEN_SENSOR, DisplayServer.SCREEN_SENSOR_LANDSCAPE, DisplayServer.SCREEN_SENSOR_PORTRAIT][o])
+
+
+func _on_resized() -> void:
+	var ws := DisplayServer.window_get_size()
+	var want := ws.y > ws.x
+	var target := PORTRAIT if want else LANDSCAPE
+	if get_window().content_scale_size != target:
+		get_window().content_scale_size = target
+	if want != portrait or body.get_child_count() == 0:
+		portrait = want
+		refresh()
+
+
+func refresh() -> void:
+	match page:
+		"info":
+			show_info(page_game)
+		"settings":
+			show_settings()
+		_:
+			show_list()
+
+
+# ---------------------------------------------------------------- widgets
 
 func clear_body() -> void:
 	for c in body.get_children():
+		body.remove_child(c)
 		c.queue_free()
 
 
-func label(s: String, size: int, color := Color(1, 1, 1), center := true) -> Label:
+func label(s: String, size: int, color := Color(1, 1, 1), center := false) -> Label:
 	var l := Label.new()
 	l.text = s
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	if center:
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	l.add_theme_font_size_override("font_size", size)
@@ -41,18 +203,45 @@ func label(s: String, size: int, color := Color(1, 1, 1), center := true) -> Lab
 	return l
 
 
-func style_button(b: Button, c: Color, radius := 18) -> void:
+func flat(c: Color, radius := 16, pad := 14) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = c
+	sb.set_corner_radius_all(radius)
+	sb.set_content_margin_all(pad)
+	return sb
+
+
+func style_button(b: Button, c: Color, radius := 14) -> void:
 	b.mouse_filter = Control.MOUSE_FILTER_PASS  # let drags reach the scroll container on phones
-	for state in ["normal", "hover", "pressed", "focus"]:
-		var sb := StyleBoxFlat.new()
-		sb.bg_color = c if state == "normal" else (c.lightened(0.15) if state != "pressed" else c.darkened(0.2))
-		if state == "focus":
-			sb.draw_center = false
-			sb.border_color = Color(1, 1, 1)
-			sb.set_border_width_all(4)
-		sb.set_corner_radius_all(radius)
-		sb.set_content_margin_all(14)
-		b.add_theme_stylebox_override(state, sb)
+	b.add_theme_stylebox_override("normal", flat(c, radius, 12))
+	b.add_theme_stylebox_override("hover", flat(c.lightened(0.12), radius, 12))
+	b.add_theme_stylebox_override("pressed", flat(c.darkened(0.2), radius, 12))
+	var f := flat(Color(0, 0, 0, 0), radius, 12)
+	f.draw_center = false
+	f.border_color = Color(1, 1, 1)
+	f.set_border_width_all(3)
+	b.add_theme_stylebox_override("focus", f)
+
+
+func button(txt: String, c: Color, size := 22, expand := true) -> Button:
+	var b := Button.new()
+	b.text = txt
+	b.add_theme_font_size_override("font_size", size)
+	b.custom_minimum_size = Vector2(0, 58)
+	if expand:
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	style_button(b, c)
+	return b
+
+
+func chip(txt: String, c := Color(0, 0, 0, 0.28)) -> Control:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", flat(c, 10, 7))
+	var l := Label.new()
+	l.text = txt
+	l.add_theme_font_size_override("font_size", 18)
+	p.add_child(l)
+	return p
 
 
 func scroll_box() -> VBoxContainer:
@@ -67,148 +256,291 @@ func scroll_box() -> VBoxContainer:
 	return inner
 
 
+func back_bar(title: String) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	var back := button("< Back", Color(0.25, 0.24, 0.36), 22, false)
+	back.custom_minimum_size = Vector2(140, 58)
+	back.pressed.connect(func():
+		page = "list"
+		refresh())
+	row.add_child(back)
+	var t := label(title, 34 if portrait else 40, GOLD)
+	t.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(t)
+	body.add_child(row)
+
+
+func section(parent: Control, title: String) -> void:
+	parent.add_child(label(title, 24, GOLD))
+
+
 # ---------------------------------------------------------------- game list
 
 func show_list() -> void:
+	page = "list"
 	clear_body()
-	body.add_child(label("LAB ARCADE", 58, Color(1.0, 0.85, 0.35)))
-	body.add_child(label("%d games. Pick one." % Games.LIST.size(), 24))
+	var top := HBoxContainer.new()
+	top.add_theme_constant_override("separation", 12)
+	var title := label("LAB ARCADE", 44 if portrait else 52, GOLD)
+	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	top.add_child(title)
+	var sb := button("Settings", Color(0.28, 0.26, 0.40), 22, false)
+	sb.custom_minimum_size = Vector2(150, 58)
+	sb.pressed.connect(show_settings)
+	top.add_child(sb)
+	body.add_child(top)
+	var bar := HBoxContainer.new()
+	bar.add_theme_constant_override("separation", 10)
+	var count := label("%d games" % Games.LIST.size(), 20, MUTED)
+	count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	bar.add_child(count)
+	var sl := Label.new()
+	sl.text = "Sort:"
+	sl.add_theme_font_size_override("font_size", 20)
+	bar.add_child(sl)
+	var ob := OptionButton.new()
+	ob.name = "SortOption"
+	for s in SORTS:
+		ob.add_item(s)
+	ob.select(int(get_setting("ui", "sort", 0)))
+	ob.add_theme_font_size_override("font_size", 20)
+	ob.get_popup().add_theme_font_size_override("font_size", 26)
+	ob.custom_minimum_size = Vector2(260, 50)
+	ob.item_selected.connect(func(i):
+		set_setting("ui", "sort", i)
+		show_list())
+	bar.add_child(ob)
+	body.add_child(bar)
 	var inner := scroll_box()
 	var grid := GridContainer.new()
-	grid.columns = 2
+	grid.name = "Cards"
+	grid.columns = 1 if portrait else 2
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation", 18)
-	grid.add_theme_constant_override("v_separation", 18)
+	grid.add_theme_constant_override("h_separation", 16)
+	grid.add_theme_constant_override("v_separation", 16)
 	inner.add_child(grid)
-	var first: Button = null
-	for g in Games.LIST:
-		var card := make_card(g)
-		grid.add_child(card)
-		if first == null:
-			first = card.get_child(0)
-	if first:
-		first.grab_focus()
-
-
-func newest(g: Dictionary) -> Dictionary:
-	var vs: Array = g["versions"]
-	return vs[vs.size() - 1]
-
-
-func best_path(g: Dictionary) -> String:
-	return g.get("best_file", "user://best_%s.dat" % g["id"])
+	var first := true
+	for g in sorted_games():
+		var c := make_card(g)
+		grid.add_child(c)
+		if first:
+			var pb: Button = c.find_child("Play", true, false)
+			if pb:
+				(func(): if is_instance_valid(pb) and pb.is_inside_tree(): pb.grab_focus()).call_deferred()
+			first = false
 
 
 func make_card(g: Dictionary) -> Control:
-	var box := VBoxContainer.new()
-	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	box.add_theme_constant_override("separation", 6)
-	var b := Button.new()
-	var best := read_best(best_path(g))
-	var nv := newest(g)
-	b.text = "%s\n%s\n%s  ·  %s%s" % [g["name"], g["tagline"], g.get("length", ""), short_effort(g.get("effort", "")), ("  ·  Best: %d" % best) if best > 0 else ""]
-	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	b.custom_minimum_size = Vector2(560, 170)
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.add_theme_font_size_override("font_size", 25)
-	style_button(b, g["color"])
-	var scene: String = nv["scene"]
-	var has_save: bool = g.has("save_file") and FileAccess.file_exists(g["save_file"])
-	b.pressed.connect(func(): launch(scene, "continue" if has_save else ""))
-	box.add_child(b)
+	var card := PanelContainer.new()
+	card.name = "Card_" + g["id"]
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.add_theme_stylebox_override("panel", flat(Color(g["color"]).darkened(0.15), 18, 16))
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 8)
+	card.add_child(v)
+	v.add_child(label(g["name"], 30))
+	v.add_child(label(g["tagline"], 20, Color(1, 1, 1, 0.85)))
+	var chips := HFlowContainer.new()
+	chips.add_theme_constant_override("h_separation", 8)
+	chips.add_theme_constant_override("v_separation", 8)
+	v.add_child(chips)
+	chips.add_child(chip(g.get("length", "")))
+	var best := read_best(g)
+	chips.add_child(chip("Best %d" % best if best > 0 else "No score yet", Color(1, 0.85, 0.35, 0.28) if best > 0 else Color(0, 0, 0, 0.28)))
+	var n := plays(g["id"])
+	if n > 0:
+		chips.add_child(chip("Played %dx" % n))
+	chips.add_child(chip(short_effort(g.get("effort", ""))))
+	var sv := save_info(g)
+	if sv != "":
+		chips.add_child(chip("Saved: " + sv, Color(0.2, 0.6, 0.35, 0.5)))
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
-	box.add_child(row)
-	if has_save:
-		var cb := small_button("Continue", Color(0.20, 0.45, 0.30))
-		cb.pressed.connect(func(): launch(scene, "continue"))
-		row.add_child(cb)
-		var nb := small_button("New game", Color(0.22, 0.21, 0.32))
-		nb.pressed.connect(func(): launch(scene, "new"))
-		row.add_child(nb)
+	v.add_child(row)
+	var scene: String = newest(g)["scene"]
+	var play := button("Continue" if sv != "" else "Play", Color(0.16, 0.62, 0.38), 24)
+	play.name = "Play"
+	play.pressed.connect(func(): launch(g, scene, "continue" if sv != "" else ""))
+	row.add_child(play)
 	var gid: String = g["id"]
-	var db := small_button("Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0.30, 0.25, 0.40))
+	var db := button("Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0, 0, 0, 0.3), 19)
+	db.name = "Difficulty"
+	db.tooltip_text = "Difficulty: tap to change"
 	db.pressed.connect(func():
 		var d := (ArcadeGame.get_difficulty(gid) + 1) % 3
 		ArcadeGame.set_difficulty(gid, d)
 		db.text = "Difficulty: " + ArcadeGame.DIFF_NAMES[d])
 	row.add_child(db)
-	var vb := small_button("v%d · Versions" % nv["v"], Color(0.22, 0.21, 0.32))
-	vb.pressed.connect(func(): show_versions(g))
-	row.add_child(vb)
-	return box
+	var info := button("Info", Color(0, 0, 0, 0.3), 20)
+	info.name = "Info"
+	info.pressed.connect(func(): show_info(g))
+	row.add_child(info)
+	return card
 
 
-func short_effort(e: String) -> String:
-	# "Web effort 7 of 8: Studio (built and playtested)" -> "effort 7/8 Studio"
-	var m := RegEx.create_from_string("(\\d) of 8: ([A-Za-z]+)").search(e)
-	if m:
-		return "effort %s/8 %s" % [m.get_string(1), m.get_string(2)]
-	return e
-
-
-func small_button(txt: String, c: Color) -> Button:
-	var sb := Button.new()
-	sb.text = txt
-	sb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	sb.add_theme_font_size_override("font_size", 19)
-	style_button(sb, c, 12)
-	return sb
-
-
-func launch(scene: String, mode: String) -> void:
+func launch(g: Dictionary, scene: String, mode: String) -> void:
+	record_play(g["id"])
 	Engine.set_meta("launch_mode", mode)
 	get_tree().change_scene_to_file(scene)
 
 
-# ---------------------------------------------------------------- versions page
+# ---------------------------------------------------------------- info page
 
-func show_versions(g: Dictionary) -> void:
+func show_info(g: Dictionary) -> void:
+	page = "info"
+	page_game = g
 	clear_body()
-	var back := Button.new()
-	back.text = "< Back to all games"
-	back.add_theme_font_size_override("font_size", 22)
-	style_button(back, Color(0.25, 0.24, 0.36), 12)
-	back.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	back.pressed.connect(show_list)
-	body.add_child(back)
-	body.add_child(label(g["name"] + ": versions", 44, Color(1.0, 0.85, 0.35)))
+	back_bar(g["name"])
 	var inner := scroll_box()
-	inner.add_child(label("One run: %s\n%s\nGodot version built in %s" % [g.get("length", "?"), g.get("effort", "?"), g.get("godot_time", "?")], 21, Color(0.85, 0.85, 0.95), false))
+	inner.add_child(label(g.get("about", g["tagline"]), 22))
+	# play buttons
+	var sv := save_info(g)
+	var scene: String = newest(g)["scene"]
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	inner.add_child(row)
+	var play := button("Continue (%s)" % sv if sv != "" else "Play", Color(0.16, 0.62, 0.38), 24)
+	play.pressed.connect(func(): launch(g, scene, "continue" if sv != "" else ""))
+	row.add_child(play)
+	if sv != "":
+		var ng := button("New game", Color(0.30, 0.28, 0.42), 22)
+		ng.pressed.connect(func(): launch(g, scene, "new"))
+		row.add_child(ng)
+	# difficulty
+	section(inner, "Difficulty")
+	var drow := HBoxContainer.new()
+	drow.add_theme_constant_override("separation", 8)
+	inner.add_child(drow)
+	var gid: String = g["id"]
+	for d in 3:
+		var on := ArcadeGame.get_difficulty(gid) == d
+		var b := button(ArcadeGame.DIFF_NAMES[d], Color(0.85, 0.55, 0.15) if on else PANEL, 22)
+		b.pressed.connect(func():
+			ArcadeGame.set_difficulty(gid, d)
+			show_info(g))
+		drow.add_child(b)
+	section(inner, "Controls")
+	inner.add_child(label(g.get("controls", ""), 21, Color(0.9, 0.9, 1)))
+	section(inner, "Facts")
+	var best := read_best(g)
+	var lp := last_played(gid)
+	var facts := [
+		["One run", g.get("length", "?")],
+		["Best score", str(best) if best > 0 else "none yet"],
+		["Played", "%d times" % plays(gid) + ("" if lp == 0 else ", last on " + Time.get_date_string_from_unix_time(lp))],
+		["Effort", g.get("effort", "?")],
+		["Godot version built in", g.get("godot_time", "?")],
+		["Saved progress", sv if sv != "" else ("none" if g.has("save_file") else "this game has no saves")],
+	]
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 18)
+	grid.add_theme_constant_override("v_separation", 6)
+	inner.add_child(grid)
+	for f in facts:
+		var k := Label.new()
+		k.text = f[0]
+		k.add_theme_font_size_override("font_size", 20)
+		k.add_theme_color_override("font_color", MUTED)
+		grid.add_child(k)
+		grid.add_child(label(f[1], 20))
+	section(inner, "Versions")
 	var vs: Array = g["versions"]
 	for i in range(vs.size() - 1, -1, -1):
 		var v: Dictionary = vs[i]
-		var b := Button.new()
-		var tag := "  (newest)" if i == vs.size() - 1 else ""
-		b.text = "Play v%d%s   ·   %s\n%s" % [v["v"], tag, v["date"], v["notes"]]
+		var b := button("Play v%d%s  ·  %s\n%s" % [v["v"], "  (newest)" if i == vs.size() - 1 else "", v["date"], v["notes"]], Color(g["color"]).darkened(0.1 if i == vs.size() - 1 else 0.4), 20)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.add_theme_font_size_override("font_size", 22)
-		style_button(b, g["color"] if i == vs.size() - 1 else Color(g["color"]).darkened(0.35), 14)
-		var scene: String = v["scene"]
-		b.pressed.connect(func(): launch(scene, ""))
+		var vscene: String = v["scene"]
+		b.pressed.connect(func(): launch(g, vscene, ""))
 		inner.add_child(b)
-		if i == vs.size() - 1:
-			b.grab_focus.call_deferred()
 	var web: Array = g.get("web", [])
 	if web.size() > 0:
-		inner.add_child(label("Earlier web versions in Laugh Lab (not playable here)", 22, Color(0.75, 0.75, 0.85), false))
+		inner.add_child(label("Earlier web versions in Laugh Lab (not playable here):", 19, MUTED))
 		for w in web:
-			inner.add_child(label("•  " + str(w), 20, Color(0.75, 0.75, 0.85), false))
+			inner.add_child(label("•  " + str(w), 19, MUTED))
 
 
-func read_best(path: String) -> int:
-	if not FileAccess.file_exists(path):
-		return 0
-	var f := FileAccess.open(path, FileAccess.READ)
-	return f.get_32() if f else 0
+# ---------------------------------------------------------------- settings page
 
+func show_settings() -> void:
+	page = "settings"
+	clear_body()
+	back_bar("Settings")
+	var inner := scroll_box()
+	section(inner, "Difficulty for all games")
+	inner.add_child(label("Sets every game at once. You can still change single games on their card.", 19, MUTED))
+	var drow := HBoxContainer.new()
+	drow.add_theme_constant_override("separation", 8)
+	inner.add_child(drow)
+	for d in 3:
+		var b := button(ArcadeGame.DIFF_NAMES[d], PANEL, 22)
+		b.pressed.connect(func():
+			for g in Games.LIST:
+				ArcadeGame.set_difficulty(g["id"], d)
+			b.text = ArcadeGame.DIFF_NAMES[d] + " (set)")
+		drow.add_child(b)
+	section(inner, "Sort games by")
+	var srow := HFlowContainer.new()
+	srow.add_theme_constant_override("h_separation", 8)
+	srow.add_theme_constant_override("v_separation", 8)
+	inner.add_child(srow)
+	for i in SORTS.size():
+		var on := int(get_setting("ui", "sort", 0)) == i
+		var b := button(SORTS[i], Color(0.85, 0.55, 0.15) if on else PANEL, 20, false)
+		b.pressed.connect(func():
+			set_setting("ui", "sort", i)
+			show_settings())
+		srow.add_child(b)
+	section(inner, "Menu screen orientation")
+	inner.add_child(label("Games always play in landscape. The menu can follow the phone.", 19, MUTED))
+	var orow := HFlowContainer.new()
+	orow.add_theme_constant_override("h_separation", 8)
+	orow.add_theme_constant_override("v_separation", 8)
+	inner.add_child(orow)
+	for i in ORIENTS.size():
+		var on := int(get_setting("ui", "orientation", 0)) == i
+		var b := button(ORIENTS[i], Color(0.85, 0.55, 0.15) if on else PANEL, 20, false)
+		b.pressed.connect(func():
+			set_setting("ui", "orientation", i)
+			apply_orientation()
+			show_settings())
+		orow.add_child(b)
+	section(inner, "Data")
+	var reset := button("Tap again to really reset all high scores" if confirm_reset else "Reset all high scores", Color(0.6, 0.2, 0.25) if confirm_reset else PANEL, 20)
+	reset.pressed.connect(func():
+		if confirm_reset:
+			for g in Games.LIST:
+				var p := best_path(g)
+				if FileAccess.file_exists(p):
+					DirAccess.remove_absolute(ProjectSettings.globalize_path(p))
+			confirm_reset = false
+			reset.text = "High scores reset"
+		else:
+			confirm_reset = true
+			show_settings())
+	inner.add_child(reset)
+	section(inner, "About")
+	inner.add_child(label("Lab Arcade %s  ·  %d games  ·  made with Godot %s\ngithub.com/Hephaestus985/Laugh-Labs" % [ProjectSettings.get_setting("application/config/version", "?"), Games.LIST.size(), Engine.get_version_info()["string"]], 19, MUTED))
+
+
+# ---------------------------------------------------------------- back button
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		get_tree().quit()
+		go_back()
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		go_back()
+
+
+func go_back() -> void:
+	if page == "list":
 		get_tree().quit()
+	else:
+		page = "list"
+		confirm_reset = false
+		refresh()

@@ -17,7 +17,9 @@ PATH=~/Android/jdk17/bin:$PATH ~/Android/sdk/build-tools/35.0.1/apksigner verify
 $GODOT --headless --path . --export-debug "LinuxTest" ../builds/linux/LabArcade.x86_64 >/dev/null 2>&1
 OUT=${1:-/tmp/labarcade-tests}
 mkdir -p "$OUT"
-if ../builds/linux/LabArcade.x86_64 --fixed-fps 60 -- "$OUT" 2>&1 | grep -E "^FAIL|^TESTS"; [ "${PIPESTATUS[0]}" -ne 0 ]; then
+timeout 1200 ../builds/linux/LabArcade.x86_64 --fixed-fps 60 -- "$OUT" > "$OUT/log.txt" 2>&1 || true
+grep -E "^FAIL|^TESTS|SCRIPT ERROR" "$OUT/log.txt" || true
+if ! grep -q "^TESTS: .*, 0 failed" "$OUT/log.txt"; then
   echo "TESTS FAILED - see $OUT/report.txt"
   exit 1
 fi
