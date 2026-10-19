@@ -1,15 +1,27 @@
-Lab Arcade test report  2026-10-19T20:01:33
-157 checks, 0 failed
+Lab Arcade test report  2026-10-19T20:05:11
+166 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
-PASS  menu                       a card per game                10 cards
-PASS  menu                       every card has Play, Info, Difficulty 
+PASS  menu                       opens on the Library without picks 
+PASS  menu                       Library has a card per game    11 cards
+PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
 PASS  menu                       has difficulty buttons         
 PASS  menu                       difficulty button cycles       Difficulty: Normal -> Difficulty: Hard
+PASS  menu                       tap on Play opens that card's game 
 PASS  menu                       swipe scrolls from card, label or button 
-PASS  menu                       a tap (no swipe) still presses buttons 
+PASS  menu                       tap on Info opens that card's page page cleanroom_parkour
 PASS  menu                       info page scrolls by swipe     
+PASS  menu                       Home is empty until you pick games 
+PASS  menu                       Home shows your picks          
+PASS  menu                       - Home removes a pick          
+PASS  menu                       Library has a search bar       
+PASS  menu                       search finds a game by name    
+PASS  menu                       search matches descriptions    
+PASS  menu                       search with no match shows no cards 
+PASS  menu                       More games filter              
+PASS  menu                       Lab games filter               
+PASS  menu                       Quick filter only shows short games 9 games
 PASS  menu                       all sort orders work           
 PASS  menu                       shortest first sorts by length sock_escape .. the_last_knight
 PASS  menu                       play count is recorded         
@@ -18,9 +30,6 @@ PASS  menu                       settings page builds
 PASS  menu                       back returns to the list       
 PASS  menu                       portrait layout = 1 column     skipped without a window
 PASS  menu                       landscape layout = 2 columns   
-PASS  menu                       has a More games tab           
-PASS  menu                       More games tab shows those games 
-PASS  menu                       More games info pages build    
 PASS  menu                       no errors                      
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene

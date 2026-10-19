@@ -29,7 +29,9 @@ func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	headless = DisplayServer.get_name() == "headless"
 	if headless:
-		get_window().size = Vector2i(1280, 720)  # gives taps and swipes real screen positions
+		# a phone-like window: bigger than the 1280x720 canvas, so taps get scaled
+		# like on a real phone (a re-scaled tap once opened the wrong game)
+		get_window().size = Vector2i(1920, 1080)
 		await frames(1)
 	backup_user_files()
 	await run_all()
@@ -60,7 +62,13 @@ func key(k: int, down: bool) -> void:
 	Input.parse_input_event(e)
 
 
+## Canvas position -> window position, the way a real touch screen reports it.
+func to_window(p: Vector2) -> Vector2:
+	return get_tree().root.get_screen_transform() * p
+
+
 func tap(pos: Vector2, index := 0) -> void:
+	pos = to_window(pos)
 	var e := InputEventScreenTouch.new()
 	e.index = index
 	e.position = pos
@@ -75,6 +83,7 @@ func tap(pos: Vector2, index := 0) -> void:
 
 
 func mouse(pos: Vector2, down: bool) -> void:
+	pos = to_window(pos)
 	var e := InputEventMouseButton.new()
 	e.button_index = MOUSE_BUTTON_LEFT
 	e.position = pos
@@ -89,7 +98,7 @@ func swipe(from: Vector2, dy: float) -> void:
 	await frames(1)
 	for i in 12:
 		var d := InputEventMouseMotion.new()
-		d.position = from + Vector2(0, dy * (i + 1) / 12.0)
+		d.position = to_window(from + Vector2(0, dy * (i + 1) / 12.0))
 		d.global_position = d.position
 		d.button_mask = MOUSE_BUTTON_MASK_LEFT
 		Input.parse_input_event(d)
@@ -159,6 +168,8 @@ func spawn(scene_path: String) -> Node:
 
 func run_all() -> void:
 	await test_menu()
+	if "menu" in OS.get_cmdline_user_args():
+		return  # quick run: launcher only
 	for g in Games.LIST:
 		for v in g["versions"]:
 			await test_game(g, v)
@@ -192,15 +203,21 @@ func test_menu() -> void:
 	check("menu", "games.gd is complete", ok_meta, "%d games" % Games.LIST.size())
 	var m := spawn("res://menu.tscn")
 	await frames(5)
+	var all_n := Games.LIST.size() + Games.EXTERNAL.size()
+	check("menu", "opens on the Library without picks", m.tab == 1)
 	var cards: Node = m.find_child("Cards", true, false)
-	check("menu", "a card per game", cards != null and cards.get_child_count() == Games.LIST.size(), "%d cards" % (cards.get_child_count() if cards else 0))
+	check("menu", "Library has a card per game", cards != null and cards.get_child_count() == all_n, "%d cards" % (cards.get_child_count() if cards else 0))
 	var plays_ok := cards != null
 	if cards:
 		for c in cards.get_children():
-			plays_ok = plays_ok and c.find_child("Play", true, false) != null and c.find_child("Info", true, false) != null and c.find_child("Difficulty", true, false) != null
-	check("menu", "every card has Play, Info, Difficulty", plays_ok)
+			plays_ok = plays_ok and c.find_child("Play", true, false) != null and c.find_child("Info", true, false) != null and c.find_child("HomeToggle", true, false) != null
+	check("menu", "every card has Play, Info, + Home", plays_ok)
 	check("menu", "renders", screen_detail("menu_landscape") > 3.0, "not checked: running headless" if headless else "")
-	var db: Button = cards.get_child(0).find_child("Difficulty", true, false) if cards else null
+	var db: Button = null
+	for c in cards.get_children():
+		db = c.find_child("Difficulty", true, false)
+		if db:
+			break
 	if check("menu", "has difficulty buttons", db != null):
 		var before := db.text
 		db.emit_signal("pressed")
@@ -208,6 +225,30 @@ func test_menu() -> void:
 		check("menu", "difficulty button cycles", db.text != before, "%s -> %s" % [before, db.text])
 		for g in Games.LIST:
 			ArcadeGame.set_difficulty(g["id"], 1)
+	# tapping Play on a card launches exactly that card's game (scaled like a phone)
+	var launched := []
+	m.launch_hook = func(id, _scene, _mode): launched.append(id)
+	var right_game := true
+	var picks := [0, 3, cards.get_child_count() - 1]
+	for i in picks:
+		var sc0: ScrollContainer = m.find_child("Scroll", true, false)
+		var card: Control = cards.get_child(i)
+		sc0.ensure_control_visible(card)
+		await frames(3)
+		launched.clear()
+		var pc: Vector2 = card.find_child("Play", true, false).get_global_rect().get_center()
+		mouse(pc, true)
+		await frames(1)
+		mouse(pc, false)
+		await frames(3)
+		var want := String(card.name).trim_prefix("Card_")
+		right_game = right_game and launched.size() == 1 and launched[0] == want
+		if launched.size() != 1 or launched[0] != want:
+			print("  tap on card ", i, " (", want, ") launched ", launched)
+	check("menu", "tap on Play opens that card's game", right_game)
+	m.launch_hook = Callable()
+	(m.find_child("Scroll", true, false) as ScrollContainer).scroll_vertical = 0
+	await frames(2)
 	# swiping scrolls the list, wherever the finger starts
 	var sc: ScrollContainer = m.find_child("Scroll", true, false)
 	var swipe_ok := sc != null
@@ -228,26 +269,84 @@ func test_menu() -> void:
 		sc.scroll_vertical = 0
 		await frames(2)
 	check("menu", "swipe scrolls from card, label or button", swipe_ok)
-	var info_btn: Button = cards.get_child(0).find_child("Info", true, false)
+	var info_btn: Button = cards.get_child(1).find_child("Info", true, false)
 	var ic := info_btn.get_global_rect().get_center()
 	mouse(ic, true)
 	await frames(1)
 	mouse(ic, false)
 	await frames(4)
-	check("menu", "a tap (no swipe) still presses buttons", m.page == "info")
+	check("menu", "tap on Info opens that card's page", m.page == "info" and m.page_game.get("id", "") == String(cards.get_child(1).name).trim_prefix("Card_") if is_instance_valid(cards) else m.page == "info", "page %s" % m.page_game.get("id", ""))
 	var isc: ScrollContainer = m.find_child("Scroll", true, false)
 	if isc:
 		await swipe(isc.get_global_rect().get_center(), -200)
 	check("menu", "info page scrolls by swipe", isc != null and isc.scroll_vertical > 50)
 	m.go_back()
 	await frames(3)
+	# Home tab: the games you pick
+	m.tab = 0
+	m.show_list()
+	await frames(2)
+	cards = m.find_child("Cards", true, false)
+	check("menu", "Home is empty until you pick games", cards != null and cards.get_child_count() == 0)
+	m.toggle_favorite("the_last_knight")
+	m.toggle_favorite("outpost_assault")
+	m.show_list()
+	await frames(2)
+	cards = m.find_child("Cards", true, false)
+	check("menu", "Home shows your picks", cards != null and cards.get_child_count() == 2)
+	var ht: Button = cards.get_child(0).find_child("HomeToggle", true, false)
+	var hc := ht.get_global_rect().get_center()
+	mouse(hc, true)
+	await frames(1)
+	mouse(hc, false)
+	await frames(3)
+	cards = m.find_child("Cards", true, false)
+	check("menu", "- Home removes a pick", cards != null and cards.get_child_count() == 1 and m.favorites().size() == 1)
+	m.set_setting("ui", "favorites", [])
+	# Library: search and filters
+	m.tab = 1
+	m.show_list()
+	await frames(2)
+	var se: LineEdit = m.find_child("Search", true, false)
+	check("menu", "Library has a search bar", se != null)
+	m.search = "knight"
+	m.fill_cards()
+	cards = m.find_child("Cards", true, false)
+	check("menu", "search finds a game by name", cards.get_child_count() == 1 and String(cards.get_child(0).name) == "Card_the_last_knight")
+	m.search = "tower defense"
+	m.fill_cards()
+	check("menu", "search matches descriptions", cards.get_child_count() == 1 and String(cards.get_child(0).name) == "Card_outpost_assault")
+	m.search = "zzzz"
+	m.fill_cards()
+	check("menu", "search with no match shows no cards", cards.get_child_count() == 0)
+	m.search = ""
+	m.f_source = 2
+	m.show_list()
+	await frames(2)
+	cards = m.find_child("Cards", true, false)
+	check("menu", "More games filter", cards.get_child_count() == Games.EXTERNAL.size())
+	m.f_source = 1
+	m.fill_cards()
+	check("menu", "Lab games filter", cards.get_child_count() == Games.LIST.size())
+	m.f_source = 0
+	m.f_length = 1
+	m.fill_cards()
+	var quick_ok := cards.get_child_count() > 0
+	for c in cards.get_children():
+		for g in m.all_games():
+			if "Card_" + g["id"] == String(c.name):
+				quick_ok = quick_ok and m.minutes(g) <= 3.0
+	check("menu", "Quick filter only shows short games", quick_ok, "%d games" % cards.get_child_count())
+	m.f_length = 0
+	m.show_list()
+	await frames(2)
 	cards = m.find_child("Cards", true, false)
 	# every sort order still lists every game
 	var sorts_ok := true
 	for i in m.SORTS.size():
 		m.set_setting("ui", "sort", i)
 		var sids = m.sorted_games().map(func(g): return g["id"])
-		sorts_ok = sorts_ok and sids.size() == Games.LIST.size()
+		sorts_ok = sorts_ok and sids.size() == all_n
 	m.set_setting("ui", "sort", 0)
 	var az: Array = m.sorted_games().map(func(g): return g["name"])
 	var az_sorted := az.duplicate()
@@ -263,7 +362,7 @@ func test_menu() -> void:
 	check("menu", "play count is recorded", m.plays("sock_escape") == p0 + 1 and m.last_played("sock_escape") > 0)
 	# info page for every game
 	var info_ok := true
-	for g in Games.LIST:
+	for g in m.all_games():
 		m.show_info(g)
 		await frames(1)
 		info_ok = info_ok and m.body.get_child_count() >= 2
@@ -288,10 +387,6 @@ func test_menu() -> void:
 		cards = m.find_child("Cards", true, false)
 		check("menu", "portrait layout = 1 column", cards != null and cards.columns == 1)
 		screen_detail("menu_portrait")
-		m.show_info(Games.LIST[Games.LIST.size() - 1])
-		await frames(4)
-		screen_detail("menu_portrait_info")
-		m.go_back()
 		DisplayServer.window_set_size(old)
 		for i in 60:
 			await frames(1)
@@ -300,22 +395,6 @@ func test_menu() -> void:
 				break
 	cards = m.find_child("Cards", true, false)
 	check("menu", "landscape layout = 2 columns", cards != null and cards.columns == 2)
-	# the More games tab lists the open-source games
-	var t1: Button = m.find_child("Tab1", true, false)
-	if check("menu", "has a More games tab", t1 != null):
-		t1.emit_signal("pressed")
-		await frames(2)
-		cards = m.find_child("Cards", true, false)
-		check("menu", "More games tab shows those games", cards != null and cards.get_child_count() == Games.EXTERNAL.size())
-		for g in Games.EXTERNAL:
-			m.show_info(g)
-			await frames(1)
-		check("menu", "More games info pages build", true)
-		m.go_back()
-		await frames(1)
-		var t0: Button = m.find_child("Tab0", true, false)
-		t0.emit_signal("pressed")
-		await frames(2)
 	m.queue_free()
 	await frames(2)
 	check("menu", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))

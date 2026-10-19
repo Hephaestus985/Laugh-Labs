@@ -22,12 +22,19 @@ var confirm_reset := false
 var portrait := false
 
 
-var tab := 0  # 0 = Lab games, 1 = More games
+var tab := 1  # 0 = Home (your picks), 1 = Library (everything)
+var search := ""
+var f_source := 0  # 0 all, 1 Lab games, 2 More games (by others)
+var f_length := 0  # 0 any, 1 quick (3 min or less), 2 longer
+var f_unplayed := false
+var launch_hook := Callable()  # tests replace launching with this
+const SOURCES := ["All", "Lab games", "More games"]
+const LENGTHS := ["Any length", "Quick (3 min or less)", "Longer"]
 
 
 func _ready() -> void:
 	get_tree().paused = false  # in case a game was left while paused
-	tab = int(get_setting("ui", "tab", 0))
+	tab = int(get_setting("ui", "tab", 0 if favorites().size() > 0 else 1))
 	get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 	apply_orientation()
 	var bg := ColorRect.new()
@@ -73,13 +80,20 @@ var last_drag_y := 0.0
 var last_drag_t := 0
 
 
+## The topmost visible, enabled button at a point (in screen-canvas coordinates).
+func button_at(root: Node, pos: Vector2) -> BaseButton:
+	var found: BaseButton = null
+	for b in root.find_children("*", "BaseButton", true, false):
+		if b.is_visible_in_tree() and not b.disabled and b.get_global_rect().has_point(pos):
+			found = b  # later in the tree = drawn on top
+	return found
+
+
 func current_scroll() -> ScrollContainer:
 	return body.find_child("Scroll", true, false) as ScrollContainer if body else null
 
 
 func _input(event: InputEvent) -> void:
-	if event.has_meta("replay"):
-		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			var sc := current_scroll()
@@ -98,13 +112,12 @@ func _input(event: InputEvent) -> void:
 		elif drag_down:
 			drag_down = false
 			get_viewport().set_input_as_handled()
-			if not dragging and drag_press != null:
-				# it was a tap: hand the press and release to the buttons
-				drag_press.set_meta("replay", true)
-				var rel: InputEventMouseButton = event.duplicate()
-				rel.set_meta("replay", true)
-				Input.parse_input_event(drag_press)
-				Input.parse_input_event(rel)
+			if not dragging and is_instance_valid(drag_scroll):
+				# it was a tap: press the button under the finger. (Re-sending the
+				# touch would be scaled twice on phones and hit the wrong button.)
+				var b := button_at(drag_scroll, drag_from)
+				if b and b.get_global_rect().has_point(event.position):
+					b.emit_signal("pressed")
 			dragging = false
 	elif event is InputEventMouseMotion and drag_down:
 		if not (event.button_mask & MOUSE_BUTTON_MASK_LEFT):
@@ -207,8 +220,51 @@ func short_effort(e: String) -> String:
 	return e
 
 
+func favorites() -> Array:
+	return get_setting("ui", "favorites", [])
+
+
+func is_favorite(id: String) -> bool:
+	return favorites().has(id)
+
+
+func toggle_favorite(id: String) -> void:
+	var f: Array = favorites().duplicate()
+	if f.has(id):
+		f.erase(id)
+	else:
+		f.append(id)
+	set_setting("ui", "favorites", f)
+
+
+func is_external(g: Dictionary) -> bool:
+	return Games.EXTERNAL.any(func(e): return e["id"] == g["id"])
+
+
+func matches(g: Dictionary) -> bool:
+	if f_source == 1 and is_external(g):
+		return false
+	if f_source == 2 and not is_external(g):
+		return false
+	if f_length == 1 and minutes(g) > 3.0:
+		return false
+	if f_length == 2 and minutes(g) <= 3.0:
+		return false
+	if f_unplayed and plays(g["id"]) > 0:
+		return false
+	var q := search.strip_edges().to_lower()
+	if q != "":
+		var hay := ("%s %s %s %s" % [g["name"], g["tagline"], g.get("about", ""), g.get("effort", "")]).to_lower()
+		for word in q.split(" ", false):
+			if not hay.contains(word):
+				return false
+	return true
+
+
 func tab_list() -> Array:
-	return Games.EXTERNAL if tab == 1 else Games.LIST
+	if tab == 0:
+		return all_games().filter(func(g): return is_favorite(g["id"]))
+	return all_games().filter(matches)
 
 
 func all_games() -> Array:
@@ -381,9 +437,9 @@ func show_list() -> void:
 	var bar := HBoxContainer.new()
 	bar.add_theme_constant_override("separation", 10)
 	for t in 2:
-		var tb := button(("Lab games (%d)" % Games.LIST.size()) if t == 0 else ("More games (%d)" % Games.EXTERNAL.size()), Color(0.85, 0.55, 0.15) if tab == t else PANEL, 20, false)
+		var tb := button(("Home (%d)" % favorites().size()) if t == 0 else ("Library (%d)" % all_games().size()), Color(0.85, 0.55, 0.15) if tab == t else PANEL, 21, false)
 		tb.name = "Tab%d" % t
-		tb.custom_minimum_size = Vector2(0, 50)
+		tb.custom_minimum_size = Vector2(150, 50)
 		tb.pressed.connect(func():
 			tab = t
 			set_setting("ui", "tab", t)
@@ -392,24 +448,45 @@ func show_list() -> void:
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	bar.add_child(spacer)
-	var sl := Label.new()
-	sl.text = "Sort:"
-	sl.add_theme_font_size_override("font_size", 20)
-	bar.add_child(sl)
 	var ob := OptionButton.new()
 	ob.name = "SortOption"
-	for s in SORTS:
-		ob.add_item(s)
+	for srt in SORTS:
+		ob.add_item("Sort: " + srt)
 	ob.select(int(get_setting("ui", "sort", 0)))
-	ob.add_theme_font_size_override("font_size", 20)
+	ob.add_theme_font_size_override("font_size", 19)
 	ob.get_popup().add_theme_font_size_override("font_size", 26)
-	ob.custom_minimum_size = Vector2(260, 50)
+	ob.custom_minimum_size = Vector2(240, 50)
 	ob.item_selected.connect(func(i):
 		set_setting("ui", "sort", i)
-		show_list())
+		fill_cards())
 	bar.add_child(ob)
 	body.add_child(bar)
+	if tab == 1:
+		var se := LineEdit.new()
+		se.name = "Search"
+		se.placeholder_text = "Search games..."
+		se.text = search
+		se.clear_button_enabled = true
+		se.add_theme_font_size_override("font_size", 22)
+		se.custom_minimum_size = Vector2(0, 52)
+		se.text_changed.connect(func(txt):
+			search = txt
+			fill_cards())
+		body.add_child(se)
+		var fl := HFlowContainer.new()
+		fl.name = "Filters"
+		fl.add_theme_constant_override("h_separation", 8)
+		fl.add_theme_constant_override("v_separation", 8)
+		body.add_child(fl)
+		for i in SOURCES.size():
+			fl.add_child(filter_button("Src%d" % i, SOURCES[i], f_source == i, func(): f_source = i))
+		for i in LENGTHS.size():
+			fl.add_child(filter_button("Len%d" % i, LENGTHS[i], f_length == i, func(): f_length = i))
+		fl.add_child(filter_button("Unplayed", "Not played yet", f_unplayed, func(): f_unplayed = not f_unplayed))
 	var inner := scroll_box()
+	var count := label("", 19, MUTED)
+	count.name = "Count"
+	inner.add_child(count)
 	var grid := GridContainer.new()
 	grid.name = "Cards"
 	grid.columns = 1 if portrait else 2
@@ -417,15 +494,35 @@ func show_list() -> void:
 	grid.add_theme_constant_override("h_separation", 16)
 	grid.add_theme_constant_override("v_separation", 16)
 	inner.add_child(grid)
-	var first := true
-	for g in sorted_games():
-		var c := make_card(g)
-		grid.add_child(c)
-		if first:
-			var pb: Button = c.find_child("Play", true, false)
-			if pb:
-				(func(): if is_instance_valid(pb) and pb.is_inside_tree(): pb.grab_focus()).call_deferred()
-			first = false
+	fill_cards()
+
+
+func filter_button(id: String, txt: String, on: bool, action: Callable) -> Button:
+	var b := button(txt, Color(0.85, 0.55, 0.15) if on else PANEL, 18, false)
+	b.name = id
+	b.custom_minimum_size = Vector2(0, 44)
+	b.pressed.connect(func():
+		action.call()
+		show_list())
+	return b
+
+
+## Rebuild only the cards (keeps the search box and keyboard open while typing).
+func fill_cards() -> void:
+	var grid: GridContainer = body.find_child("Cards", true, false)
+	var count: Label = body.find_child("Count", true, false)
+	if grid == null:
+		return
+	for c in grid.get_children():
+		grid.remove_child(c)
+		c.queue_free()
+	var games := sorted_games()
+	for g in games:
+		grid.add_child(make_card(g))
+	if tab == 0:
+		count.text = "Your picks. Add games from the Library with \"+ Home\"." if games.size() > 0 else "Nothing here yet. Open the Library and tap \"+ Home\" on the games you like."
+	else:
+		count.text = "%d of %d games" % [games.size(), all_games().size()] + ("" if games.size() > 0 else ". Nothing matches: clear the search or a filter.")
 
 
 func make_card(g: Dictionary) -> Control:
@@ -453,6 +550,23 @@ func make_card(g: Dictionary) -> Control:
 	var sv := save_info(g)
 	if sv != "":
 		chips.add_child(chip("Saved: " + sv, Color(0.2, 0.6, 0.35, 0.5)))
+	if is_external(g):
+		chips.add_child(chip("More games", Color(0.3, 0.5, 0.25, 0.5)))
+	var hid: String = g["id"]
+	var home := button("- Home" if is_favorite(hid) else "+ Home", Color(0.85, 0.55, 0.15, 0.85) if is_favorite(hid) else Color(0, 0, 0, 0.35), 18, false)
+	home.name = "HomeToggle"
+	home.custom_minimum_size = Vector2(110, 40)
+	home.pressed.connect(func():
+		toggle_favorite(hid)
+		if tab == 0:
+			show_list()
+		else:
+			home.text = "- Home" if is_favorite(hid) else "+ Home"
+			style_button(home, Color(0.85, 0.55, 0.15, 0.85) if is_favorite(hid) else Color(0, 0, 0, 0.35))
+			var t0: Button = body.find_child("Tab0", true, false)
+			if t0:
+				t0.text = "Home (%d)" % favorites().size())
+	chips.add_child(home)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
 	v.add_child(row)
@@ -484,6 +598,9 @@ func make_card(g: Dictionary) -> Control:
 
 
 func launch(g: Dictionary, scene: String, mode: String) -> void:
+	if launch_hook.is_valid():
+		launch_hook.call(g["id"], scene, mode)
+		return
 	record_play(g["id"])
 	if g.get("aspect", "") == "expand":
 		# games made by others: full landscape screen, their own layout
@@ -518,6 +635,12 @@ func show_info(g: Dictionary) -> void:
 		var ng := button("New game", Color(0.30, 0.28, 0.42), 22)
 		ng.pressed.connect(func(): launch(g, scene, "new"))
 		row.add_child(ng)
+	var hb := button("Remove from Home" if is_favorite(gid) else "Add to Home", Color(0.30, 0.28, 0.42), 20)
+	hb.name = "HomeToggle"
+	hb.pressed.connect(func():
+		toggle_favorite(gid)
+		show_info(g))
+	row.add_child(hb)
 	if g.has("credit"):
 		section(inner, "Made by")
 		inner.add_child(label(g["credit"], 20, Color(0.9, 0.9, 1)))
