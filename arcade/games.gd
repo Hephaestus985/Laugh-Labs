@@ -57,4 +57,24 @@ const LIST := [
 		],
 		"web": ["v1 (2026-10-18): original", "v2 (2026-10-19): difficulty setting, real fog level, broader jokes"],
 	},
+	{
+		"id": "orbit_courier",
+		"name": "Orbit Courier",
+		"tagline": "Slingshot between moving planets to deliver party invitations.",
+		"color": Color(0.35, 0.25, 0.60),
+		"versions": [
+			{"v": 1, "date": "2026-10-19", "scene": "res://games/orbit_courier/v1/game.tscn", "notes": "Godot remake of the Laugh Lab game, with a difficulty setting."},
+		],
+		"web": ["v1 (2026-10-18): original"],
+	},
+	{
+		"id": "never_ask_for_directions",
+		"name": "Never Ask for Directions",
+		"tagline": "Steer a Viking longship past fjords, icebergs and a kraken. Don't ask.",
+		"color": Color(0.20, 0.42, 0.55),
+		"versions": [
+			{"v": 1, "date": "2026-10-19", "scene": "res://games/never_ask_for_directions/v1/game.tscn", "notes": "Godot remake of the Laugh Lab game. Sails sideways to fit a landscape screen."},
+		],
+		"web": ["v1 (2026-10-18): original"],
+	},
 ]
