@@ -42,6 +42,7 @@ func label(s: String, size: int, color := Color(1, 1, 1), center := true) -> Lab
 
 
 func style_button(b: Button, c: Color, radius := 18) -> void:
+	b.mouse_filter = Control.MOUSE_FILTER_PASS  # let drags reach the scroll container on phones
 	for state in ["normal", "hover", "pressed", "focus"]:
 		var sb := StyleBoxFlat.new()
 		sb.bg_color = c if state == "normal" else (c.lightened(0.15) if state != "pressed" else c.darkened(0.2))

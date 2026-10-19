@@ -25,6 +25,7 @@ var use_stick := true
 var use_b := false
 var tap_is_a := false
 var show_a := true  # draw the A touch button
+var custom_keys := false  # true: the game reads its own keys (base only handles Esc)
 
 var font: Font
 var t := 0.0
@@ -144,7 +145,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.pressed and k == KEY_ESCAPE:
 			back_to_menu()
 			return
-		if k in [KEY_SPACE, KEY_ENTER, KEY_KP_ENTER, KEY_Z, KEY_J]:
+		if custom_keys:
+			pass
+		elif k in [KEY_SPACE, KEY_ENTER, KEY_KP_ENTER, KEY_Z, KEY_J]:
 			_set_a(event.pressed)
 		elif k in [KEY_SHIFT, KEY_X, KEY_K]:
 			_set_b(event.pressed)

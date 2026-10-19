@@ -97,4 +97,14 @@ const LIST := [
 		],
 		"web": ["v1 (2026-10-18): original"],
 	},
+	{
+		"id": "the_last_knight",
+		"name": "The Last Knight",
+		"tagline": "Chase the crossbow inventor through five eras. Parry, stomp, honk.",
+		"color": Color(0.55, 0.18, 0.25),
+		"versions": [
+			{"v": 2, "date": "2026-10-19", "scene": "res://games/the_last_knight/v2/game.tscn", "notes": "Godot remake of web v2: 5 eras, the boss, save and continue at every level and at the boss."},
+		],
+		"web": ["v1 (2026-10-18): original", "v2 (2026-10-19): save and continue at every level and at the boss"],
+	},
 ]
