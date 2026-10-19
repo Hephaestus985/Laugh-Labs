@@ -21,4 +21,14 @@ Silly little games, all in one Android app: **Lab Arcade**.
 Under each game in the app: **Difficulty** (Easy / Normal / Hard), **Versions** (every older version stays playable, plus run length and effort), and **Continue / New game** for games with saves (The Last Knight). See [CHANGELOG.md](CHANGELOG.md).
 
 ## For developers
-`arcade/` is one Godot 4 project. Each game version lives in `arcade/games/<game>/v<N>/` and is listed in `arcade/games.gd`. Shared input, touch controls and high scores are in `arcade/common/arcade_game.gd`. `arcade/tools/smoke_test.tscn` plays every game with random input and saves screenshots. Open `arcade/` in Godot and press F5 to play on a PC. Build and test the APK with `arcade/tools/build_apk.sh`.
+`arcade/` is one Godot 4 project. Each game version lives in `arcade/games/<game>/v<N>/` and is listed in `arcade/games.gd`. Shared input, touch controls and high scores are in `arcade/common/arcade_game.gd`. Open `arcade/` in Godot and press F5 to play on a PC. Build and test the APK with `arcade/tools/build_apk.sh`.
+
+## Tests
+`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (125 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
+
+Run them in the editor:
+```bash
+flatpak run --filesystem=home org.godotengine.Godot --path arcade --fixed-fps 60 res://tools/tests/run_tests.tscn -- /tmp/report
+```
+`arcade/tools/build_apk.sh` builds the APK and runs the same tests on an exported build (the way the phone app is built); it stops with an error if any test fails. Your own high scores and saves are backed up and restored around the tests. Latest results: `arcade/tools/tests/last_report.txt`.
+

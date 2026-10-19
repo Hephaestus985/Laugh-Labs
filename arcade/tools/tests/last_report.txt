@@ -1,0 +1,128 @@
+Lab Arcade test report  2026-10-19T15:59:45
+125 checks, 0 failed
+
+PASS  menu                       games.gd is complete           10 games
+PASS  menu                       builds a card per game         30 buttons
+PASS  menu                       renders                        
+PASS  menu                       has difficulty buttons         
+PASS  menu                       difficulty button cycles       Difficulty: Normal -> Difficulty: Hard
+PASS  menu                       versions pages build           
+PASS  menu                       no errors                      
+PASS  sock_escape v1             scene loads                    
+PASS  sock_escape v1             has its game code              script missing from scene
+PASS  sock_escape v1             title screen renders           
+PASS  sock_escape v1             starts on the title            
+PASS  sock_escape v1             tap starts the game            state 1
+PASS  sock_escape v1             survives 20 s of play          
+PASS  sock_escape v1             screen still renders           
+PASS  sock_escape v1             difficulty setting is used     
+PASS  sock_escape v1             has a way back to the menu     
+PASS  sock_escape v1             no errors                      0: 
+PASS  waveguide_snake v1         scene loads                    
+PASS  waveguide_snake v1         has its game code              script missing from scene
+PASS  waveguide_snake v1         title screen renders           
+PASS  waveguide_snake v1         starts on the title            
+PASS  waveguide_snake v1         tap starts the game            state 1
+PASS  waveguide_snake v1         survives 20 s of play          
+PASS  waveguide_snake v1         screen still renders           
+PASS  waveguide_snake v1         high score is saved            
+PASS  waveguide_snake v1         difficulty setting is used     
+PASS  waveguide_snake v1         has a way back to the menu     
+PASS  waveguide_snake v1         no errors                      0: 
+PASS  cleanroom_parkour v1       scene loads                    
+PASS  cleanroom_parkour v1       has its game code              script missing from scene
+PASS  cleanroom_parkour v1       title screen renders           
+PASS  cleanroom_parkour v1       starts on the title            
+PASS  cleanroom_parkour v1       tap starts the game            state 1
+PASS  cleanroom_parkour v1       survives 20 s of play          
+PASS  cleanroom_parkour v1       screen still renders           
+PASS  cleanroom_parkour v1       high score is saved            
+PASS  cleanroom_parkour v1       difficulty setting is used     
+PASS  cleanroom_parkour v1       has a way back to the menu     
+PASS  cleanroom_parkour v1       no errors                      0: 
+PASS  escape_the_cavity v2       scene loads                    
+PASS  escape_the_cavity v2       has its game code              script missing from scene
+PASS  escape_the_cavity v2       title screen renders           
+PASS  escape_the_cavity v2       starts on the title            
+PASS  escape_the_cavity v2       tap starts the game            state 1
+PASS  escape_the_cavity v2       survives 20 s of play          
+PASS  escape_the_cavity v2       screen still renders           
+PASS  escape_the_cavity v2       high score is saved            
+PASS  escape_the_cavity v2       difficulty setting is used     
+PASS  escape_the_cavity v2       has a way back to the menu     
+PASS  escape_the_cavity v2       no errors                      0: 
+PASS  bend_it_like_einstein v2   scene loads                    
+PASS  bend_it_like_einstein v2   has its game code              script missing from scene
+PASS  bend_it_like_einstein v2   title screen renders           
+PASS  bend_it_like_einstein v2   starts on the title            
+PASS  bend_it_like_einstein v2   tap starts the game            state 1
+PASS  bend_it_like_einstein v2   survives 20 s of play          
+PASS  bend_it_like_einstein v2   screen still renders           
+PASS  bend_it_like_einstein v2   high score is saved            
+PASS  bend_it_like_einstein v2   difficulty setting is used     
+PASS  bend_it_like_einstein v2   has a way back to the menu     
+PASS  bend_it_like_einstein v2   no errors                      0: 
+PASS  orbit_courier v1           scene loads                    
+PASS  orbit_courier v1           has its game code              script missing from scene
+PASS  orbit_courier v1           title screen renders           
+PASS  orbit_courier v1           starts on the title            
+PASS  orbit_courier v1           tap starts the game            state 1
+PASS  orbit_courier v1           survives 20 s of play          
+PASS  orbit_courier v1           screen still renders           
+PASS  orbit_courier v1           high score is saved            
+PASS  orbit_courier v1           difficulty setting is used     
+PASS  orbit_courier v1           has a way back to the menu     
+PASS  orbit_courier v1           no errors                      0: 
+PASS  never_ask_for_directions v1 scene loads                    
+PASS  never_ask_for_directions v1 has its game code              script missing from scene
+PASS  never_ask_for_directions v1 title screen renders           
+PASS  never_ask_for_directions v1 starts on the title            
+PASS  never_ask_for_directions v1 tap starts the game            state 1
+PASS  never_ask_for_directions v1 survives 20 s of play          
+PASS  never_ask_for_directions v1 screen still renders           
+PASS  never_ask_for_directions v1 high score is saved            
+PASS  never_ask_for_directions v1 difficulty setting is used     
+PASS  never_ask_for_directions v1 has a way back to the menu     
+PASS  never_ask_for_directions v1 no errors                      0: 
+PASS  lighthouse_keeper v1       scene loads                    
+PASS  lighthouse_keeper v1       has its game code              script missing from scene
+PASS  lighthouse_keeper v1       title screen renders           
+PASS  lighthouse_keeper v1       starts on the title            
+PASS  lighthouse_keeper v1       tap starts the game            state 1
+PASS  lighthouse_keeper v1       survives 20 s of play          
+PASS  lighthouse_keeper v1       screen still renders           
+PASS  lighthouse_keeper v1       high score is saved            
+PASS  lighthouse_keeper v1       difficulty setting is used     
+PASS  lighthouse_keeper v1       has a way back to the menu     
+PASS  lighthouse_keeper v1       no errors                      0: 
+PASS  escape_velocity v1         scene loads                    
+PASS  escape_velocity v1         has its game code              script missing from scene
+PASS  escape_velocity v1         title screen renders           
+PASS  escape_velocity v1         starts on the title            
+PASS  escape_velocity v1         tap starts the game            state 1
+PASS  escape_velocity v1         survives 20 s of play          
+PASS  escape_velocity v1         screen still renders           
+PASS  escape_velocity v1         high score is saved            
+PASS  escape_velocity v1         difficulty setting is used     
+PASS  escape_velocity v1         has a way back to the menu     
+PASS  escape_velocity v1         no errors                      0: 
+PASS  the_last_knight v2         scene loads                    
+PASS  the_last_knight v2         has its game code              script missing from scene
+PASS  the_last_knight v2         title screen renders           
+PASS  the_last_knight v2         starts on the title            
+PASS  the_last_knight v2         tap starts the game            state 1
+PASS  the_last_knight v2         survives 20 s of play          
+PASS  the_last_knight v2         screen still renders           
+PASS  the_last_knight v2         high score is saved            
+PASS  the_last_knight v2         difficulty setting is used     
+PASS  the_last_knight v2         has a way back to the menu     
+PASS  the_last_knight v2         no errors                      0: 
+PASS  the_last_knight            all 5 levels load              
+PASS  the_last_knight            boss fight starts              
+PASS  the_last_knight            boss has 3 phases              [1, 2, 3]
+PASS  the_last_knight            beating the boss ends the game state 5
+PASS  the_last_knight            Continue loads the save        level 3 score 1234
+PASS  the_last_knight            playing a level saves progress 
+PASS  the_last_knight            New game clears the save       
+PASS  the_last_knight            losing all lives = game over   state 6
+PASS  the_last_knight            flows: no errors               
