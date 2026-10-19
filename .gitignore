@@ -1,4 +1,4 @@
 .godot/
 builds/
-*.apk
 *.idsig
+!apks/*.apk
