@@ -379,23 +379,52 @@ func test_menu() -> void:
 	m.fill_cards()
 	check("menu", "search with no match shows no cards", cards.get_child_count() == 0)
 	m.search = ""
-	m.f_source = 2
+	# drop-down filters: publisher, length, genre
+	for id in ["PublisherFilter", "LengthFilter", "GenreFilter"]:
+		var ob: OptionButton = m.find_child(id, true, false)
+		check("menu", "Library has a %s drop-down" % id.trim_suffix("Filter").to_lower(), ob != null and ob.item_count > 2, "%d choices" % (ob.item_count if ob else 0))
+	m.f_publisher = m.BY_OTHERS
 	m.show_list()
 	await frames(2)
 	cards = m.find_child("Cards", true, false)
-	check("menu", "More games filter", cards.get_child_count() == Games.EXTERNAL.size())
-	m.f_source = 1
+	check("menu", "More games (by others) filter", cards.get_child_count() == Games.EXTERNAL.size())
+	m.f_publisher = "Lab Arcade"
 	m.fill_cards()
-	check("menu", "Lab games filter", cards.get_child_count() == Games.LIST.size())
-	m.f_source = 0
-	m.f_length = 1
+	check("menu", "Lab Arcade publisher filter", cards.get_child_count() == Games.LIST.size())
+	m.f_publisher = "Kenney"
 	m.fill_cards()
-	var quick_ok := cards.get_child_count() > 0
-	for c in cards.get_children():
-		for g in m.all_games():
-			if "Card_" + g["id"] == String(c.name):
-				quick_ok = quick_ok and m.minutes(g) <= 3.0
-	check("menu", "Quick filter only shows short games", quick_ok, "%d games" % cards.get_child_count())
+	check("menu", "publisher filter (Kenney)", cards.get_child_count() == 2)
+	m.f_publisher = ""
+	m.f_genre = "RPG"
+	m.fill_cards()
+	check("menu", "genre filter (RPG)", cards.get_child_count() == 1 and String(cards.get_child(0).name) == "Card_open_rpg")
+	m.f_genre = ""
+	var classes_ok := true
+	var total := 0
+	for li in range(1, m.LENGTHS.size()):
+		m.f_length = li
+		m.fill_cards()
+		total += cards.get_child_count()
+		for c in cards.get_children():
+			for g in m.all_games():
+				if "Card_" + g["id"] == String(c.name):
+					classes_ok = classes_ok and m.length_class(g) == li
+	check("menu", "length filters split the games", classes_ok and total == m.all_games().size(), "%d of %d" % [total, m.all_games().size()])
+	# picking from the drop-down filters the list (as a tap on the phone would)
+	m.f_length = 0
+	m.show_list()
+	await frames(2)
+	var gob: OptionButton = m.find_child("GenreFilter", true, false)
+	var gi := -1
+	for i in gob.item_count:
+		if gob.get_item_text(i) == "Racing":
+			gi = i
+	gob.select(gi)
+	gob.item_selected.emit(gi)
+	await frames(2)
+	cards = m.find_child("Cards", true, false)
+	check("menu", "choosing a genre in the drop-down filters", m.f_genre == "Racing" and cards.get_child_count() == 1)
+	m.f_genre = ""
 	m.f_length = 0
 	m.show_list()
 	await frames(2)

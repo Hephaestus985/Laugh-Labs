@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-19T21:22:34
-237 checks, 0 failed
+Lab Arcade test report  2026-10-19T21:29:32
+243 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
 PASS  menu                       opens on the Library without picks 
@@ -19,9 +19,15 @@ PASS  menu                       Library has a search bar
 PASS  menu                       search finds a game by name    
 PASS  menu                       search matches descriptions    
 PASS  menu                       search with no match shows no cards 
-PASS  menu                       More games filter              
-PASS  menu                       Lab games filter               
-PASS  menu                       Quick filter only shows short games 9 games
+PASS  menu                       Library has a publisher drop-down 7 choices
+PASS  menu                       Library has a length drop-down 5 choices
+PASS  menu                       Library has a genre drop-down  9 choices
+PASS  menu                       More games (by others) filter  
+PASS  menu                       Lab Arcade publisher filter    
+PASS  menu                       publisher filter (Kenney)      
+PASS  menu                       genre filter (RPG)             
+PASS  menu                       length filters split the games 15 of 15
+PASS  menu                       choosing a genre in the drop-down filters 
 PASS  menu                       all sort orders work           
 PASS  menu                       shortest first sorts by length sock_escape .. racing
 PASS  menu                       play count is recorded         

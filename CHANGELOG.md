@@ -2,6 +2,10 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.11 (2026-10-19)
+- Library filters are now drop-down menus: **Publisher** (Lab Arcade, games by others, or a studio), **Length** (short, medium, long, no end) and **Genre** (action, arcade, platformer, puzzle, racing, RPG, runner, strategy), plus "Not played yet"
+- Every game card shows its genre; the Info page lists genre and publisher. Search also finds publishers and genres
+
 ## Lab Arcade 1.10 (2026-10-19)
 - Four more games by others, each security-reviewed first (see `arcade/external/<game>/SECURITY_REVIEW.md`) and made fully playable on a phone:
   - **Open RPG** (GDQuest, MIT): a short pixel-art RPG with a town, a puzzle and turn-based battles. Tap to walk, talk and continue; tap an action, then tap the enemy. BACK undoes a choice

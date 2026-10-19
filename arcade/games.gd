@@ -16,6 +16,8 @@ const LIST := [
 		"effort": "Original for the arcade",
 		"godot_time": "~10 min",
 		"name": "Sock Escape",
+		"publisher": "Lab Arcade",
+		"genre": "Runner",
 		"tagline": "A sock flees the washing machine. Jump, duck, survive the Dryer of Doom.",
 		"color": Color(0.30, 0.55, 0.85),
 		"best_file": "user://sock_escape_best.dat",
@@ -32,6 +34,8 @@ const LIST := [
 		"effort": "Laugh Lab built-in game",
 		"godot_time": "~3 min",
 		"name": "Waveguide Snake",
+		"publisher": "Lab Arcade",
+		"genre": "Arcade",
 		"tagline": "You're a light pulse. Eat photons, grow, dodge scattering defects.",
 		"color": Color(0.20, 0.45, 0.75),
 		"versions": [
@@ -47,6 +51,8 @@ const LIST := [
 		"effort": "Laugh Lab built-in game",
 		"godot_time": "~3 min",
 		"name": "Cleanroom Parkour",
+		"publisher": "Lab Arcade",
+		"genre": "Runner",
 		"tagline": "Late for your cleanroom slot. Jump pits, deadlines and falling reviews.",
 		"color": Color(0.55, 0.40, 0.75),
 		"versions": [
@@ -62,6 +68,8 @@ const LIST := [
 		"effort": "Web effort 4 of 8: Polished",
 		"godot_time": "~5 min",
 		"name": "Escape the Cavity",
+		"publisher": "Lab Arcade",
+		"genre": "Platformer",
 		"tagline": "You're a photon stuck in a laser. Hop the mirrors, grab carriers, survive 6 levels.",
 		"color": Color(0.80, 0.30, 0.42),
 		"versions": [
@@ -77,6 +85,8 @@ const LIST := [
 		"effort": "Web effort 4 of 8: Polished",
 		"godot_time": "~4 min",
 		"name": "Bend It Like Einstein",
+		"publisher": "Lab Arcade",
+		"genre": "Puzzle",
 		"tagline": "Hold to summon a pocket black hole and bend photons into the fiber.",
 		"color": Color(0.25, 0.30, 0.55),
 		"versions": [
@@ -92,6 +102,8 @@ const LIST := [
 		"effort": "Web effort 7 of 8: Studio (built and playtested)",
 		"godot_time": "~3 min",
 		"name": "Orbit Courier",
+		"publisher": "Lab Arcade",
+		"genre": "Arcade",
 		"tagline": "Slingshot between moving planets to deliver party invitations.",
 		"color": Color(0.35, 0.25, 0.60),
 		"versions": [
@@ -107,6 +119,8 @@ const LIST := [
 		"effort": "Web effort 7 of 8: Studio (built and playtested)",
 		"godot_time": "~3 min",
 		"name": "Never Ask for Directions",
+		"publisher": "Lab Arcade",
+		"genre": "Arcade",
 		"tagline": "Steer a Viking longship past fjords, icebergs and a kraken. Don't ask.",
 		"color": Color(0.20, 0.42, 0.55),
 		"versions": [
@@ -122,6 +136,8 @@ const LIST := [
 		"effort": "Web effort 7 of 8: Studio (built and playtested)",
 		"godot_time": "~5 min",
 		"name": "Lighthouse Keeper",
+		"publisher": "Lab Arcade",
+		"genre": "Arcade",
 		"tagline": "Swing a very expensive laser so ships see the rocks. Mind the serpent.",
 		"color": Color(0.70, 0.52, 0.18),
 		"versions": [
@@ -137,6 +153,8 @@ const LIST := [
 		"effort": "Web effort 7 of 8: Studio (built and playtested)",
 		"godot_time": "~6 min",
 		"name": "Escape Velocity",
+		"publisher": "Lab Arcade",
+		"genre": "Platformer",
 		"tagline": "Bounce from an Enschede rooftop to the Moon. Stomp geese, eat stroopwafels.",
 		"color": Color(0.20, 0.50, 0.70),
 		"versions": [
@@ -153,6 +171,8 @@ const LIST := [
 		"effort": "Web effort 8 of 8: Masterpiece (several playtest rounds)",
 		"godot_time": "~12 min",
 		"name": "The Last Knight",
+		"publisher": "Lab Arcade",
+		"genre": "Action",
 		"tagline": "Chase the crossbow inventor through five eras. Parry, stomp, honk.",
 		"color": Color(0.55, 0.18, 0.25),
 		"versions": [
@@ -170,6 +190,8 @@ const EXTERNAL := [
 	{
 		"id": "outpost_assault",
 		"name": "Outpost Assault",
+		"publisher": "Quiver",
+		"genre": "Strategy",
 		"tagline": "Tower defense: build gatling, cannon and missile turrets to hold the outpost.",
 		"about": "Waves of infantry, tanks and helicopters march on your outpost. Tap the empty turret slots to build gatling, single-shot or missile turrets, and repair or replace them between waves. Survive three growing waves to win. Made by Quiver (quiver.dev) as an open-source Godot 4 template.",
 		"controls": "Tap a turret slot to build, tap a turret to repair, replace or remove it (its range shows while selected). Drag with one finger to move the map; pinch or use the + / - buttons to zoom; II pauses. PC: click, middle-drag, scroll wheel, ESC.",
@@ -190,6 +212,8 @@ const EXTERNAL := [
 	{
 		"id": "platformer_3d",
 		"name": "3D Platformer",
+		"publisher": "Kenney",
+		"genre": "Platformer",
 		"tagline": "Run, double-jump and collect coins across floating 3D platforms.",
 		"about": "A small, polished 3D platformer by Kenney: run across floating islands, double-jump between platforms, break bricks from below, ride falling platforms and collect every coin. Fall off and you start again.",
 		"controls": "Drag on the left half to walk, JUMP (tap again in the air for a double jump), < and > turn the camera, + and - zoom. PC: WASD, space, arrow keys.",
@@ -210,6 +234,8 @@ const EXTERNAL := [
 	{
 		"id": "racing",
 		"name": "Kenney Racing",
+		"publisher": "Kenney",
+		"genre": "Racing",
 		"tagline": "Arcade driving around a track with a bouncy little truck.",
 		"about": "A tiny arcade racer by Kenney: drift a toy truck around a track, bump into the other cars and enjoy the skid marks. There's no lap timer yet; it's a driving toy.",
 		"controls": "Drag on the left half to steer (up = gas, down = brake), or use the GAS and BRAKE buttons. PC: WASD or arrow keys.",
@@ -230,6 +256,8 @@ const EXTERNAL := [
 	{
 		"id": "tactical_rpg",
 		"name": "Tactical RPG",
+		"publisher": "ramaureirac & mbusson",
+		"genre": "Strategy",
 		"tagline": "Turn-based battle on a 3D board: move your units, attack, outlast.",
 		"about": "A small turn-based tactics battle in the style of Final Fantasy Tactics: your team and the enemy team take turns on a 3D grid. Pick a unit, move it across the tiles, attack an enemy in range, then wait. The enemy plays back. Win by defeating every enemy unit.",
 		"controls": "Tap a unit to pick it, then Move or Attack and tap a tile. Wait ends that unit's turn, End turn ends yours. Arrow buttons move the camera, << >> turn it, + and - zoom. PC: mouse, WASD, Q / E, wheel.",
@@ -250,6 +278,8 @@ const EXTERNAL := [
 	{
 		"id": "open_rpg",
 		"name": "Open RPG",
+		"publisher": "GDQuest",
+		"genre": "RPG",
 		"tagline": "A little pixel-art RPG: explore a town, solve a puzzle, fight in turn-based battles.",
 		"about": "A short JRPG-style adventure by GDQuest: a small robot wakes up in a town, helps a ghost in the woods, talks to the townsfolk, collects tokens for an adoring fan, opens chests and doors, solves a wand puzzle and fights turn-based battles with a party of animals.",
 		"controls": "Tap where to walk, tap people and objects to talk or use them, tap to continue a conversation. In battle tap an action, then tap the enemy (or friend) to use it on. BACK undoes a choice. PC: arrow keys / WASD, space, mouse, Esc.",

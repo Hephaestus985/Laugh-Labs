@@ -24,12 +24,13 @@ var portrait := false
 
 var tab := 1  # 0 = Home (your picks), 1 = Library (everything)
 var search := ""
-var f_source := 0  # 0 all, 1 Lab games, 2 More games (by others)
-var f_length := 0  # 0 any, 1 quick (3 min or less), 2 longer
+var f_publisher := ""  # "" any, BY_OTHERS, or a publisher's name
+var f_length := 0  # index in LENGTHS
+var f_genre := ""  # "" any, or a genre
 var f_unplayed := false
 var launch_hook := Callable()  # tests replace launching with this
-const SOURCES := ["All", "Lab games", "More games"]
-const LENGTHS := ["Any length", "Quick (3 min or less)", "Longer"]
+const BY_OTHERS := "More games (by others)"
+const LENGTHS := ["Any length", "Short (under 5 min)", "Medium (5-15 min)", "Long (15 min or more)", "No end (free play)"]
 
 
 func _ready() -> void:
@@ -203,6 +204,25 @@ func newest(g: Dictionary) -> Dictionary:
 	return vs[vs.size() - 1]
 
 
+## Which LENGTHS entry a game falls in (judged by its shortest stated run).
+func length_class(g: Dictionary) -> int:
+	var m := minutes(g)
+	if m >= 99.0:
+		return 4
+	return 1 if m < 5.0 else (2 if m < 15.0 else 3)
+
+
+## The distinct values of a games.gd field, in a stable order.
+func values_of(field: String) -> Array:
+	var out: Array = []
+	for g in all_games():
+		var v: String = g.get(field, "")
+		if v != "" and not out.has(v):
+			out.append(v)
+	out.sort()
+	return out
+
+
 func minutes(g: Dictionary) -> float:
 	var m := RegEx.create_from_string("(\\d+)\\s*(?:-\\s*\\d+)?\\s*(s|min)").search(g.get("length", ""))
 	if m == null:
@@ -245,19 +265,19 @@ func is_external(g: Dictionary) -> bool:
 
 
 func matches(g: Dictionary) -> bool:
-	if f_source == 1 and is_external(g):
+	if f_publisher == BY_OTHERS and not is_external(g):
 		return false
-	if f_source == 2 and not is_external(g):
+	if f_publisher != "" and f_publisher != BY_OTHERS and g.get("publisher", "") != f_publisher:
 		return false
-	if f_length == 1 and minutes(g) > 3.0:
+	if f_length != 0 and length_class(g) != f_length:
 		return false
-	if f_length == 2 and minutes(g) <= 3.0:
+	if f_genre != "" and g.get("genre", "") != f_genre:
 		return false
 	if f_unplayed and plays(g["id"]) > 0:
 		return false
 	var q := search.strip_edges().to_lower()
 	if q != "":
-		var hay := ("%s %s %s %s" % [g["name"], g["tagline"], g.get("about", ""), g.get("effort", "")]).to_lower()
+		var hay := ("%s %s %s %s %s %s" % [g["name"], g["tagline"], g.get("about", ""), g.get("effort", ""), g.get("publisher", ""), g.get("genre", "")]).to_lower()
 		for word in q.split(" ", false):
 			if not hay.contains(word):
 				return false
@@ -481,10 +501,13 @@ func show_list() -> void:
 		fl.add_theme_constant_override("h_separation", 8)
 		fl.add_theme_constant_override("v_separation", 8)
 		body.add_child(fl)
-		for i in SOURCES.size():
-			fl.add_child(filter_button("Src%d" % i, SOURCES[i], f_source == i, func(): f_source = i))
-		for i in LENGTHS.size():
-			fl.add_child(filter_button("Len%d" % i, LENGTHS[i], f_length == i, func(): f_length = i))
+		var pubs: Array = ["Lab Arcade", BY_OTHERS]
+		for v in values_of("publisher"):
+			if not pubs.has(v):
+				pubs.append(v)
+		fl.add_child(filter_menu("Publisher", "Any publisher", pubs, f_publisher, func(v): f_publisher = v))
+		fl.add_child(filter_menu("Length", LENGTHS[0], LENGTHS.slice(1), "" if f_length == 0 else LENGTHS[f_length], func(v): f_length = maxi(0, LENGTHS.find(v))))
+		fl.add_child(filter_menu("Genre", "Any genre", values_of("genre"), f_genre, func(v): f_genre = v))
 		fl.add_child(filter_button("Unplayed", "Not played yet", f_unplayed, func(): f_unplayed = not f_unplayed))
 	var inner := scroll_box()
 	var count := label("", 19, MUTED)
@@ -498,6 +521,25 @@ func show_list() -> void:
 	grid.add_theme_constant_override("v_separation", 16)
 	inner.add_child(grid)
 	fill_cards()
+
+
+## A drop-down filter. The first entry means "no filter" (empty value).
+func filter_menu(id: String, any_text: String, values: Array, current: String, action: Callable) -> OptionButton:
+	var ob := OptionButton.new()
+	ob.name = id + "Filter"
+	ob.add_item(any_text)
+	for v in values:
+		ob.add_item(v)
+	ob.select(maxi(0, values.find(current) + 1))
+	ob.add_theme_font_size_override("font_size", 18)
+	ob.get_popup().add_theme_font_size_override("font_size", 26)
+	ob.custom_minimum_size = Vector2(0, 46)
+	if current != "":  # highlight a filter that is on
+		ob.add_theme_color_override("font_color", Color(1.0, 0.75, 0.3))
+	ob.item_selected.connect(func(i):
+		action.call("" if i == 0 else values[i - 1])
+		show_list())
+	return ob
 
 
 func filter_button(id: String, txt: String, on: bool, action: Callable) -> Button:
@@ -542,6 +584,7 @@ func make_card(g: Dictionary) -> Control:
 	chips.add_theme_constant_override("h_separation", 8)
 	chips.add_theme_constant_override("v_separation", 8)
 	v.add_child(chips)
+	chips.add_child(chip(g.get("genre", "")))
 	chips.add_child(chip(g.get("length", "")))
 	if not g.get("no_score", false):
 		var best := read_best(g)
@@ -666,6 +709,8 @@ func show_info(g: Dictionary) -> void:
 	var best := read_best(g)
 	var lp := last_played(gid)
 	var facts := [
+		["Genre", g.get("genre", "?")],
+		["Publisher", g.get("publisher", "?")],
 		["One run", g.get("length", "?")],
 		["Best score", "not tracked" if g.get("no_score", false) else (str(best) if best > 0 else "none yet")],
 		["Played", "%d times" % plays(gid) + ("" if lp == 0 else ", last on " + Time.get_date_string_from_unix_time(lp))],
