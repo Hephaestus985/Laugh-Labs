@@ -9,7 +9,9 @@ const PX := 260.0
 const GRAVITY := 2800.0
 const JUMP_V := -1000.0
 const DJUMP_V := -880.0
-const SAVE_PATH := "user://best.dat"
+const MENU_BTN := Rect2(10, 10, 120, 60)
+const SAVE_PATH := "user://sock_escape_best.dat"
+const MENU_SCENE := "res://menu.tscn"
 
 const STAGE_SCORES := [0, 200, 600, 1100, 1800, 2700]
 const STAGE_NAMES := ["Gentle Rinse", "Warm Wash", "Spin Cycle", "Heavy Duty", "TURBO SPIN", "DRYER OF DOOM"]
@@ -135,14 +137,17 @@ func _unhandled_input(event: InputEvent) -> void:
 		var k: int = event.keycode
 		if event.pressed and not event.echo:
 			if k == KEY_ESCAPE:
-				get_tree().quit()
+				back_to_menu()
 				return
 			if is_jump_key(k):
 				pressed_jump = true
 		elif not event.pressed and is_jump_key(k):
 			released_jump = true
 	elif event is InputEventScreenTouch:
-		# phone: hold the left third to duck, tap anywhere else to jump
+		# phone: menu button top-left, hold the left third to duck, tap anywhere else to jump
+		if event.pressed and MENU_BTN.has_point(event.position):
+			back_to_menu()
+			return
 		if event.pressed and event.position.x < W * 0.33 and state == State.PLAY:
 			touch_duck = event.index
 		elif not event.pressed and event.index == touch_duck:
@@ -151,7 +156,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			pressed_jump = true
 		else:
 			released_jump = true
-	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not is_mobile:
+		if event.pressed and MENU_BTN.has_point(event.position):
+			back_to_menu()
+			return
 		if event.pressed:
 			pressed_jump = true
 		else:
@@ -168,6 +176,15 @@ func _unhandled_input(event: InputEvent) -> void:
 					reset_game()
 	if released_jump and state == State.PLAY and vy < -350.0:
 		vy *= 0.5  # short hop when you let go early
+
+
+func back_to_menu() -> void:
+	get_tree().change_scene_to_file(MENU_SCENE)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:  # Android back button
+		back_to_menu()
 
 
 func try_jump() -> void:
@@ -408,6 +425,8 @@ func _draw() -> void:
 	for p in popups:
 		text(Vector2(p["x"] - 50.0, p["y"]), p["text"], 26, Color(1.0, 0.95, 0.4, p["life"]))
 	draw_hud()
+	draw_rect(MENU_BTN, Color(0, 0, 0, 0.25))
+	text(MENU_BTN.position + Vector2(14, 40), "< MENU", 22, Color(1, 1, 1, 0.85))
 
 
 func draw_background() -> void:
@@ -566,7 +585,7 @@ func draw_hud() -> void:
 			else:
 				text(Vector2(0, 340), "SPACE / UP / click  =  jump   (press again in the air to double jump)", 24, white, true)
 				text(Vector2(0, 378), "DOWN / S  =  duck under bubbles, or slam back to the floor", 24, white, true)
-			text(Vector2(0, 416), "Grab the yellow lost socks for bonus points. ESC quits.", 24, white, true)
+			text(Vector2(0, 416), "Grab the yellow lost socks for bonus points. ESC = menu.", 24, white, true)
 			if int(t * 2.0) % 2 == 0:
 				text(Vector2(0, 500), "Tap to run!" if is_mobile else "Press SPACE to run!", 40, Color(0.6, 1.0, 0.6), true)
 			if best > 0:
