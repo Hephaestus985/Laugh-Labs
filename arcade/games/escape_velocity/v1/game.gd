@@ -76,6 +76,7 @@ func _ready() -> void:
 	show_a = false
 	tap_is_a = true
 	load_best()
+	diff = difficulty()
 	D = DIFFS[diff]
 	for i in 90:
 		stars.append({"x": randf(), "y": randf() * 2000.0, "r": 1.6 if randf() < .15 else 1.0, "tw": randf() * 6.0})
@@ -279,8 +280,10 @@ func on_input(event: InputEvent) -> void:
 	if state == State.TITLE and event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_LEFT, KEY_A]:
 			diff = maxi(0, diff - 1)
+			set_difficulty(game_id, diff)
 		elif event.keycode in [KEY_RIGHT, KEY_D]:
 			diff = mini(2, diff + 1)
+			set_difficulty(game_id, diff)
 	if event is InputEventScreenTouch:
 		if event.pressed:
 			touch_idx = event.index
@@ -310,12 +313,13 @@ func _process(delta: float) -> void:
 			gt += delta
 			if pressed_b():
 				diff = (diff + 1) % 3
-			if pressed_a():
+				set_difficulty(game_id, diff)
+			if start_pressed():
 				new_game()
 				clear_presses()
 		State.OVER:
 			gt += delta
-			if pressed_a() and t > 1.0:
+			if start_pressed() and t > 1.0:
 				state = State.TITLE
 				cam_y = -VH * 0.42
 		_:
@@ -780,7 +784,7 @@ func _draw() -> void:
 			"Bounce from a Twente rooftop to the Moon, dodging honking geese,",
 			"space junk and meteoroids. Stroopwafels give a syrup boost.",
 			"Stomp geese from above. Hold the left or right side of the screen to steer.",
-			"Difficulty: < %s >   (arrows or B to change)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap or press SPACE to launch")
 	elif state == State.OVER:
 		draw_hud()

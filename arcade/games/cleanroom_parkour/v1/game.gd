@@ -41,6 +41,7 @@ var flash := 0.0
 var why := ""
 var new_best := false
 var run_anim := 0.0
+var mult := 1.0
 
 
 func _ready() -> void:
@@ -72,6 +73,7 @@ func reset() -> void:
 	level = 1
 	secs = 0.0
 	new_best = false
+	mult = DIFF_MULT[difficulty()]
 	banner = "Level 1: The corridor"
 	banner_t = 1.6
 	state = State.PLAY
@@ -90,10 +92,10 @@ func _process(delta: float) -> void:
 	flash = maxf(0.0, flash - delta)
 	match state:
 		State.TITLE:
-			if pressed_a():
+			if start_pressed():
 				reset()
 		State.DEAD:
-			if pressed_a() and t > 0.6:
+			if start_pressed() and t > 0.6:
 				reset()
 		State.PLAY:
 			play(minf(delta, 0.04))
@@ -121,7 +123,7 @@ func play(dt: float) -> void:
 		banner = ("Level %d: %s" % [level, zone()["name"]]) if level <= ZONES.size() else "Level %d: faster!" % level
 		banner_t = 1.6
 		shake(5.0)
-	speed = minf(1300.0, 520.0 + (level - 1) * 120.0 + secs * 4.0)
+	speed = minf(1300.0, 520.0 + (level - 1) * 120.0 + secs * 4.0) * mult
 	var dx := speed * dt
 	dist += dx
 	run_anim += dt * speed / 40.0
@@ -256,6 +258,7 @@ func _draw() -> void:
 		text(Vector2(0, 280), "You're late for your cleanroom slot. Every level is a new room.", 28, Color(1, 1, 1), true)
 		text(Vector2(0, 325), "Pits, flying deadlines, falling reviews. Grab wafers for bonus metres.", 26, Color(1, 1, 1), true)
 		text(Vector2(0, 380), "Tap / SPACE to jump, again in the air for a double jump.", 26, Color(0.85, 0.85, 1), true)
+		text(Vector2(0, 425), "Difficulty: %s (change it in the menu)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(game_id)], 22, Color(0.85, 0.85, 1), true)
 		if int(t * 2.0) % 2 == 0:
 			text(Vector2(0, 490), "Tap or press SPACE to run", 36, Color(0.6, 1, 0.6), true)
 	elif state == State.DEAD:

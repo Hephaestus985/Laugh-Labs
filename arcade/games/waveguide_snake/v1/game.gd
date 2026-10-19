@@ -26,6 +26,7 @@ var new_best := false
 var swipe_from := Vector2.ZERO
 var swiping := false
 var eat_flash := 0.0
+var mult := 1.0
 
 
 func _ready() -> void:
@@ -43,7 +44,8 @@ func reset() -> void:
 	walls.clear()
 	eaten = 0
 	level = 1
-	step_time = 0.16
+	mult = DIFF_MULT[difficulty()]
+	step_time = 0.16 / mult
 	acc = 0.0
 	food = free_cell(true)
 	new_best = false
@@ -103,10 +105,10 @@ func _process(delta: float) -> void:
 	eat_flash = maxf(0.0, eat_flash - delta)
 	match state:
 		State.TITLE:
-			if pressed_a():
+			if start_pressed():
 				reset()
 		State.DEAD:
-			if pressed_a() and t > 0.6:
+			if start_pressed() and t > 0.6:
 				reset()
 		State.PLAY:
 			clear_presses()
@@ -135,7 +137,7 @@ func step() -> void:
 	if head == food:
 		eaten += 1
 		eat_flash = 0.25
-		step_time = maxf(0.065, 0.16 - eaten * 0.004)
+		step_time = maxf(0.065, 0.16 - eaten * 0.004) / mult
 		if eaten % 5 == 0:
 			level += 1
 			for i in level:
@@ -210,6 +212,7 @@ func _draw() -> void:
 		text(Vector2(0, 290), "You are a light pulse. Collect photons and grow.", 30, Color(1, 1, 1), true)
 		text(Vector2(0, 340), "Don't hit the walls, your tail, or scattering defects. It speeds up.", 26, Color(1, 1, 1), true)
 		text(Vector2(0, 400), "Swipe to steer on a phone, arrows / WASD on a PC.", 26, Color(0.85, 0.85, 1), true)
+		text(Vector2(0, 445), "Difficulty: %s (change it in the menu)" % DIFF_NAMES[difficulty()], 22, Color(0.85, 0.85, 1), true)
 		if int(t * 2.0) % 2 == 0:
 			text(Vector2(0, 500), "Tap or press SPACE to start", 36, Color(0.6, 1, 0.6), true)
 	elif state == State.DEAD:

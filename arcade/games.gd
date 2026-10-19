@@ -4,10 +4,15 @@
 # so a new version never overwrites an old one. To release a new version:
 # copy the newest folder to v<N+1>, change it, and add an entry at the END
 # of "versions". The menu plays the last entry by default.
+# "length" is how long one run or round takes, "effort" how much work went into the
+# original, "godot_time" roughly how long the Godot version took to build.
 # "web" lists the versions that existed in the Laugh Lab web page (not playable here).
 const LIST := [
 	{
 		"id": "sock_escape",
+		"length": "1-3 min per run (endless, gets faster)",
+		"effort": "Original for the arcade",
+		"godot_time": "~10 min",
 		"name": "Sock Escape",
 		"tagline": "A sock flees the washing machine. Jump, duck, survive the Dryer of Doom.",
 		"color": Color(0.30, 0.55, 0.85),
@@ -19,6 +24,9 @@ const LIST := [
 	},
 	{
 		"id": "waveguide_snake",
+		"length": "1-3 min per run (endless)",
+		"effort": "Laugh Lab built-in game",
+		"godot_time": "~3 min",
 		"name": "Waveguide Snake",
 		"tagline": "You're a light pulse. Eat photons, grow, dodge scattering defects.",
 		"color": Color(0.20, 0.45, 0.75),
@@ -29,6 +37,9 @@ const LIST := [
 	},
 	{
 		"id": "cleanroom_parkour",
+		"length": "1-2 min per run (endless, 5 rooms)",
+		"effort": "Laugh Lab built-in game",
+		"godot_time": "~3 min",
 		"name": "Cleanroom Parkour",
 		"tagline": "Late for your cleanroom slot. Jump pits, deadlines and falling reviews.",
 		"color": Color(0.55, 0.40, 0.75),
@@ -39,6 +50,9 @@ const LIST := [
 	},
 	{
 		"id": "escape_the_cavity",
+		"length": "72 s round, 6 levels",
+		"effort": "Web effort 4 of 8: Polished",
+		"godot_time": "~5 min",
 		"name": "Escape the Cavity",
 		"tagline": "You're a photon stuck in a laser. Hop the mirrors, grab carriers, survive 6 levels.",
 		"color": Color(0.80, 0.30, 0.42),
@@ -49,6 +63,9 @@ const LIST := [
 	},
 	{
 		"id": "bend_it_like_einstein",
+		"length": "60 s round, 5 levels",
+		"effort": "Web effort 4 of 8: Polished",
+		"godot_time": "~4 min",
 		"name": "Bend It Like Einstein",
 		"tagline": "Hold to summon a pocket black hole and bend photons into the fiber.",
 		"color": Color(0.25, 0.30, 0.55),
@@ -59,6 +76,9 @@ const LIST := [
 	},
 	{
 		"id": "orbit_courier",
+		"length": "2-4 min per run (endless)",
+		"effort": "Web effort 7 of 8: Studio (built and playtested)",
+		"godot_time": "~3 min",
 		"name": "Orbit Courier",
 		"tagline": "Slingshot between moving planets to deliver party invitations.",
 		"color": Color(0.35, 0.25, 0.60),
@@ -69,6 +89,9 @@ const LIST := [
 	},
 	{
 		"id": "never_ask_for_directions",
+		"length": "2-4 min per run (endless, 5 zones)",
+		"effort": "Web effort 7 of 8: Studio (built and playtested)",
+		"godot_time": "~3 min",
 		"name": "Never Ask for Directions",
 		"tagline": "Steer a Viking longship past fjords, icebergs and a kraken. Don't ask.",
 		"color": Color(0.20, 0.42, 0.55),
@@ -79,6 +102,9 @@ const LIST := [
 	},
 	{
 		"id": "lighthouse_keeper",
+		"length": "3-6 min per run (endless levels)",
+		"effort": "Web effort 7 of 8: Studio (built and playtested)",
+		"godot_time": "~5 min",
 		"name": "Lighthouse Keeper",
 		"tagline": "Swing a very expensive laser so ships see the rocks. Mind the serpent.",
 		"color": Color(0.70, 0.52, 0.18),
@@ -89,6 +115,9 @@ const LIST := [
 	},
 	{
 		"id": "escape_velocity",
+		"length": "3-5 min to reach the Moon",
+		"effort": "Web effort 7 of 8: Studio (built and playtested)",
+		"godot_time": "~6 min",
 		"name": "Escape Velocity",
 		"tagline": "Bounce from an Enschede rooftop to the Moon. Stomp geese, eat stroopwafels.",
 		"color": Color(0.20, 0.50, 0.70),
@@ -99,6 +128,10 @@ const LIST := [
 	},
 	{
 		"id": "the_last_knight",
+		"save_file": "user://the_last_knight_save.json",
+		"length": "20-30 min: 5 levels and a boss, with saves",
+		"effort": "Web effort 8 of 8: Masterpiece (several playtest rounds)",
+		"godot_time": "~12 min",
 		"name": "The Last Knight",
 		"tagline": "Chase the crossbow inventor through five eras. Parry, stomp, honk.",
 		"color": Color(0.55, 0.18, 0.25),

@@ -41,6 +41,7 @@ func _ready() -> void:
 	show_a = false
 	tap_is_a = true
 	load_best()
+	diff = difficulty()
 	for i in 90:
 		stars.append({"x": randf() * 4000.0, "y": randf() * H, "s": randf_range(1.0, 3.5), "z": randf_range(0.2, 0.6)})
 	reset()
@@ -149,8 +150,10 @@ func on_input(event: InputEvent) -> void:
 	if state == State.TITLE and event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_LEFT, KEY_A]:
 			diff = maxi(0, diff - 1)
+			set_difficulty(game_id, diff)
 		elif event.keycode in [KEY_RIGHT, KEY_D]:
 			diff = mini(2, diff + 1)
+			set_difficulty(game_id, diff)
 	if state == State.PLAY and event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_UP:
 		release()
 
@@ -162,11 +165,12 @@ func _process(delta: float) -> void:
 		State.TITLE:
 			if pressed_b():
 				diff = (diff + 1) % 3
-			if pressed_a():
+				set_difficulty(game_id, diff)
+			if start_pressed():
 				reset()
 				state = State.PLAY
 		State.OVER:
-			if pressed_a() and t > 0.9:
+			if start_pressed() and t > 0.9:
 				state = State.TITLE
 		State.PLAY:
 			if pressed_a():
@@ -274,7 +278,7 @@ func _draw() -> void:
 			"between moving planets. Let go of your orbit at the right moment",
 			"to fly to the next planet. Watch out for black holes.",
 			"Tap anywhere / SPACE to let go.",
-			"Difficulty: < %s >   (left/right to change)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap or press SPACE to start")
 	elif state == State.OVER and t > 0.6:
 		card(why.to_upper(), [

@@ -79,6 +79,7 @@ func _ready() -> void:
 	show_a = false
 	tap_is_a = true
 	load_best()
+	diff = difficulty()
 	DF = DFS[diff]
 	for i in 60:
 		rain.append({"x": randf() * WW, "y": randf() * HH, "s": randf_range(0.6, 1.0)})
@@ -250,8 +251,10 @@ func on_input(event: InputEvent) -> void:
 	if state == State.TITLE and event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_LEFT, KEY_A]:
 			diff = maxi(0, diff - 1)
+			set_difficulty(game_id, diff)
 		elif event.keycode in [KEY_RIGHT, KEY_D]:
 			diff = mini(2, diff + 1)
+			set_difficulty(game_id, diff)
 	if state != State.PLAY:
 		return
 	var aim_now := false
@@ -274,7 +277,8 @@ func _process(delta: float) -> void:
 			aim = -PI / 2 + sin(gt * 0.6) * 1.1
 			if pressed_b():
 				diff = (diff + 1) % 3
-			if pressed_a():
+				set_difficulty(game_id, diff)
+			if start_pressed():
 				new_game()
 				state = State.PLAY
 				clear_presses()
@@ -282,7 +286,7 @@ func _process(delta: float) -> void:
 			gt += delta
 			for x in texts:
 				x["life"] -= delta
-			if pressed_a() and t > 1.0:
+			if start_pressed() and t > 1.0:
 				state = State.TITLE
 		State.PLAY:
 			clear_presses()
@@ -647,7 +651,7 @@ func _draw() -> void:
 			"Swing a very expensive laser beam across a night sea so captains can see",
 			"the rocks. Lit captains learn where the rocks are and steer around them.",
 			"Touch / move the mouse to aim, or use left / right.",
-			"Difficulty: < %s >   (left/right or B to change)" % DFS[diff]["label"],
+			"Difficulty: %s   (change it in the menu, or with left / right here)" % DFS[diff]["label"],
 		], "Tap or press SPACE to light up")
 		draw_overlay()
 		return

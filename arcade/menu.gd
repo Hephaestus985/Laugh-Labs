@@ -1,5 +1,5 @@
 extends Control
-# Laugh Lab Arcade: the start screen that lists every game, plus a version
+# Lab Arcade: the start screen that lists every game, plus a version
 # history page per game where older versions can still be played.
 
 const Games := preload("res://games.gd")
@@ -71,7 +71,7 @@ func scroll_box() -> VBoxContainer:
 
 func show_list() -> void:
 	clear_body()
-	body.add_child(label("LAUGH LAB ARCADE", 58, Color(1.0, 0.85, 0.35)))
+	body.add_child(label("LAB ARCADE", 58, Color(1.0, 0.85, 0.35)))
 	body.add_child(label("%d games. Pick one." % Games.LIST.size(), 24))
 	var inner := scroll_box()
 	var grid := GridContainer.new()
@@ -106,22 +106,59 @@ func make_card(g: Dictionary) -> Control:
 	var b := Button.new()
 	var best := read_best(best_path(g))
 	var nv := newest(g)
-	b.text = "%s\n%s%s" % [g["name"], g["tagline"], ("\nBest: %d" % best) if best > 0 else ""]
+	b.text = "%s\n%s\n%s  ·  %s%s" % [g["name"], g["tagline"], g.get("length", ""), short_effort(g.get("effort", "")), ("  ·  Best: %d" % best) if best > 0 else ""]
 	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	b.custom_minimum_size = Vector2(560, 150)
+	b.custom_minimum_size = Vector2(560, 170)
 	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	b.add_theme_font_size_override("font_size", 25)
 	style_button(b, g["color"])
 	var scene: String = nv["scene"]
-	b.pressed.connect(func(): get_tree().change_scene_to_file(scene))
+	var has_save: bool = g.has("save_file") and FileAccess.file_exists(g["save_file"])
+	b.pressed.connect(func(): launch(scene, "continue" if has_save else ""))
 	box.add_child(b)
-	var vb := Button.new()
-	vb.text = "v%d  ·  Versions" % nv["v"]
-	vb.add_theme_font_size_override("font_size", 20)
-	style_button(vb, Color(0.22, 0.21, 0.32), 12)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	box.add_child(row)
+	if has_save:
+		var cb := small_button("Continue", Color(0.20, 0.45, 0.30))
+		cb.pressed.connect(func(): launch(scene, "continue"))
+		row.add_child(cb)
+		var nb := small_button("New game", Color(0.22, 0.21, 0.32))
+		nb.pressed.connect(func(): launch(scene, "new"))
+		row.add_child(nb)
+	var gid: String = g["id"]
+	var db := small_button("Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0.30, 0.25, 0.40))
+	db.pressed.connect(func():
+		var d := (ArcadeGame.get_difficulty(gid) + 1) % 3
+		ArcadeGame.set_difficulty(gid, d)
+		db.text = "Difficulty: " + ArcadeGame.DIFF_NAMES[d])
+	row.add_child(db)
+	var vb := small_button("v%d · Versions" % nv["v"], Color(0.22, 0.21, 0.32))
 	vb.pressed.connect(func(): show_versions(g))
-	box.add_child(vb)
+	row.add_child(vb)
 	return box
+
+
+func short_effort(e: String) -> String:
+	# "Web effort 7 of 8: Studio (built and playtested)" -> "effort 7/8 Studio"
+	var m := RegEx.create_from_string("(\\d) of 8: ([A-Za-z]+)").search(e)
+	if m:
+		return "effort %s/8 %s" % [m.get_string(1), m.get_string(2)]
+	return e
+
+
+func small_button(txt: String, c: Color) -> Button:
+	var sb := Button.new()
+	sb.text = txt
+	sb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sb.add_theme_font_size_override("font_size", 19)
+	style_button(sb, c, 12)
+	return sb
+
+
+func launch(scene: String, mode: String) -> void:
+	Engine.set_meta("launch_mode", mode)
+	get_tree().change_scene_to_file(scene)
 
 
 # ---------------------------------------------------------------- versions page
@@ -137,6 +174,7 @@ func show_versions(g: Dictionary) -> void:
 	body.add_child(back)
 	body.add_child(label(g["name"] + ": versions", 44, Color(1.0, 0.85, 0.35)))
 	var inner := scroll_box()
+	inner.add_child(label("One run: %s\n%s\nGodot version built in %s" % [g.get("length", "?"), g.get("effort", "?"), g.get("godot_time", "?")], 21, Color(0.85, 0.85, 0.95), false))
 	var vs: Array = g["versions"]
 	for i in range(vs.size() - 1, -1, -1):
 		var v: Dictionary = vs[i]
@@ -148,7 +186,7 @@ func show_versions(g: Dictionary) -> void:
 		b.add_theme_font_size_override("font_size", 22)
 		style_button(b, g["color"] if i == vs.size() - 1 else Color(g["color"]).darkened(0.35), 14)
 		var scene: String = v["scene"]
-		b.pressed.connect(func(): get_tree().change_scene_to_file(scene))
+		b.pressed.connect(func(): launch(scene, ""))
 		inner.add_child(b)
 		if i == vs.size() - 1:
 			b.grab_focus.call_deferred()

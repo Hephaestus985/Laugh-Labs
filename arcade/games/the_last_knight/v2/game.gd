@@ -91,12 +91,20 @@ func _ready() -> void:
 	use_b = true
 	custom_keys = true
 	load_best()
+	diff = difficulty()
 	D = DIFS[diff]
 	saved = load_save()
 	L = build_level(1)
 	p = new_player()
 	p["x"] = 6 * T
 	p["y"] = FLOOR - p["h"]
+	var lm := launch_mode()
+	if lm == "new":
+		clear_save()
+	elif lm == "continue" and saved != null:
+		begin_run()
+		resume_save(saved)
+		saved = null
 
 
 func new_player() -> Dictionary:
@@ -1203,8 +1211,10 @@ func on_input(event: InputEvent) -> void:
 		if event.pressed and state == S.TITLE:
 			if k in [KEY_LEFT, KEY_A]:
 				diff = maxi(0, diff - 1)
+				set_difficulty(game_id, diff)
 			elif k in [KEY_RIGHT, KEY_D]:
 				diff = mini(2, diff + 1)
+				set_difficulty(game_id, diff)
 			elif k == KEY_N and saved != null:
 				clear_save()
 
@@ -1228,7 +1238,7 @@ func _process(delta: float) -> void:
 		if title_cam > L["cols"] * T - VW - 10:
 			title_cam = 0.0
 		cam_x = title_cam
-		var tap := pressed_a() or jump_pressed or atk_pressed or pressed_b()
+		var tap := start_pressed() or jump_pressed or atk_pressed or pressed_b()
 		jump_pressed = false
 		atk_pressed = false
 		if tap:
@@ -1241,7 +1251,7 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 	if state == S.END or state == S.OVER:
-		var tap2 := pressed_a() or jump_pressed or atk_pressed or pressed_b()
+		var tap2 := start_pressed() or jump_pressed or atk_pressed or pressed_b()
 		jump_pressed = false
 		atk_pressed = false
 		if tap2 and t > 1.5:
@@ -2242,7 +2252,7 @@ func draw_title() -> void:
 		"Chase the inventor through five eras and settle this in his tower.",
 		"Move: arrows / stick.  Jump: SPACE or up / JUMP.  Sword: X or J / SWORD.",
 		"Swing at bolts and axes to parry them back. Stomp geese from above.",
-		"Difficulty: < %s >   (left/right to change)" % DIFS[diff]["lab"],
+		"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFS[diff]["lab"],
 	]
 	var prompt := "Tap or press SPACE to start"
 	if saved != null:

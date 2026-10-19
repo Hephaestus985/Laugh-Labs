@@ -1,8 +1,8 @@
 # Laugh-Labs
 
-Silly little games, all in one Android app: **Laugh Lab Arcade**.
+Silly little games, all in one Android app: **Lab Arcade**.
 
-**Install on your phone:** [LaughLabArcade.apk](https://github.com/Hephaestus985/Laugh-Labs/raw/main/apks/LaughLabArcade.apk). Open it and allow installs from your browser if Android asks. Installing a newer version updates the app and keeps your high scores.
+**Install on your phone:** [LabArcade.apk](https://github.com/Hephaestus985/Laugh-Labs/raw/main/apks/LabArcade.apk). Open it and allow installs from your browser if Android asks. Installing a newer version updates the app and keeps your high scores.
 
 ## Games
 | Game | What it is |
@@ -18,7 +18,7 @@ Silly little games, all in one Android app: **Laugh Lab Arcade**.
 | Escape Velocity | Bounce from an Enschede rooftop to the Moon. Stomp geese, eat stroopwafels. |
 | The Last Knight | Chase the crossbow inventor through five eras. Parry, stomp, honk. |
 
-Every game keeps its old versions: open **Versions** under a game in the app. See [CHANGELOG.md](CHANGELOG.md).
+Under each game in the app: **Difficulty** (Easy / Normal / Hard), **Versions** (every older version stays playable, plus run length and effort), and **Continue / New game** for games with saves (The Last Knight). See [CHANGELOG.md](CHANGELOG.md).
 
 ## For developers
-`arcade/` is one Godot 4 project. Each game version lives in `arcade/games/<game>/v<N>/` and is listed in `arcade/games.gd`. Shared input, touch controls and high scores are in `arcade/common/arcade_game.gd`. `arcade/tools/smoke_test.tscn` plays every game with random input and saves screenshots. Open `arcade/` in Godot and press F5 to play on a PC.
+`arcade/` is one Godot 4 project. Each game version lives in `arcade/games/<game>/v<N>/` and is listed in `arcade/games.gd`. Shared input, touch controls and high scores are in `arcade/common/arcade_game.gd`. `arcade/tools/smoke_test.tscn` plays every game with random input and saves screenshots. Open `arcade/` in Godot and press F5 to play on a PC. Build and test the APK with `arcade/tools/build_apk.sh`.

@@ -65,6 +65,7 @@ var cat = null  # Vector2 or null
 func _ready() -> void:
 	game_id = "escape_the_cavity"
 	load_best()
+	diff = difficulty()
 	D = DIFFS[diff]
 
 
@@ -163,8 +164,10 @@ func on_input(event: InputEvent) -> void:
 	if state == State.TITLE and event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_LEFT, KEY_A]:
 			diff = maxi(0, diff - 1)
+			set_difficulty(game_id, diff)
 		elif event.keycode in [KEY_RIGHT, KEY_D]:
 			diff = mini(2, diff + 1)
+			set_difficulty(game_id, diff)
 
 
 func _process(delta: float) -> void:
@@ -173,10 +176,11 @@ func _process(delta: float) -> void:
 		State.TITLE:
 			if pressed_b():
 				diff = (diff + 1) % 3
-			if pressed_a():
+				set_difficulty(game_id, diff)
+			if start_pressed():
 				start()
 		State.OVER:
-			if pressed_a() and t > 0.8:
+			if start_pressed() and t > 0.8:
 				state = State.TITLE
 				t = 0.0
 		State.PLAY:
@@ -438,7 +442,7 @@ func _draw() -> void:
 			"You are a photon stuck in a VCSEL. Lasing needs gain, gain needs carriers,",
 			"and carriers need YOU to jump. Survive 6 increasingly hostile levels for 72 s.",
 			"Move: arrows / stick.  Jump: SPACE / up / A button.",
-			"Difficulty: < %s >   (left/right or B to change)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap A or press SPACE to start")
 	elif state == State.OVER:
 		overlay_card("LASING!" if survived else "DECOHERENCE", [
@@ -446,7 +450,6 @@ func _draw() -> void:
 			"%d carriers, level %d/%d, %s" % [collected, lvl, LV.size(), D["name"]],
 			verdict(score),
 		], "Tap A or press SPACE to continue" if t > 0.8 else "")
-	use_b = state == State.TITLE
 	draw_overlay("JUMP" if state == State.PLAY else "GO", "DIFF")
 
 

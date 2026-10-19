@@ -2,6 +2,14 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.3 (2026-10-19)
+- Fixed: The Last Knight, Escape Velocity and Lighthouse Keeper did not start in 1.2 (a stale build cache shipped their scenes without code)
+- Renamed the app to Lab Arcade (high scores are kept)
+- Difficulty (Easy / Normal / Hard) for every game, chosen in the menu
+- Continue / New game buttons for The Last Knight's save
+- Each game shows how long a run takes and how much effort went into it
+- Tap anywhere to start a game or play again
+
 ## Laugh Lab Arcade 1.2 (2026-10-19)
 All the Laugh Lab games John kept, remade in Godot:
 - waveguide_snake v1: remake of the Laugh Lab built-in game, with swipe controls

@@ -47,6 +47,7 @@ func _ready() -> void:
 	show_a = false
 	tap_is_a = true
 	load_best()
+	diff = difficulty()
 	reset()
 
 
@@ -141,8 +142,10 @@ func on_input(event: InputEvent) -> void:
 	if state == State.TITLE and event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_LEFT, KEY_A]:
 			diff = maxi(0, diff - 1)
+			set_difficulty(game_id, diff)
 		elif event.keycode in [KEY_RIGHT, KEY_D]:
 			diff = mini(2, diff + 1)
+			set_difficulty(game_id, diff)
 
 
 func _process(delta: float) -> void:
@@ -152,11 +155,12 @@ func _process(delta: float) -> void:
 		State.TITLE:
 			if pressed_b():
 				diff = (diff + 1) % 3
-			if pressed_a():
+				set_difficulty(game_id, diff)
+			if start_pressed():
 				reset()
 				state = State.PLAY
 		State.OVER:
-			if pressed_a() and t > 0.9:
+			if start_pressed() and t > 0.9:
 				state = State.TITLE
 		State.PLAY:
 			clear_presses()
@@ -321,7 +325,7 @@ func _draw() -> void:
 			"Steer a Viking longship through fjords, gusts, icebergs and a kraken,",
 			"without once asking for directions. Grab loot. Three shields.",
 			"Hold the screen above or below the ship to steer, or use up / down.",
-			"Difficulty: < %s >   (left/right to change)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap or press SPACE to sail")
 	elif state == State.OVER and t > 0.5:
 		card("VALHALLA", [

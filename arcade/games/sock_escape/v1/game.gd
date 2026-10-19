@@ -77,6 +77,7 @@ var dead_timer := 0.0
 var bg_offset := 0.0
 var stage := 0
 var stage_flash := 0.0
+var mult := 1.0
 var touch_duck := -1  # finger index holding the duck zone, -1 when none
 var is_mobile := false
 
@@ -120,6 +121,7 @@ func reset_game() -> void:
 	play_time = 0.0
 	stage = 0
 	stage_flash = 2.0
+	mult = ArcadeGame.DIFF_MULT[ArcadeGame.get_difficulty("sock_escape")]
 	touch_duck = -1
 	state = State.PLAY
 
@@ -235,7 +237,7 @@ func current_stage() -> int:
 
 func update_play(delta: float) -> void:
 	play_time += delta
-	speed = minf(430.0 + play_time * 13.0, 1150.0)
+	speed = minf(430.0 + play_time * 13.0, 1150.0) * mult
 	var dx := speed * delta
 	distance += dx
 	bg_offset += dx
@@ -586,6 +588,7 @@ func draw_hud() -> void:
 				text(Vector2(0, 340), "SPACE / UP / click  =  jump   (press again in the air to double jump)", 24, white, true)
 				text(Vector2(0, 378), "DOWN / S  =  duck under bubbles, or slam back to the floor", 24, white, true)
 			text(Vector2(0, 416), "Grab the yellow lost socks for bonus points. ESC = menu.", 24, white, true)
+			text(Vector2(0, 454), "Difficulty: %s (change it in the menu)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty("sock_escape")], 22, white, true)
 			if int(t * 2.0) % 2 == 0:
 				text(Vector2(0, 500), "Tap to run!" if is_mobile else "Press SPACE to run!", 40, Color(0.6, 1.0, 0.6), true)
 			if best > 0:

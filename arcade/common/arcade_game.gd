@@ -35,6 +35,7 @@ var best := 0
 var a_down := false
 var b_down := false
 var _a_just := false
+var _tap_just := false
 var _b_just := false
 var _a_released := false
 var pointer := Vector2.ZERO  # last mouse / touch position, for games that aim
@@ -75,6 +76,38 @@ func submit_score(score: int) -> bool:
 	return false
 
 
+# ---------------------------------------------------------------- settings shared with the menu
+
+const SETTINGS_PATH := "user://settings.cfg"
+const DIFF_NAMES := ["Easy", "Normal", "Hard"]
+const DIFF_MULT := [0.8, 1.0, 1.25]
+
+
+static func get_difficulty(id: String) -> int:
+	var cf := ConfigFile.new()
+	if cf.load(SETTINGS_PATH) != OK:
+		return 1
+	return clampi(int(cf.get_value("difficulty", id, 1)), 0, 2)
+
+
+static func set_difficulty(id: String, d: int) -> void:
+	var cf := ConfigFile.new()
+	cf.load(SETTINGS_PATH)
+	cf.set_value("difficulty", id, clampi(d, 0, 2))
+	cf.save(SETTINGS_PATH)
+
+
+func difficulty() -> int:
+	return get_difficulty(game_id)
+
+
+## How the menu launched this game: "" (normal), "continue" or "new".
+func launch_mode() -> String:
+	var m: String = Engine.get_meta("launch_mode", "")
+	Engine.set_meta("launch_mode", "")
+	return m
+
+
 func back_to_menu() -> void:
 	get_tree().change_scene_to_file(MENU_SCENE)
 
@@ -104,7 +137,16 @@ func released_a() -> bool:
 	return v
 
 
+## A tap anywhere, the A button, SPACE or ENTER: used on title and game-over screens.
+func start_pressed() -> bool:
+	var v := _tap_just or _a_just
+	_tap_just = false
+	_a_just = false
+	return v
+
+
 func clear_presses() -> void:
+	_tap_just = false
 	_a_just = false
 	_b_just = false
 	_a_released = false
@@ -162,6 +204,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.pressed and MENU_BTN.has_point(event.position):
 			back_to_menu()
 			return
+		if event.pressed:
+			_tap_just = true
 		if event.button_index == MOUSE_BUTTON_LEFT:
 			pointer_down = event.pressed
 			_set_a(event.pressed)
@@ -179,6 +223,7 @@ func _touch(idx: int, pos: Vector2, down: bool) -> void:
 		if MENU_BTN.has_point(pos):
 			back_to_menu()
 			return
+		_tap_just = true
 		if show_a and pos.distance_to(BTN_A_C) < BTN_A_R * 1.3:
 			_a_idx = idx
 			_set_a(true)

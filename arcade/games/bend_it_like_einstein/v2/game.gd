@@ -47,6 +47,7 @@ func _ready() -> void:
 	show_a = false
 	tap_is_a = true
 	load_best()
+	diff = difficulty()
 	D = DIFFS[diff]
 
 
@@ -85,8 +86,10 @@ func on_input(event: InputEvent) -> void:
 	if state == State.TITLE and event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_LEFT, KEY_A]:
 			diff = maxi(0, diff - 1)
+			set_difficulty(game_id, diff)
 		elif event.keycode in [KEY_RIGHT, KEY_D]:
 			diff = mini(2, diff + 1)
+			set_difficulty(game_id, diff)
 	if state == State.PLAY and (event is InputEventMouseButton or event is InputEventScreenTouch or event is InputEventScreenDrag or (event is InputEventMouseMotion and pointer_down)):
 		hole = pointer
 		kb_used = false
@@ -98,10 +101,11 @@ func _process(delta: float) -> void:
 		State.TITLE:
 			if pressed_b():
 				diff = (diff + 1) % 3
-			if pressed_a():
+				set_difficulty(game_id, diff)
+			if start_pressed():
 				start()
 		State.OVER:
-			if pressed_a() and t > 0.8:
+			if start_pressed() and t > 0.8:
 				state = State.TITLE
 				t = 0.0
 		State.PLAY:
@@ -307,7 +311,7 @@ func _draw() -> void:
 			"into the fiber. Don't let them fall in: spaghettified photons cost a point.",
 			"Hold the screen (or mouse) where the black hole should be.",
 			"On a PC: arrows move it, hold SPACE to switch it on.",
-			"Difficulty: < %s >   (left/right to change)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap or press SPACE to start")
 	elif state == State.OVER:
 		var eff := int(round(100.0 * coupled / emitted)) if emitted > 0 else 0

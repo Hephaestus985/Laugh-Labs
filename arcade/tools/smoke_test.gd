@@ -38,6 +38,8 @@ func next_game() -> void:
 	cur.set_meta("smoke_name", "%s_v%d" % [item[0], item[1]])
 	add_child(cur)
 	frame = 0
+	if cur.get_script() == null:
+		print("SMOKE FAIL: no script on ", item[2])
 
 func send(k: int, down: bool) -> void:
 	var e := InputEventKey.new()
