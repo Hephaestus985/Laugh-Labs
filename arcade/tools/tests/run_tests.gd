@@ -873,6 +873,91 @@ func win_sokoban(n: PuzzleGame) -> void:
 	n.call("_check")
 
 
+func play_flow(n: PuzzleGame, name: String) -> void:
+	# drag along the first solution pipe
+	var sol: Array = n.get("solution")[0]
+	var nn: int = n.get("n")
+	var o: Vector2 = n.get("origin")
+	var c: float = n.get("cell")
+	var pts := sol.map(func(i): return o + Vector2(i % nn + 0.5, i / nn + 0.5) * c)
+	var e := InputEventScreenTouch.new()
+	e.position = to_window(pts[0])
+	e.pressed = true
+	Input.parse_input_event(e)
+	await frames(2)
+	for k in range(1, pts.size()):
+		var d := InputEventScreenDrag.new()
+		d.position = to_window(pts[k])
+		Input.parse_input_event(d)
+		await frames(2)
+	var r := InputEventScreenTouch.new()
+	r.position = to_window(pts.back())
+	Input.parse_input_event(r)
+	await frames(3)
+	check(name, "dragging from a dot to its partner connects them (phone)", n.call("pipe_done", 0))
+
+
+func win_flow(n: PuzzleGame) -> void:
+	var sol: Array = n.get("solution")
+	var paths := []
+	for k in sol.size():
+		paths.append(sol[k].duplicate() if k > 0 else [])
+	n.set("paths", paths)
+	n.call("_hint")
+
+
+func play_block_stacker(n: PuzzleGame, name: String) -> void:
+	var p0: Vector2i = n.get("pos")
+	await touch_swipe(Vector2(500, 300), Vector2(-130, 0))
+	await frames(2)
+	check(name, "dragging sideways slides the piece (phone)", n.get("pos").x < p0.x)
+	await touch_swipe(Vector2(500, 200), Vector2(0, 260))
+	await frames(3)
+	check(name, "swipe down drops the piece (phone)", n.get("grid").filter(func(v): return v != "").size() == 4)
+
+
+func win_block_stacker(n: PuzzleGame) -> void:
+	var g: Array = n.get("grid")
+	g.fill("")
+	for x in 9:
+		g[19 * 10 + x] = "T"
+	n.set("grid", g)
+	n.set("lines", int(n.get("target")) - 1)
+	n.set("cells", [Vector2i(0, 0), Vector2i(0, 1), Vector2i(0, 2), Vector2i(0, 3)])
+	n.set("piece", "I")
+	n.set("pos", Vector2i(9, 0))
+	n.call("hard_drop")
+	# the target is reached; the round goes on until the stack tops out
+	for k in 300:
+		if n.state != 1:
+			break
+		n.call("hard_drop")
+
+
+func play_connect_four(n: PuzzleGame, name: String) -> void:
+	var o: Vector2 = n.ORIGIN
+	await tap(o + Vector2(3.5 * n.CELL, 3 * n.CELL))
+	await frames(2)
+	check(name, "tap a column drops a disc (phone)", n.get("board")[5 * 7 + 3] == 1)
+	for k in 120:
+		if n.get("turn") == 1:
+			break
+		await frames(1)
+	check(name, "the computer answers", n.get("board").filter(func(v): return v == 2).size() == 1)
+
+
+func win_connect_four(n: PuzzleGame) -> void:
+	var b: Array = n.get("board")
+	b.fill(0)
+	for c in 3:
+		b[5 * 7 + c] = 1
+	b[4 * 7 + 0] = 2
+	b[4 * 7 + 1] = 2
+	n.set("board", b)
+	n.set("turn", 1)
+	n.call("play", 3, 1)
+
+
 func test_knight_flows() -> void:
 	var name := "the_last_knight"
 	var scene := "res://games/the_last_knight/v2/game.tscn"

@@ -1,9 +1,9 @@
-Lab Arcade test report  2026-10-19T23:19:43
-448 checks, 0 failed
+Lab Arcade test report  2026-10-19T23:23:27
+513 checks, 0 failed
 
-PASS  menu                       games.gd is complete           19 games
+PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
-PASS  menu                       Library has a card per game    24 cards
+PASS  menu                       Library has a card per game    27 cards
 PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
 PASS  menu                       has difficulty buttons         
@@ -21,16 +21,16 @@ PASS  menu                       search matches descriptions
 PASS  menu                       search with no match shows no cards 
 PASS  menu                       Library has a publisher drop-down 7 choices
 PASS  menu                       Library has a length drop-down 5 choices
-PASS  menu                       Library has a genre drop-down  10 choices
+PASS  menu                       Library has a genre drop-down  11 choices
 PASS  menu                       More games (by others) filter  
 PASS  menu                       Lab Arcade publisher filter    
 PASS  menu                       publisher filter (Kenney)      
 PASS  menu                       genre filter (RPG)             
-PASS  menu                       length filters split the games 24 of 24
+PASS  menu                       length filters split the games 27 of 27
 PASS  menu                       choosing a genre in the drop-down filters 
 PASS  menu                       filters are kept after playing a game genre 'Racing'
 PASS  menu                       all sort orders work           
-PASS  menu                       shortest first sorts by length sock_escape .. racing
+PASS  menu                       shortest first sorts by length sokoban .. racing
 PASS  menu                       play count is recorded         
 PASS  menu                       info page for every game       
 PASS  menu                       settings page builds           
@@ -283,7 +283,7 @@ PASS  lights_out v1              touch play changes the board (phone)
 PASS  lights_out v1              Continue restores the board    
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1640
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1480
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -349,6 +349,71 @@ PASS  sokoban v1                 new Normal round starts
 PASS  sokoban v1                 solving it wins and saves the best score state 2 won true best 400
 PASS  sokoban v1                 new Hard round starts          
 PASS  sokoban v1                 no errors while solving        0: 
+PASS  flow v1                    scene loads                    
+PASS  flow v1                    has its game code              script missing from scene
+PASS  flow v1                    uses the landscape game screen 
+PASS  flow v1                    title screen renders           not checked: running headless
+PASS  flow v1                    starts on the title            
+PASS  flow v1                    tap starts the game            state 1
+PASS  flow v1                    survives 20 s of play          
+PASS  flow v1                    screen still renders           not checked: running headless
+PASS  flow v1                    high score is saved            
+PASS  flow v1                    difficulty setting is used     
+PASS  flow v1                    has a way back to the menu     
+PASS  flow v1                    no errors                      0: 
+PASS  flow v1                    tap starts a round             
+PASS  flow v1                    dragging from a dot to its partner connects them (phone) 
+PASS  flow v1                    touch play changes the board (phone) 
+PASS  flow v1                    Continue restores the board    
+PASS  flow v1                    new Easy round starts          
+PASS  flow v1                    new Normal round starts        
+PASS  flow v1                    solving it wins and saves the best score state 2 won true best 1276
+PASS  flow v1                    new Hard round starts          
+PASS  flow v1                    no errors while solving        0: 
+PASS  block_stacker v1           scene loads                    
+PASS  block_stacker v1           has its game code              script missing from scene
+PASS  block_stacker v1           uses the landscape game screen 
+PASS  block_stacker v1           title screen renders           not checked: running headless
+PASS  block_stacker v1           starts on the title            
+PASS  block_stacker v1           tap starts the game            state 1
+PASS  block_stacker v1           survives 20 s of play          
+PASS  block_stacker v1           screen still renders           not checked: running headless
+PASS  block_stacker v1           high score is saved            
+PASS  block_stacker v1           difficulty setting is used     
+PASS  block_stacker v1           has a way back to the menu     
+PASS  block_stacker v1           no errors                      0: 
+PASS  block_stacker v1           tap starts a round             
+PASS  block_stacker v1           dragging sideways slides the piece (phone) 
+PASS  block_stacker v1           swipe down drops the piece (phone) 
+PASS  block_stacker v1           touch play changes the board (phone) 
+PASS  block_stacker v1           Continue restores the board    
+PASS  block_stacker v1           new Easy round starts          
+PASS  block_stacker v1           new Normal round starts        
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 346
+PASS  block_stacker v1           new Hard round starts          
+PASS  block_stacker v1           no errors while solving        0: 
+PASS  connect_four v1            scene loads                    
+PASS  connect_four v1            has its game code              script missing from scene
+PASS  connect_four v1            uses the landscape game screen 
+PASS  connect_four v1            title screen renders           not checked: running headless
+PASS  connect_four v1            starts on the title            
+PASS  connect_four v1            tap starts the game            state 1
+PASS  connect_four v1            survives 20 s of play          
+PASS  connect_four v1            screen still renders           not checked: running headless
+PASS  connect_four v1            high score is saved            
+PASS  connect_four v1            difficulty setting is used     
+PASS  connect_four v1            has a way back to the menu     
+PASS  connect_four v1            no errors                      0: 
+PASS  connect_four v1            tap starts a round             
+PASS  connect_four v1            tap a column drops a disc (phone) 
+PASS  connect_four v1            the computer answers           
+PASS  connect_four v1            touch play changes the board (phone) 
+PASS  connect_four v1            Continue restores the board    
+PASS  connect_four v1            new Easy round starts          
+PASS  connect_four v1            new Normal round starts        
+PASS  connect_four v1            solving it wins and saves the best score state 2 won true best 1360
+PASS  connect_four v1            new Hard round starts          
+PASS  connect_four v1            no errors while solving        0: 
 PASS  the_last_knight            all 5 levels load              
 PASS  the_last_knight            boss fight starts              
 PASS  the_last_knight            boss has 3 phases              [1, 2, 3]

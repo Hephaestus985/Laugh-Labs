@@ -17,6 +17,18 @@ Silly little games, all in one Android app: **Lab Arcade**.
 | Lighthouse Keeper | Swing a very expensive laser so ships see the rocks. Mind the serpent. |
 | Escape Velocity | Bounce from an Enschede rooftop to the Moon. Stomp geese, eat stroopwafels. |
 | The Last Knight | Chase the crossbow inventor through five eras. Parry, stomp, honk. |
+| 2048 | Swipe to slide numbered tiles; equal tiles merge. |
+| Sudoku | Generated puzzles with exactly one solution, notes and hints. |
+| Minesweeper | Tap to open, long-press to flag; the first tap is always safe. |
+| Solitaire | Klondike patience: tap or drag cards, draw 3 on Hard. |
+| Nonogram | Fill the grid from number clues to reveal a picture. |
+| Lights Out | Tap a light to flip it and its neighbours; turn them all off. |
+| Sliding Puzzle | Slide the tiles back into order (3x3 to 5x5). |
+| Mahjong Solitaire | Match pairs of free tiles; every deal can be cleared. |
+| Sokoban | Push crates onto targets; generated levels that can always be solved. |
+| Flow | Connect same-coloured dots with pipes that fill the board. |
+| Block Stacker | Falling blocks: slide, turn, clear rows. |
+| Connect Four | Four in a row against the computer, three strengths. |
 
 Each game card shows run length, best score, times played and effort, with **Play / Continue**, **Difficulty** and **Info** (story, controls, facts, every older version). **Settings** has difficulty for all games, sorting, menu orientation (the menu works in portrait too) and resetting scores. See [CHANGELOG.md](CHANGELOG.md).
 
@@ -36,7 +48,7 @@ They live in `arcade/external/<game>/` with their licenses and a `SECURITY_REVIE
 Every game must be fully playable with touch only: no keyboard, no mouse wheel, no hover, no right-click. Lab games use the on-screen stick and buttons from `arcade/common/arcade_game.gd`; games by others get on-screen buttons and touch fixes (marked `[Lab Arcade]`). The tests check this by playing with simulated phone touches on a scaled, phone-sized screen.
 
 ## Tests
-`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (448 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
+`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (513 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
 
 Run them without a window or sound (`menu` or `external` for a quick run, `VISUAL=1` to also check drawing in an off-screen window):
 ```bash

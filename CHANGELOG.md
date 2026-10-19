@@ -2,6 +2,10 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.17 (2026-10-19)
+- New games: **Flow** (generated pipe puzzles that can always be filled), **Block Stacker** (falling blocks; drag to slide, tap to turn, swipe down to drop; clear 20 / 40 / 60 rows to win) and **Connect Four** (against the computer, looking 1, 4 or 6 moves ahead)
+- That completes the 12 simple games: 2048, Sudoku, Minesweeper, Solitaire, Nonogram, Lights Out, Sliding Puzzle, Mahjong Solitaire, Sokoban, Flow, Block Stacker and Connect Four
+
 ## Lab Arcade 1.16 (2026-10-19)
 - New games: **Sliding Puzzle** (3x3 to 5x5), **Mahjong Solitaire** (deals that can always be cleared, hint, shuffle) and **Sokoban** (levels built backwards from the solution so they can always be solved; tap to walk, swipe to push)
 
