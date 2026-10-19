@@ -87,4 +87,14 @@ const LIST := [
 		],
 		"web": ["v1 (2026-10-18): original"],
 	},
+	{
+		"id": "escape_velocity",
+		"name": "Escape Velocity",
+		"tagline": "Bounce from an Enschede rooftop to the Moon. Stomp geese, eat stroopwafels.",
+		"color": Color(0.20, 0.50, 0.70),
+		"versions": [
+			{"v": 1, "date": "2026-10-19", "scene": "res://games/escape_velocity/v1/game.tscn", "notes": "Godot remake of the Laugh Lab game: 5 zones, windmills, geese and the Moon."},
+		],
+		"web": ["v1 (2026-10-18): original"],
+	},
 ]
