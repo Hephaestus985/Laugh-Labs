@@ -238,7 +238,7 @@ const EXTERNAL := [
 		"genre": "Racing",
 		"tagline": "Arcade driving around a track with a bouncy little truck.",
 		"about": "A tiny arcade racer by Kenney: drift a toy truck around a track, bump into the other cars and enjoy the skid marks. There's no lap timer yet; it's a driving toy.",
-		"controls": "Drag on the left half to steer (up = gas, down = brake), or use the GAS and BRAKE buttons. PC: WASD or arrow keys.",
+		"controls": "Drag on the left half and point where the truck should go on screen; it turns that way and drives. GAS and BRAKE work too (BRAKE also reverses). PC: WASD or arrow keys.",
 		"length": "Free play (no end)",
 		"effort": "Open-source starter kit by Kenney",
 		"credit": "Starter Kit Racing by Kenney (kenney.nl), github.com/KenneyNL/Starter-Kit-Racing. Code and art: MIT license. Added to Lab Arcade with touch controls and a back button.",

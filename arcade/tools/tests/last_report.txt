@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-19T21:29:32
-243 checks, 0 failed
+Lab Arcade test report  2026-10-19T21:34:43
+255 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
 PASS  menu                       opens on the Library without picks 
@@ -194,6 +194,7 @@ PASS  platformer_3d              stick moves the player (phone) moved 6.73
 PASS  platformer_3d              button JUMP works (phone)      
 PASS  platformer_3d              survives 20 s of play          
 PASS  platformer_3d              screen still renders           not checked: running headless
+PASS  platformer_3d              < MENU returns to the launcher (phone) res://menu.tscn
 PASS  platformer_3d              no errors                      0: 
 PASS  racing                     license file included          
 PASS  racing                     start screen loads with its code 
@@ -201,11 +202,16 @@ PASS  racing                     start screen renders           not checked: run
 PASS  racing                     has a way back to the arcade   
 PASS  racing                     game scene loads with its code 
 PASS  racing                     has on-screen phone controls   
-PASS  racing                     stick moves the player (phone) moved 2.93
+PASS  racing                     stick moves the player (phone) moved 3.04
+PASS  racing                     stick right points the truck right on screen (phone) screen heading (0.999996, -0.002891)
+PASS  racing                     stick down points the truck down on screen (phone) screen heading (0.068324, 0.997663)
+PASS  racing                     stick left points the truck left on screen (phone) screen heading (-0.999981, -0.006183)
+PASS  racing                     stick up points the truck up on screen (phone) screen heading (0.103183, -0.994662)
 PASS  racing                     button GAS works (phone)       
 PASS  racing                     button BRAKE works (phone)     
 PASS  racing                     survives 20 s of play          
 PASS  racing                     screen still renders           not checked: running headless
+PASS  racing                     < MENU returns to the launcher (phone) res://menu.tscn
 PASS  racing                     no errors                      0: 
 PASS  tactical_rpg               license file included          
 PASS  tactical_rpg               start screen loads with its code 
@@ -220,9 +226,11 @@ PASS  tactical_rpg               tap on Move shows where it can go (phone) stage
 PASS  tactical_rpg               the unit has tiles it can reach 
 PASS  tactical_rpg               tap on a tile moves the unit there (phone) moved 3.25
 PASS  tactical_rpg               arrow button moves the camera (phone) moved 6.03
+PASS  tactical_rpg               turn button turns the camera (phone) 0 -> 90
 PASS  tactical_rpg               defeating every enemy shows Victory 
 PASS  tactical_rpg               survives 20 s of play          
 PASS  tactical_rpg               screen still renders           not checked: running headless
+PASS  tactical_rpg               < MENU returns to the launcher (phone) res://menu.tscn
 PASS  tactical_rpg               no errors                      0: 
 PASS  open_rpg                   license file included          
 PASS  open_rpg                   start screen loads with its code 
@@ -240,7 +248,11 @@ PASS  open_rpg                   the map has a battle
 PASS  open_rpg                   battle shows the action menu   
 PASS  open_rpg                   an attack can be chosen        
 PASS  open_rpg                   tap on an attack asks for a target (phone) 
+PASS  open_rpg                   BACK cancels picking a target (phone) 
+PASS  open_rpg                   BACK shows the actions again   
+PASS  open_rpg                   the attack can be chosen again 
 PASS  open_rpg                   tap on an enemy attacks it (phone) 
 PASS  open_rpg                   survives 20 s of play          
 PASS  open_rpg                   screen still renders           not checked: running headless
+PASS  open_rpg                   < MENU returns to the launcher (phone) res://menu.tscn
 PASS  open_rpg                   no errors                      0: 

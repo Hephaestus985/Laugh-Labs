@@ -667,9 +667,58 @@ func test_external(g: Dictionary) -> void:
 	check(name, "survives 20 s of play", is_instance_valid(get_tree().current_scene) and get_tree().current_scene != self)
 	check(name, "screen still renders", screen_detail(name + "_play") > 3.0, "not checked: running headless" if headless else "")
 	get_tree().paused = false
-	await end_current()
+	await back_via_menu_button(name)
 	var e := new_errors(errs)
 	check(name, "no errors", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
+
+
+## Taps "< MENU" like a player would and checks the launcher comes back cleanly.
+func back_via_menu_button(name: String) -> void:
+	var cur := get_tree().current_scene
+	var ovs := cur.find_children("*", "TouchOverlay", true, false) if is_instance_valid(cur) and cur != self else []
+	if ovs.is_empty():
+		await end_current()
+		return
+	var ov: TouchOverlay = ovs[0]
+	var menu_rect: Rect2 = ov.buttons.filter(func(b): return b[1] is String and b[1] == "__menu")[0][0]
+	await tap(menu_rect.get_center())
+	await frames(20)
+	var now := get_tree().current_scene
+	check(name, "< MENU returns to the launcher (phone)", is_instance_valid(now) and now.scene_file_path == "res://menu.tscn", str(now.scene_file_path if is_instance_valid(now) else "none"))
+	await end_current()
+
+
+## Racing: holding the stick towards a screen direction drives the truck that way on screen
+## (John found left and right swapped when the truck drove towards the camera).
+func steer_checks(name: String, ov: TouchOverlay, body: Node3D) -> void:
+	var cam := get_viewport().get_camera_3d()
+	var dirs := {"right": Vector2(1, 0), "down": Vector2(0, 1), "left": Vector2(-1, 0), "up": Vector2(0, -1)}
+	for dname in dirs:
+		var d: Vector2 = dirs[dname]
+		var from := Vector2(260, ov.laid_out_for.y - 260)
+		var e := InputEventScreenTouch.new()
+		e.index = 5
+		e.position = to_window(from)
+		e.pressed = true
+		Input.parse_input_event(e)
+		await frames(2)
+		var drag := InputEventScreenDrag.new()
+		drag.index = 5
+		drag.position = to_window(from + d * 100)
+		Input.parse_input_event(drag)
+		await frames(150)  # time to turn
+		# which way the truck points (it may be sliding along a wall, so not its movement)
+		var model: Node3D = body.get_parent().get("vehicle_model")
+		var pos := model.global_position
+		var ahead := model.global_basis.z
+		ahead.y = 0
+		var r := InputEventScreenTouch.new()
+		r.index = 5
+		r.position = drag.position
+		Input.parse_input_event(r)
+		await frames(30)
+		var sp := cam.unproject_position(pos + ahead.normalized()) - cam.unproject_position(pos)
+		check(name, "stick %s points the truck %s on screen (phone)" % [dname, dname], sp.length() > 5 and sp.normalized().dot(d) > 0.9, "screen heading %s" % sp.normalized())
 
 
 ## Touch-plays a game with the arcade's on-screen controls (TouchOverlay).
@@ -707,6 +756,8 @@ func overlay_checks(name: String, game: Node) -> void:
 		Input.parse_input_event(r)
 		await frames(3)
 		check(name, "stick moves the player (phone)", mover.global_position.distance_to(p0) > 0.3, "moved %.2f" % mover.global_position.distance_to(p0))
+		if mover.get_parent() is Vehicle:
+			await steer_checks(name, ov, mover)
 	for b in ov.buttons:
 		if not b[1] is String or b[1] == "__menu" or b[3]:
 			continue
@@ -801,6 +852,32 @@ func rpg_checks(name: String, main: Node) -> void:
 	var cursors := main.find_children("*", "UIBattlerTargetingCursor", true, false)
 	if not check(name, "tap on an attack asks for a target (phone)", cursors.size() > 0):
 		return
+	# BACK cancels the target choice (it was broken in 1.10)
+	var ov: TouchOverlay = main.find_children("*", "TouchOverlay", true, false)[0]
+	var back_rect: Rect2 = ov.buttons.filter(func(b): return b[2] == "BACK")[0][0]
+	await tap(back_rect.get_center(), 2)
+	await frames(20)
+	check(name, "BACK cancels picking a target (phone)", not is_instance_valid(cursors[0]))
+	menu = null
+	for i in 120:
+		var menus := main.find_children("*", "UIActionMenu", true, false)
+		if menus.size() > 0 and menus[0].visible:
+			menu = menus[0]
+			break
+		await frames(1)
+	if not check(name, "BACK shows the actions again", menu != null):
+		return
+	await frames(30)
+	for b in menu.get_children():
+		if b is BaseButton and not b.disabled and b.get("action") and b.get("action").get("targets_enemies"):
+			btn = b
+			break
+	acting = btn.get("action").get("source")
+	await tap(btn.get_global_transform_with_canvas() * (btn.size / 2))
+	await frames(30)
+	cursors = main.find_children("*", "UIBattlerTargetingCursor", true, false)
+	if not check(name, "the attack can be chosen again", cursors.size() > 0):
+		return
 	var target: Node2D = cursors[0].get("targets")[0]
 	await tap(target.get_global_transform_with_canvas().origin)
 	await frames(10)
@@ -876,6 +953,13 @@ func tactics_checks(name: String, main: Node) -> void:
 			Input.parse_input_event(r)
 			await frames(3)
 			check(name, "arrow button moves the camera (phone)", cam_node.global_position.distance_to(c0) > 0.2, "moved %.2f" % cam_node.global_position.distance_to(c0))
+	# camera turn button (a Callable button, broken in 1.10)
+	for b in ov.buttons:
+		if b[2] == ">>":
+			var rot0: int = TacticsCameraResource.y_rot
+			await tap((b[0] as Rect2).get_center(), 2)
+			await frames(5)
+			check(name, "turn button turns the camera (phone)", TacticsCameraResource.y_rot != rot0, "%d -> %d" % [rot0, TacticsCameraResource.y_rot])
 	# the battle ends when one side has no units left
 	for p in level.get("opponent").get_children():
 		p.get("stats").set("curr_health", 0)

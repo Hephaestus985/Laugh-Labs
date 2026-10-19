@@ -2,6 +2,12 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.12 (2026-10-19)
+- Kenney Racing: the stick now steers by screen direction (point where the truck should go), so left and right are no longer swapped when it drives towards you
+- Fixed: "< MENU" in games by others could crash on the way back to the launcher
+- Fixed: the small on-screen buttons that run an action did nothing (Tactical RPG turn and zoom, Open RPG BACK)
+- Tests now tap "< MENU" in every game by others, check all four stick directions in Kenney Racing, and use the turn and BACK buttons
+
 ## Lab Arcade 1.11 (2026-10-19)
 - Library filters are now drop-down menus: **Publisher** (Lab Arcade, games by others, or a studio), **Length** (short, medium, long, no end) and **Genre** (action, arcade, platformer, puzzle, racing, RPG, runner, strategy), plus "Not played yet"
 - Every game card shows its genre; the Info page lists genre and publisher. Search also finds publishers and genres

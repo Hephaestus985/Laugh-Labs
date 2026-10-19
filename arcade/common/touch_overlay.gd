@@ -115,12 +115,14 @@ func _input(event: InputEvent) -> void:
 		if event.pressed:
 			for b in buttons:
 				if (b[0] as Rect2).grow(14).has_point(p):
-					if b[1] == "__menu":
+					get_viewport().set_input_as_handled()
+					if b[1] is Callable:
+						(b[1] as Callable).call()
+					elif b[1] == "__menu":
 						back_to_launcher()
 					else:
 						held[event.index] = b[1]
 						Input.action_press(b[1])
-					get_viewport().set_input_as_handled()
 					return
 			if stick_actions.size() == 4 and p.x < laid_out_for.x * 0.45 and p.y > 120 and stick_idx == -1:
 				stick_idx = event.index
@@ -170,7 +172,8 @@ func back_to_launcher() -> void:
 		apply_stick()
 	get_tree().paused = false
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
-	get_tree().change_scene_to_file(LAUNCHER)
+	# deferred: the game may still be in the middle of handling this input event
+	get_tree().change_scene_to_file.call_deferred(LAUNCHER)
 
 
 func _notification(what: int) -> void:

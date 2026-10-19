@@ -115,6 +115,7 @@ func handle_input(delta):
 	if raycast.is_colliding():
 		input.x = Input.get_axis("left", "right")
 		input.z = Input.get_axis("back", "forward")
+		_screen_stick_steer()
 
 	sphere.angular_velocity += vehicle_model.get_global_transform().basis.x * (linear_speed * 100) * delta
 
@@ -194,3 +195,33 @@ func _on_sphere_body_entered(_body: Node) -> void:
 		var impact_velocity := absf(linear_velocity.dot(vehicle_body.global_basis.z))
 		impact_sound.volume_db = clampf(remap(impact_velocity, 0.0, 6.0, -20.0, 0.0), -20.0, 0.0)
 		impact_sound.play()
+
+
+# [Lab Arcade] On a phone the stick points where the truck should go on screen. The original
+# controls turn the truck relative to itself, which feels mirrored whenever it drives towards
+# the camera. So turn towards the stick's direction (as seen through the camera) and drive.
+func _screen_stick_steer() -> void:
+	var ov := TouchOverlay.current
+	if not is_instance_valid(ov) or ov.stick_idx == -1 or ov.stick_vec.length() < 0.2:
+		return
+	var cam := get_viewport().get_camera_3d()
+	if cam == null:
+		return
+	# the ground point the stick points at, seen through the camera from the truck
+	var here: Vector3 = vehicle_model.global_position
+	var from := cam.unproject_position(here)
+	var to := from + ov.stick_vec.normalized() * 200.0
+	var ground := Plane(Vector3.UP, here.y)
+	var hit = ground.intersects_ray(cam.project_ray_origin(to), cam.project_ray_normal(to))
+	if hit == null:
+		return
+	var want: Vector3 = hit - here
+	want.y = 0
+	if want.length() < 0.001:
+		return
+	want = want.normalized()
+	var facing: Vector3 = vehicle_model.global_basis.z
+	facing.y = 0
+	var turn: float = facing.normalized().signed_angle_to(want, Vector3.UP)  # + = turn left (rotate_y +)
+	input.x = -clampf(turn * 2.0, -1.0, 1.0)
+	input.z = clampf(ov.stick_vec.length(), 0.0, 1.0)
