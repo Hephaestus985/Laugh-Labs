@@ -2,6 +2,9 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.13 (2026-10-19)
+- The Library keeps your search and filters after you play a game (and the next time you open the app)
+
 ## Lab Arcade 1.12 (2026-10-19)
 - Kenney Racing: the stick now steers by screen direction (point where the truck should go), so left and right are no longer swapped when it drives towards you
 - Fixed: "< MENU" in games by others could crash on the way back to the launcher

@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-19T21:34:43
-255 checks, 0 failed
+Lab Arcade test report  2026-10-19T21:46:13
+256 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
 PASS  menu                       opens on the Library without picks 
@@ -28,6 +28,7 @@ PASS  menu                       publisher filter (Kenney)
 PASS  menu                       genre filter (RPG)             
 PASS  menu                       length filters split the games 15 of 15
 PASS  menu                       choosing a genre in the drop-down filters 
+PASS  menu                       filters are kept after playing a game genre 'Racing'
 PASS  menu                       all sort orders work           
 PASS  menu                       shortest first sorts by length sock_escape .. racing
 PASS  menu                       play count is recorded         

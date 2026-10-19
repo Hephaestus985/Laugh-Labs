@@ -424,6 +424,16 @@ func test_menu() -> void:
 	await frames(2)
 	cards = m.find_child("Cards", true, false)
 	check("menu", "choosing a genre in the drop-down filters", m.f_genre == "Racing" and cards.get_child_count() == 1)
+	# coming back from a game builds a new menu: the filter must still be there
+	var m2: Node = load("res://menu.tscn").instantiate()
+	add_child(m2)
+	await frames(3)
+	var cards2: Node = m2.find_child("Cards", true, false)
+	check("menu", "filters are kept after playing a game", m2.f_genre == "Racing" and cards2 != null and cards2.get_child_count() == 1, "genre '%s'" % m2.f_genre)
+	m2.f_genre = ""
+	m2.fill_cards()
+	m2.queue_free()
+	await frames(1)
 	m.f_genre = ""
 	m.f_length = 0
 	m.show_list()

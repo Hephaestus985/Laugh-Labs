@@ -39,6 +39,7 @@ func _ready() -> void:
 		if g.has("park"):
 			load(g["park"]).park(get_tree())
 	tab = int(get_setting("ui", "tab", 0 if favorites().size() > 0 else 1))
+	load_filters()
 	get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 	apply_orientation()
 	var bg := ColorRect.new()
@@ -553,7 +554,33 @@ func filter_button(id: String, txt: String, on: bool, action: Callable) -> Butto
 
 
 ## Rebuild only the cards (keeps the search box and keyboard open while typing).
+## The Library's search and filters are kept between visits (playing a game reloads the menu).
+const FILTER_KEYS := ["search", "f_publisher", "f_length", "f_genre", "f_unplayed"]
+
+
+func load_filters() -> void:
+	var saved: Dictionary = get_setting("ui", "filters", {})
+	for k in FILTER_KEYS:
+		if saved.has(k) and typeof(saved[k]) == typeof(get(k)):
+			set(k, saved[k])
+	if f_length < 0 or f_length >= LENGTHS.size():
+		f_length = 0
+	if f_genre != "" and not values_of("genre").has(f_genre):
+		f_genre = ""
+	if f_publisher not in ["", BY_OTHERS] and not values_of("publisher").has(f_publisher):
+		f_publisher = ""
+
+
+func save_filters() -> void:
+	var now := {}
+	for k in FILTER_KEYS:
+		now[k] = get(k)
+	if now != get_setting("ui", "filters", {}):
+		set_setting("ui", "filters", now)
+
+
 func fill_cards() -> void:
+	save_filters()
 	var grid: GridContainer = body.find_child("Cards", true, false)
 	var count: Label = body.find_child("Count", true, false)
 	if grid == null:
