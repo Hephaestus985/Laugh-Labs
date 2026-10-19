@@ -2,6 +2,10 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.7 (2026-10-19)
+- New "More games" tab for open-source games by others, starting with Outpost Assault (tower defense by Quiver, MIT / CC BY 4.0). Security-reviewed first: see arcade/external/outpost_assault/SECURITY_REVIEW.md. Added touch drag and pinch zoom, and a way back to the arcade
+- Tests now run headless (no game windows popping up), 157 checks; `VISUAL=1 tools/build_apk.sh` also checks drawing
+
 ## Lab Arcade 1.6 (2026-10-19)
 - New app icon: a lab flask with a game controller, with proper Android adaptive icon layers (no more cropped sock)
 - Swipes ignore stray pointer moves, so a swipe or tap is never misread

@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bpnhw7y2qno58"]
+
+[ext_resource type="Script" uid="uid://ss47x6c1u3qw" path="res://external/outpost_assault/scenes/maps/camera2D/camera2D.gd" id="1_w05dq"]
+[ext_resource type="PackedScene" uid="uid://cmyjsqt6idilt" path="res://external/outpost_assault/interfaces/HUD/hud.tscn" id="2_e4o7p"]
+
+[node name="Camera2D" type="Camera2D" unique_id=1731746374]
+position = Vector2(640, 360)
+script = ExtResource("1_w05dq")
+zoom_rate = 8.0
+
+[node name="Hud" parent="." unique_id=718941048 instance=ExtResource("2_e4o7p")]

@@ -161,3 +161,30 @@ const LIST := [
 		"web": ["v1 (2026-10-18): original", "v2 (2026-10-19): save and continue at every level and at the boss"],
 	},
 ]
+
+
+# Open-source games by other makers, shown in the "More games" tab. Each lives
+# in external/<id>/ with its own license files. Their res:// paths were
+# rewritten to the folder; changes made for the arcade are marked "[Lab Arcade]".
+const EXTERNAL := [
+	{
+		"id": "outpost_assault",
+		"name": "Outpost Assault",
+		"tagline": "Tower defense: build gatling, cannon and missile turrets to hold the outpost.",
+		"about": "Waves of infantry, tanks and helicopters march on your outpost. Tap the empty turret slots to build gatling, single-shot or missile turrets, and repair or replace them between waves. Survive three growing waves to win. Made by Quiver (quiver.dev) as an open-source Godot 4 template.",
+		"controls": "Tap a turret slot to build, tap a turret to repair or remove it. Drag with one finger to move the map, pinch to zoom. PC: click, middle-drag to move, scroll to zoom. ESC pauses.",
+		"length": "10-15 min: 3 waves",
+		"effort": "Open-source game by Quiver",
+		"credit": "Outpost Assault by Quiver (quiver.dev), github.com/quiver-dev/tower-defense-godot4. Code: MIT license. Art: CC BY 4.0. Font: Akashi by Ed Merritt. Added to Lab Arcade with touch controls and a back button.",
+		"godot_time": "~30 min to review and add",
+		"color": Color(0.35, 0.42, 0.25),
+		"no_difficulty": true,
+		"no_score": true,
+		"aspect": "expand",
+		"versions": [
+			{"v": 1, "date": "2026-10-19", "scene": "res://external/outpost_assault/interfaces/UI/menu/menu.tscn", "notes": "Quiver's Outpost Assault (commit 1cbd622, 2026-08-21), security-reviewed, with touch pan / pinch zoom and a way back to the arcade."},
+		],
+		"web": [],
+	},
+]
+

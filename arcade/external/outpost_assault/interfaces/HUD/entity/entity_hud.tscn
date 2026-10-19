@@ -1,0 +1,64 @@
+[gd_scene format=3 uid="uid://cre1uon7pnve1"]
+
+[ext_resource type="Script" uid="uid://dh64w14mockvy" path="res://external/outpost_assault/interfaces/HUD/entity/entity_hud.gd" id="1_qyud4"]
+[ext_resource type="Theme" uid="uid://cgfdgl4ihd081" path="res://external/outpost_assault/assets/themes/td_theme.tres" id="1_w2foj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l380f"]
+
+[sub_resource type="Gradient" id="Gradient_20pti"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(0.533333, 0.878431, 0.376471, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_j8pgm"]
+gradient = SubResource("Gradient_20pti")
+width = 100
+height = 20
+
+[sub_resource type="Gradient" id="Gradient_xebfl"]
+offsets = PackedFloat32Array(0)
+colors = PackedColorArray(1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_y4p0d"]
+gradient = SubResource("Gradient_xebfl")
+width = 100
+height = 8
+
+[node name="EntityHUD" type="Control" unique_id=316696452]
+layout_mode = 3
+anchors_preset = 0
+theme = ExtResource("1_w2foj")
+script = ExtResource("1_qyud4")
+
+[node name="Parameters" type="VBoxContainer" parent="." unique_id=1587963119]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+alignment = 2
+
+[node name="StateLabel" type="Label" parent="Parameters" unique_id=1406281650]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBoxEmpty_l380f")
+text = "Shoot"
+horizontal_alignment = 1
+vertical_alignment = 1
+metadata/_edit_use_custom_anchors = false
+
+[node name="Healthbar" type="TextureProgressBar" parent="Parameters" unique_id=600854887]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 6
+value = 100.0
+texture_progress = SubResource("GradientTexture2D_j8pgm")
+
+[node name="ReloadBar" type="TextureProgressBar" parent="Parameters" unique_id=602929095]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 6
+value = 100.0
+rounded = true
+texture_progress = SubResource("GradientTexture2D_y4p0d")
+
+[connection signal="value_changed" from="Parameters/Healthbar" to="." method="_on_healthbar_value_changed"]

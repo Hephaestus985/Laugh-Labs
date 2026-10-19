@@ -20,15 +20,18 @@ Silly little games, all in one Android app: **Lab Arcade**.
 
 Each game card shows run length, best score, times played and effort, with **Play / Continue**, **Difficulty** and **Info** (story, controls, facts, every older version). **Settings** has difficulty for all games, sorting, menu orientation (the menu works in portrait too) and resetting scores. See [CHANGELOG.md](CHANGELOG.md).
 
+## More games
+Open-source games by others, in their own tab: **Outpost Assault** (tower defense by [Quiver](https://quiver.dev), MIT code, CC BY 4.0 art). They live in `arcade/external/<game>/` with their licenses and a security review.
+
 ## For developers
 `arcade/` is one Godot 4 project. Each game version lives in `arcade/games/<game>/v<N>/` and is listed in `arcade/games.gd`. Shared input, touch controls and high scores are in `arcade/common/arcade_game.gd`. Open `arcade/` in Godot and press F5 to play on a PC. Build and test the APK with `arcade/tools/build_apk.sh`.
 
 ## Tests
-`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (146 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
+`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (157 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
 
 Run them in the editor:
 ```bash
 flatpak run --filesystem=home org.godotengine.Godot --path arcade --fixed-fps 60 res://tools/tests/run_tests.tscn -- /tmp/report
 ```
-`arcade/tools/build_apk.sh` builds the APK and runs the same tests on an exported build (the way the phone app is built); it stops with an error if any test fails. Your own high scores and saves are backed up and restored around the tests. Latest results: `arcade/tools/tests/last_report.txt`.
+`arcade/tools/build_apk.sh` builds the APK and runs the same tests headless (no windows) on an exported build; `VISUAL=1` also checks that screens draw (the way the phone app is built); it stops with an error if any test fails. Your own high scores and saves are backed up and restored around the tests. Latest results: `arcade/tools/tests/last_report.txt`.
 

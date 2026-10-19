@@ -22,7 +22,12 @@ var confirm_reset := false
 var portrait := false
 
 
+var tab := 0  # 0 = Lab games, 1 = More games
+
+
 func _ready() -> void:
+	get_tree().paused = false  # in case a game was left while paused
+	tab = int(get_setting("ui", "tab", 0))
 	get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 	apply_orientation()
 	var bg := ColorRect.new()
@@ -202,10 +207,19 @@ func short_effort(e: String) -> String:
 	return e
 
 
+func tab_list() -> Array:
+	return Games.EXTERNAL if tab == 1 else Games.LIST
+
+
+func all_games() -> Array:
+	return Games.LIST + Games.EXTERNAL
+
+
 func sorted_games() -> Array:
 	var list: Array = []
-	for i in Games.LIST.size():
-		var g: Dictionary = Games.LIST[i].duplicate()
+	var src := tab_list()
+	for i in src.size():
+		var g: Dictionary = src[i].duplicate()
 		g["_order"] = i
 		list.append(g)
 	match int(get_setting("ui", "sort", 0)):
@@ -366,9 +380,18 @@ func show_list() -> void:
 	body.add_child(top)
 	var bar := HBoxContainer.new()
 	bar.add_theme_constant_override("separation", 10)
-	var count := label("%d games" % Games.LIST.size(), 20, MUTED)
-	count.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	bar.add_child(count)
+	for t in 2:
+		var tb := button(("Lab games (%d)" % Games.LIST.size()) if t == 0 else ("More games (%d)" % Games.EXTERNAL.size()), Color(0.85, 0.55, 0.15) if tab == t else PANEL, 20, false)
+		tb.name = "Tab%d" % t
+		tb.custom_minimum_size = Vector2(0, 50)
+		tb.pressed.connect(func():
+			tab = t
+			set_setting("ui", "tab", t)
+			show_list())
+		bar.add_child(tb)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.add_child(spacer)
 	var sl := Label.new()
 	sl.text = "Sort:"
 	sl.add_theme_font_size_override("font_size", 20)
@@ -420,8 +443,9 @@ func make_card(g: Dictionary) -> Control:
 	chips.add_theme_constant_override("v_separation", 8)
 	v.add_child(chips)
 	chips.add_child(chip(g.get("length", "")))
-	var best := read_best(g)
-	chips.add_child(chip("Best %d" % best if best > 0 else "No score yet", Color(1, 0.85, 0.35, 0.28) if best > 0 else Color(0, 0, 0, 0.28)))
+	if not g.get("no_score", false):
+		var best := read_best(g)
+		chips.add_child(chip("Best %d" % best if best > 0 else "No score yet", Color(1, 0.85, 0.35, 0.28) if best > 0 else Color(0, 0, 0, 0.28)))
 	var n := plays(g["id"])
 	if n > 0:
 		chips.add_child(chip("Played %dx" % n))
@@ -438,6 +462,12 @@ func make_card(g: Dictionary) -> Control:
 	play.pressed.connect(func(): launch(g, scene, "continue" if sv != "" else ""))
 	row.add_child(play)
 	var gid: String = g["id"]
+	if g.get("no_difficulty", false):
+		var info0 := button("Info", Color(0, 0, 0, 0.3), 20)
+		info0.name = "Info"
+		info0.pressed.connect(func(): show_info(g))
+		row.add_child(info0)
+		return card
 	var db := button("Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0, 0, 0, 0.3), 19)
 	db.name = "Difficulty"
 	db.tooltip_text = "Difficulty: tap to change"
@@ -455,6 +485,12 @@ func make_card(g: Dictionary) -> Control:
 
 func launch(g: Dictionary, scene: String, mode: String) -> void:
 	record_play(g["id"])
+	if g.get("aspect", "") == "expand":
+		# games made by others: full landscape screen, their own layout
+		get_window().content_scale_size = LANDSCAPE
+		get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+		if OS.has_feature("mobile"):
+			DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR_LANDSCAPE)
 	Engine.set_meta("launch_mode", mode)
 	get_tree().change_scene_to_file(scene)
 
@@ -466,6 +502,7 @@ func show_info(g: Dictionary) -> void:
 	page_game = g
 	clear_body()
 	back_bar(g["name"])
+	var gid: String = g["id"]
 	var inner := scroll_box()
 	inner.add_child(label(g.get("about", g["tagline"]), 22))
 	# play buttons
@@ -481,19 +518,22 @@ func show_info(g: Dictionary) -> void:
 		var ng := button("New game", Color(0.30, 0.28, 0.42), 22)
 		ng.pressed.connect(func(): launch(g, scene, "new"))
 		row.add_child(ng)
+	if g.has("credit"):
+		section(inner, "Made by")
+		inner.add_child(label(g["credit"], 20, Color(0.9, 0.9, 1)))
 	# difficulty
-	section(inner, "Difficulty")
-	var drow := HBoxContainer.new()
-	drow.add_theme_constant_override("separation", 8)
-	inner.add_child(drow)
-	var gid: String = g["id"]
-	for d in 3:
-		var on := ArcadeGame.get_difficulty(gid) == d
-		var b := button(ArcadeGame.DIFF_NAMES[d], Color(0.85, 0.55, 0.15) if on else PANEL, 22)
-		b.pressed.connect(func():
-			ArcadeGame.set_difficulty(gid, d)
-			show_info(g))
-		drow.add_child(b)
+	if not g.get("no_difficulty", false):
+		section(inner, "Difficulty")
+		var drow := HBoxContainer.new()
+		drow.add_theme_constant_override("separation", 8)
+		inner.add_child(drow)
+		for d in 3:
+			var on := ArcadeGame.get_difficulty(gid) == d
+			var b := button(ArcadeGame.DIFF_NAMES[d], Color(0.85, 0.55, 0.15) if on else PANEL, 22)
+			b.pressed.connect(func():
+				ArcadeGame.set_difficulty(gid, d)
+				show_info(g))
+			drow.add_child(b)
 	section(inner, "Controls")
 	inner.add_child(label(g.get("controls", ""), 21, Color(0.9, 0.9, 1)))
 	section(inner, "Facts")
@@ -501,11 +541,11 @@ func show_info(g: Dictionary) -> void:
 	var lp := last_played(gid)
 	var facts := [
 		["One run", g.get("length", "?")],
-		["Best score", str(best) if best > 0 else "none yet"],
+		["Best score", "not tracked" if g.get("no_score", false) else (str(best) if best > 0 else "none yet")],
 		["Played", "%d times" % plays(gid) + ("" if lp == 0 else ", last on " + Time.get_date_string_from_unix_time(lp))],
 		["Effort", g.get("effort", "?")],
 		["Godot version built in", g.get("godot_time", "?")],
-		["Saved progress", sv if sv != "" else ("none" if g.has("save_file") else "this game has no saves")],
+		["Saved progress", sv if sv != "" else ("none" if g.has("save_file") else "not saved between sessions")],
 	]
 	var grid := GridContainer.new()
 	grid.columns = 2
@@ -596,7 +636,7 @@ func show_settings() -> void:
 			show_settings())
 	inner.add_child(reset)
 	section(inner, "About")
-	inner.add_child(label("Lab Arcade %s  ·  %d games  ·  made with Godot %s\ngithub.com/Hephaestus985/Laugh-Labs" % [ProjectSettings.get_setting("application/config/version", "?"), Games.LIST.size(), Engine.get_version_info()["string"]], 19, MUTED))
+	inner.add_child(label("Lab Arcade %s  ·  %d + %d games  ·  made with Godot %s\ngithub.com/Hephaestus985/Laugh-Labs" % [ProjectSettings.get_setting("application/config/version", "?"), Games.LIST.size(), Games.EXTERNAL.size(), Engine.get_version_info()["string"]], 19, MUTED))
 
 
 # ---------------------------------------------------------------- back button

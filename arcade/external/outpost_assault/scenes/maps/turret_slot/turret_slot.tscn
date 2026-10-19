@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://c00tw3b8wgm8y"]
+
+[ext_resource type="Script" uid="uid://d2fv4ln8hifc5" path="res://external/outpost_assault/scenes/maps/turret_slot/turret_slot.gd" id="1_skyup"]
+[ext_resource type="Texture2D" uid="uid://cdt1rsj4xbkq3" path="res://external/outpost_assault/entities/turrets/assets/textures/base_idle_00.png" id="2_h7gu8"]
+[ext_resource type="PackedScene" uid="uid://bjphbghinurfr" path="res://external/outpost_assault/interfaces/UI/turret_popup/turret_popup.tscn" id="3_7p0hi"]
+[ext_resource type="PackedScene" uid="uid://bj4pwhsawsoqx" path="res://external/outpost_assault/interfaces/UI/turret_actions/turret_actions.tscn" id="4_hrs4w"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hunl7"]
+size = Vector2(128, 128)
+
+[node name="TurretSlot" type="Area2D" unique_id=1865970317]
+z_index = 10
+collision_layer = 8
+collision_mask = 0
+monitoring = false
+script = ExtResource("1_skyup")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1298558648]
+texture = ExtResource("2_h7gu8")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1552585015]
+visible = false
+shape = SubResource("RectangleShape2D_hunl7")
+
+[node name="ProjectileContainer" type="Node" parent="." unique_id=1260544899]
+
+[node name="UI" type="Node2D" parent="." unique_id=1570807396]
+z_index = 100
+z_as_relative = false
+
+[node name="TurretPopup" parent="UI" unique_id=1460121584 instance=ExtResource("3_7p0hi")]
+visible = false
+
+[node name="TurretActions" parent="UI" unique_id=1571452735 instance=ExtResource("4_hrs4w")]
+visible = false
+offset_left = 88.0
+offset_top = -248.0
+offset_right = 249.0
+offset_bottom = 237.0
+
+[connection signal="input_event" from="." to="." method="_on_input_event"]
+[connection signal="turret_requested" from="UI/TurretPopup" to="." method="_on_turret_popup_turret_requested"]
+[connection signal="visibility_changed" from="UI/TurretPopup" to="." method="_on_turret_popup_visibility_changed"]
+[connection signal="visibility_changed" from="UI/TurretActions" to="." method="_on_turret_actions_visibility_changed"]
+[connection signal="pressed" from="UI/TurretActions/Replace" to="." method="_on_turret_replace_requested"]
+[connection signal="pressed" from="UI/TurretActions/Repair" to="." method="_on_turret_repair_requested"]
+[connection signal="pressed" from="UI/TurretActions/Remove" to="." method="_on_turret_remove_requested"]
+
+[editable path="UI/TurretActions"]

@@ -1,10 +1,10 @@
-Lab Arcade test report  2026-10-19T19:42:06
-146 checks, 0 failed
+Lab Arcade test report  2026-10-19T20:01:33
+157 checks, 0 failed
 
 PASS  menu                       games.gd is complete           10 games
 PASS  menu                       a card per game                10 cards
 PASS  menu                       every card has Play, Info, Difficulty 
-PASS  menu                       renders                        
+PASS  menu                       renders                        not checked: running headless
 PASS  menu                       has difficulty buttons         
 PASS  menu                       difficulty button cycles       Difficulty: Normal -> Difficulty: Hard
 PASS  menu                       swipe scrolls from card, label or button 
@@ -16,28 +16,31 @@ PASS  menu                       play count is recorded
 PASS  menu                       info page for every game       
 PASS  menu                       settings page builds           
 PASS  menu                       back returns to the list       
-PASS  menu                       portrait layout = 1 column     
+PASS  menu                       portrait layout = 1 column     skipped without a window
 PASS  menu                       landscape layout = 2 columns   
+PASS  menu                       has a More games tab           
+PASS  menu                       More games tab shows those games 
+PASS  menu                       More games info pages build    
 PASS  menu                       no errors                      
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene
 PASS  sock_escape v1             uses the landscape game screen 
-PASS  sock_escape v1             title screen renders           
+PASS  sock_escape v1             title screen renders           not checked: running headless
 PASS  sock_escape v1             starts on the title            
 PASS  sock_escape v1             tap starts the game            state 1
 PASS  sock_escape v1             survives 20 s of play          
-PASS  sock_escape v1             screen still renders           
+PASS  sock_escape v1             screen still renders           not checked: running headless
 PASS  sock_escape v1             difficulty setting is used     
 PASS  sock_escape v1             has a way back to the menu     
 PASS  sock_escape v1             no errors                      0: 
 PASS  waveguide_snake v1         scene loads                    
 PASS  waveguide_snake v1         has its game code              script missing from scene
 PASS  waveguide_snake v1         uses the landscape game screen 
-PASS  waveguide_snake v1         title screen renders           
+PASS  waveguide_snake v1         title screen renders           not checked: running headless
 PASS  waveguide_snake v1         starts on the title            
 PASS  waveguide_snake v1         tap starts the game            state 1
 PASS  waveguide_snake v1         survives 20 s of play          
-PASS  waveguide_snake v1         screen still renders           
+PASS  waveguide_snake v1         screen still renders           not checked: running headless
 PASS  waveguide_snake v1         high score is saved            
 PASS  waveguide_snake v1         difficulty setting is used     
 PASS  waveguide_snake v1         has a way back to the menu     
@@ -45,11 +48,11 @@ PASS  waveguide_snake v1         no errors                      0:
 PASS  cleanroom_parkour v1       scene loads                    
 PASS  cleanroom_parkour v1       has its game code              script missing from scene
 PASS  cleanroom_parkour v1       uses the landscape game screen 
-PASS  cleanroom_parkour v1       title screen renders           
+PASS  cleanroom_parkour v1       title screen renders           not checked: running headless
 PASS  cleanroom_parkour v1       starts on the title            
 PASS  cleanroom_parkour v1       tap starts the game            state 1
 PASS  cleanroom_parkour v1       survives 20 s of play          
-PASS  cleanroom_parkour v1       screen still renders           
+PASS  cleanroom_parkour v1       screen still renders           not checked: running headless
 PASS  cleanroom_parkour v1       high score is saved            
 PASS  cleanroom_parkour v1       difficulty setting is used     
 PASS  cleanroom_parkour v1       has a way back to the menu     
@@ -57,11 +60,11 @@ PASS  cleanroom_parkour v1       no errors                      0:
 PASS  escape_the_cavity v2       scene loads                    
 PASS  escape_the_cavity v2       has its game code              script missing from scene
 PASS  escape_the_cavity v2       uses the landscape game screen 
-PASS  escape_the_cavity v2       title screen renders           
+PASS  escape_the_cavity v2       title screen renders           not checked: running headless
 PASS  escape_the_cavity v2       starts on the title            
 PASS  escape_the_cavity v2       tap starts the game            state 1
 PASS  escape_the_cavity v2       survives 20 s of play          
-PASS  escape_the_cavity v2       screen still renders           
+PASS  escape_the_cavity v2       screen still renders           not checked: running headless
 PASS  escape_the_cavity v2       high score is saved            
 PASS  escape_the_cavity v2       difficulty setting is used     
 PASS  escape_the_cavity v2       has a way back to the menu     
@@ -69,11 +72,11 @@ PASS  escape_the_cavity v2       no errors                      0:
 PASS  bend_it_like_einstein v2   scene loads                    
 PASS  bend_it_like_einstein v2   has its game code              script missing from scene
 PASS  bend_it_like_einstein v2   uses the landscape game screen 
-PASS  bend_it_like_einstein v2   title screen renders           
+PASS  bend_it_like_einstein v2   title screen renders           not checked: running headless
 PASS  bend_it_like_einstein v2   starts on the title            
 PASS  bend_it_like_einstein v2   tap starts the game            state 1
 PASS  bend_it_like_einstein v2   survives 20 s of play          
-PASS  bend_it_like_einstein v2   screen still renders           
+PASS  bend_it_like_einstein v2   screen still renders           not checked: running headless
 PASS  bend_it_like_einstein v2   high score is saved            
 PASS  bend_it_like_einstein v2   difficulty setting is used     
 PASS  bend_it_like_einstein v2   has a way back to the menu     
@@ -81,11 +84,11 @@ PASS  bend_it_like_einstein v2   no errors                      0:
 PASS  orbit_courier v1           scene loads                    
 PASS  orbit_courier v1           has its game code              script missing from scene
 PASS  orbit_courier v1           uses the landscape game screen 
-PASS  orbit_courier v1           title screen renders           
+PASS  orbit_courier v1           title screen renders           not checked: running headless
 PASS  orbit_courier v1           starts on the title            
 PASS  orbit_courier v1           tap starts the game            state 1
 PASS  orbit_courier v1           survives 20 s of play          
-PASS  orbit_courier v1           screen still renders           
+PASS  orbit_courier v1           screen still renders           not checked: running headless
 PASS  orbit_courier v1           high score is saved            
 PASS  orbit_courier v1           difficulty setting is used     
 PASS  orbit_courier v1           has a way back to the menu     
@@ -93,11 +96,11 @@ PASS  orbit_courier v1           no errors                      0:
 PASS  never_ask_for_directions v1 scene loads                    
 PASS  never_ask_for_directions v1 has its game code              script missing from scene
 PASS  never_ask_for_directions v1 uses the landscape game screen 
-PASS  never_ask_for_directions v1 title screen renders           
+PASS  never_ask_for_directions v1 title screen renders           not checked: running headless
 PASS  never_ask_for_directions v1 starts on the title            
 PASS  never_ask_for_directions v1 tap starts the game            state 1
 PASS  never_ask_for_directions v1 survives 20 s of play          
-PASS  never_ask_for_directions v1 screen still renders           
+PASS  never_ask_for_directions v1 screen still renders           not checked: running headless
 PASS  never_ask_for_directions v1 high score is saved            
 PASS  never_ask_for_directions v1 difficulty setting is used     
 PASS  never_ask_for_directions v1 has a way back to the menu     
@@ -105,11 +108,11 @@ PASS  never_ask_for_directions v1 no errors                      0:
 PASS  lighthouse_keeper v1       scene loads                    
 PASS  lighthouse_keeper v1       has its game code              script missing from scene
 PASS  lighthouse_keeper v1       uses the landscape game screen 
-PASS  lighthouse_keeper v1       title screen renders           
+PASS  lighthouse_keeper v1       title screen renders           not checked: running headless
 PASS  lighthouse_keeper v1       starts on the title            
 PASS  lighthouse_keeper v1       tap starts the game            state 1
 PASS  lighthouse_keeper v1       survives 20 s of play          
-PASS  lighthouse_keeper v1       screen still renders           
+PASS  lighthouse_keeper v1       screen still renders           not checked: running headless
 PASS  lighthouse_keeper v1       high score is saved            
 PASS  lighthouse_keeper v1       difficulty setting is used     
 PASS  lighthouse_keeper v1       has a way back to the menu     
@@ -117,11 +120,11 @@ PASS  lighthouse_keeper v1       no errors                      0:
 PASS  escape_velocity v1         scene loads                    
 PASS  escape_velocity v1         has its game code              script missing from scene
 PASS  escape_velocity v1         uses the landscape game screen 
-PASS  escape_velocity v1         title screen renders           
+PASS  escape_velocity v1         title screen renders           not checked: running headless
 PASS  escape_velocity v1         starts on the title            
 PASS  escape_velocity v1         tap starts the game            state 1
 PASS  escape_velocity v1         survives 20 s of play          
-PASS  escape_velocity v1         screen still renders           
+PASS  escape_velocity v1         screen still renders           not checked: running headless
 PASS  escape_velocity v1         high score is saved            
 PASS  escape_velocity v1         difficulty setting is used     
 PASS  escape_velocity v1         has a way back to the menu     
@@ -129,11 +132,11 @@ PASS  escape_velocity v1         no errors                      0:
 PASS  the_last_knight v2         scene loads                    
 PASS  the_last_knight v2         has its game code              script missing from scene
 PASS  the_last_knight v2         uses the landscape game screen 
-PASS  the_last_knight v2         title screen renders           
+PASS  the_last_knight v2         title screen renders           not checked: running headless
 PASS  the_last_knight v2         starts on the title            
 PASS  the_last_knight v2         tap starts the game            state 1
 PASS  the_last_knight v2         survives 20 s of play          
-PASS  the_last_knight v2         screen still renders           
+PASS  the_last_knight v2         screen still renders           not checked: running headless
 PASS  the_last_knight v2         high score is saved            
 PASS  the_last_knight v2         difficulty setting is used     
 PASS  the_last_knight v2         has a way back to the menu     
@@ -147,3 +150,11 @@ PASS  the_last_knight            playing a level saves progress
 PASS  the_last_knight            New game clears the save       
 PASS  the_last_knight            losing all lives = game over   state 6
 PASS  the_last_knight            flows: no errors               
+PASS  outpost_assault            license files included         
+PASS  outpost_assault            start screen loads with its code 
+PASS  outpost_assault            start screen renders           not checked: running headless
+PASS  outpost_assault            has a way back to the arcade   
+PASS  outpost_assault            map loads                      
+PASS  outpost_assault            enemies arrive and the game runs 
+PASS  outpost_assault            screen still renders           not checked: running headless
+PASS  outpost_assault            no errors                      0: 

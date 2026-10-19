@@ -17,7 +17,9 @@ PATH=~/Android/jdk17/bin:$PATH ~/Android/sdk/build-tools/35.0.1/apksigner verify
 $GODOT --headless --path . --export-debug "LinuxTest" ../builds/linux/LabArcade.x86_64 >/dev/null 2>&1
 OUT=${1:-/tmp/labarcade-tests}
 mkdir -p "$OUT"
-timeout 1200 ../builds/linux/LabArcade.x86_64 --fixed-fps 60 -- "$OUT" > "$OUT/log.txt" 2>&1 || true
+# Headless by default so no game windows pop up; VISUAL=1 also checks drawing.
+HEADLESS="--headless"; [ "${VISUAL:-0}" = "1" ] && HEADLESS=""
+timeout 1200 ../builds/linux/LabArcade.x86_64 $HEADLESS --fixed-fps 60 -- "$OUT" > "$OUT/log.txt" 2>&1 || true
 grep -E "^FAIL|^TESTS|SCRIPT ERROR" "$OUT/log.txt" || true
 if ! grep -q "^TESTS: .*, 0 failed" "$OUT/log.txt"; then
   echo "TESTS FAILED - see $OUT/report.txt"

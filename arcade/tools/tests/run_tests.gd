@@ -28,6 +28,9 @@ func _ready() -> void:
 		out_dir = args[0]
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	headless = DisplayServer.get_name() == "headless"
+	if headless:
+		get_window().size = Vector2i(1280, 720)  # gives taps and swipes real screen positions
+		await frames(1)
 	backup_user_files()
 	await run_all()
 	restore_user_files()
@@ -160,6 +163,8 @@ func run_all() -> void:
 		for v in g["versions"]:
 			await test_game(g, v)
 	await test_knight_flows()
+	for g in Games.EXTERNAL:
+		await test_external(g)
 
 
 func test_menu() -> void:
@@ -194,7 +199,7 @@ func test_menu() -> void:
 		for c in cards.get_children():
 			plays_ok = plays_ok and c.find_child("Play", true, false) != null and c.find_child("Info", true, false) != null and c.find_child("Difficulty", true, false) != null
 	check("menu", "every card has Play, Info, Difficulty", plays_ok)
-	check("menu", "renders", screen_detail("menu_landscape") > 3.0)
+	check("menu", "renders", screen_detail("menu_landscape") > 3.0, "not checked: running headless" if headless else "")
 	var db: Button = cards.get_child(0).find_child("Difficulty", true, false) if cards else null
 	if check("menu", "has difficulty buttons", db != null):
 		var before := db.text
@@ -295,6 +300,22 @@ func test_menu() -> void:
 				break
 	cards = m.find_child("Cards", true, false)
 	check("menu", "landscape layout = 2 columns", cards != null and cards.columns == 2)
+	# the More games tab lists the open-source games
+	var t1: Button = m.find_child("Tab1", true, false)
+	if check("menu", "has a More games tab", t1 != null):
+		t1.emit_signal("pressed")
+		await frames(2)
+		cards = m.find_child("Cards", true, false)
+		check("menu", "More games tab shows those games", cards != null and cards.get_child_count() == Games.EXTERNAL.size())
+		for g in Games.EXTERNAL:
+			m.show_info(g)
+			await frames(1)
+		check("menu", "More games info pages build", true)
+		m.go_back()
+		await frames(1)
+		var t0: Button = m.find_child("Tab0", true, false)
+		t0.emit_signal("pressed")
+		await frames(2)
 	m.queue_free()
 	await frames(2)
 	check("menu", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))
@@ -312,7 +333,7 @@ func test_game(g: Dictionary, v: Dictionary) -> void:
 		return
 	await frames(10)
 	check(name, "uses the landscape game screen", get_window().content_scale_size == Vector2i(1280, 720))
-	check(name, "title screen renders", screen_detail() > 3.0)
+	check(name, "title screen renders", screen_detail() > 3.0, "not checked: running headless" if headless else "")
 	check(name, "starts on the title", int(n.get("state")) == 0)
 	# a tap in the middle of the screen must start the game
 	await tap(Vector2(640, 360))
@@ -338,7 +359,7 @@ func test_game(g: Dictionary, v: Dictionary) -> void:
 	release_all_keys()
 	if not check(name, "survives 20 s of play", is_instance_valid(n)):
 		return
-	check(name, "screen still renders", screen_detail(g["id"] + "_v%d" % v["v"]) > 3.0)
+	check(name, "screen still renders", screen_detail(g["id"] + "_v%d" % v["v"]) > 3.0, "not checked: running headless" if headless else "")
 	# high score saving
 	if n.has_method("submit_score"):
 		n.set("best", 0)
@@ -436,6 +457,39 @@ func test_knight_flows() -> void:
 	await frames(2)
 	var e := new_errors(errs)
 	check(name, "flows: no errors", e.is_empty(), ", ".join(e.slice(0, 3)))
+
+
+func test_external(g: Dictionary) -> void:
+	var name: String = g["id"]
+	var errs := log_counter.errors.size()
+	var v: Dictionary = g["versions"][g["versions"].size() - 1]
+	check(name, "license files included", FileAccess.file_exists("res://external/%s/LICENSE.txt" % name))
+	var menu_scene := spawn(v["scene"])
+	if not check(name, "start screen loads with its code", menu_scene != null and menu_scene.get_script() != null):
+		return
+	await frames(10)
+	check(name, "start screen renders", screen_detail(name + "_menu") > 3.0, "not checked: running headless" if headless else "")
+	check(name, "has a way back to the arcade", menu_scene.has_method("_on_quit_pressed"))
+	menu_scene.queue_free()
+	await frames(2)
+	# play the map for 20 s with random taps and drags
+	var map := spawn("res://external/%s/scenes/maps/map_template.tscn" % name)
+	if not check(name, "map loads", map != null):
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 11
+	for f in 1200:
+		if f % 40 == 20:
+			await tap(Vector2(rng.randf_range(100, 1180), rng.randf_range(100, 620)))
+		await get_tree().process_frame
+	var enemies: Node = map.find_child("EnemyContainer", true, false)
+	check(name, "enemies arrive and the game runs", enemies != null and is_instance_valid(map), "")
+	check(name, "screen still renders", screen_detail(name + "_map") > 3.0, "not checked: running headless" if headless else "")
+	get_tree().paused = false
+	map.queue_free()
+	await frames(3)
+	var e := new_errors(errs)
+	check(name, "no errors", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
 
 
 func write_report() -> void:

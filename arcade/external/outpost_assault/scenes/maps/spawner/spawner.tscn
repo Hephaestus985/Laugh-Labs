@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bdyht7kyjay3y"]
+
+[ext_resource type="Script" uid="uid://c2myjva3lqphu" path="res://external/outpost_assault/scenes/maps/spawner/spawner.gd" id="1_hhcuf"]
+[ext_resource type="Script" uid="uid://n7jeq6pwl5rq" path="res://external/outpost_assault/scenes/maps/spawner/marker2d.gd" id="2_m2sbv"]
+
+[node name="Spawner" type="Node2D" unique_id=1900732282]
+z_index = 10
+script = ExtResource("1_hhcuf")
+spawn_rate = 3.0
+enemy_count = 40
+
+[node name="SpawnsContainer" type="Node2D" parent="." unique_id=609381695]
+
+[node name="SpawnLocation1" type="Marker2D" parent="SpawnsContainer" unique_id=1810962555]
+script = ExtResource("2_m2sbv")
+
+[node name="SpawnLocation2" type="Marker2D" parent="SpawnsContainer" unique_id=799928614]
+script = ExtResource("2_m2sbv")
+
+[node name="SpawnLocation3" type="Marker2D" parent="SpawnsContainer" unique_id=1404358496]
+script = ExtResource("2_m2sbv")
+spawn_type = 1
+
+[node name="EnemyContainer" type="Node2D" parent="." unique_id=455435181]
+
+[node name="ProjectileContainer" type="Node" parent="." unique_id=1044286703]
+
+[node name="WaveTimer" type="Timer" parent="." unique_id=1054697635]
+one_shot = true
+
+[connection signal="timeout" from="WaveTimer" to="." method="_start_wave"]

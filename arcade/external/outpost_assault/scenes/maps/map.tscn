@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://covoab3tdrgeg"]
+
+[ext_resource type="Script" uid="uid://bw5x56vcj7qcw" path="res://external/outpost_assault/scenes/maps/map.gd" id="1_nrbg7"]
+[ext_resource type="TileSet" uid="uid://qkm7w8f0dolu" path="res://external/outpost_assault/scenes/maps/assets/tilesets/field.tres" id="2_h2epk"]
+[ext_resource type="PackedScene" uid="uid://bpnhw7y2qno58" path="res://external/outpost_assault/scenes/maps/camera2D/camera2D.tscn" id="3_0rhbr"]
+[ext_resource type="PackedScene" uid="uid://b8g10g5id7xy5" path="res://external/outpost_assault/scenes/maps/objective/objective.tscn" id="4_4ad64"]
+[ext_resource type="PackedScene" uid="uid://bdyht7kyjay3y" path="res://external/outpost_assault/scenes/maps/spawner/spawner.tscn" id="5_n3p8r"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_2mvwc"]
+resource_local_to_scene = true
+vertices = PackedVector2Array(256, -512, 6272, -512, 6272, 3328, 256, 3328)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(256, -512, 6272, -512, 6272, 3328, 256, 3328)])
+
+[node name="Map" type="Node2D" unique_id=594330365]
+script = ExtResource("1_nrbg7")
+
+[node name="TileMap" type="TileMap" parent="." unique_id=96164237]
+tile_set = ExtResource("2_h2epk")
+format = 2
+layer_0/name = "Ground"
+layer_1/name = "Ground Objects"
+
+[node name="AircraftNavRegion" type="NavigationRegion2D" parent="." unique_id=1505495221]
+visible = false
+navigation_polygon = SubResource("NavigationPolygon_2mvwc")
+navigation_layers = 2
+
+[node name="Camera2D" parent="." unique_id=758200298 instance=ExtResource("3_0rhbr")]
+
+[node name="Objective" parent="." unique_id=324316313 instance=ExtResource("4_4ad64")]
+
+[node name="Spawner" parent="." unique_id=1811623314 instance=ExtResource("5_n3p8r")]
+
+[editable path="Spawner"]
