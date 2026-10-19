@@ -77,4 +77,14 @@ const LIST := [
 		],
 		"web": ["v1 (2026-10-18): original"],
 	},
+	{
+		"id": "lighthouse_keeper",
+		"name": "Lighthouse Keeper",
+		"tagline": "Swing a very expensive laser so ships see the rocks. Mind the serpent.",
+		"color": Color(0.70, 0.52, 0.18),
+		"versions": [
+			{"v": 1, "date": "2026-10-19", "scene": "res://games/lighthouse_keeper/v1/game.tscn", "notes": "Godot remake of the Laugh Lab game: fog, storm, smugglers and the serpent."},
+		],
+		"web": ["v1 (2026-10-18): original"],
+	},
 ]
