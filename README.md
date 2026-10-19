@@ -36,7 +36,7 @@ They live in `arcade/external/<game>/` with their licenses and a `SECURITY_REVIE
 Every game must be fully playable with touch only: no keyboard, no mouse wheel, no hover, no right-click. Lab games use the on-screen stick and buttons from `arcade/common/arcade_game.gd`; games by others get on-screen buttons and touch fixes (marked `[Lab Arcade]`). The tests check this by playing with simulated phone touches on a scaled, phone-sized screen.
 
 ## Tests
-`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (320 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
+`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (385 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
 
 Run them without a window or sound (`menu` or `external` for a quick run, `VISUAL=1` to also check drawing in an off-screen window):
 ```bash

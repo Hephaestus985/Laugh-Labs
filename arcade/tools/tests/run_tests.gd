@@ -731,6 +731,79 @@ func win_minesweeper(n: PuzzleGame) -> void:
 				return
 
 
+func play_solitaire(n: PuzzleGame, name: String) -> void:
+	var before: int = n.get("waste").size()
+	await tap(n.call("stock_rect").get_center())
+	await frames(2)
+	check(name, "tap the deck draws a card (phone)", n.get("waste").size() == before + 1)
+	# drag: find a pile top that fits on another pile, or at least drag one and see it come back
+	var moved := false
+	for p in 7:
+		var pile: Array = n.get("piles")[p]
+		var c: int = pile.back()
+		for q in 7:
+			if q != p and n.call("fits_pile", c, q):
+				var from: Vector2 = n.call("card_pos", p, pile.size() - 1) + Vector2(50, 40)
+				var to: Vector2 = n.call("card_pos", q, n.get("piles")[q].size() - 1) + Vector2(50, 90)
+				await touch_swipe(from, to - from)
+				moved = n.get("piles")[q].has(c)
+				break
+		if moved:
+			break
+	if moved:
+		check(name, "dragging a card onto a pile moves it (phone)", true)
+
+
+func win_solitaire(n: PuzzleGame) -> void:
+	var found := [range(0, 13), range(13, 26), range(26, 39), range(39, 51)]
+	n.set("found", found)
+	n.set("piles", [[51], [], [], [], [], [], []])
+	n.set("stock", [])
+	n.set("waste", [])
+	n.call("auto_move", "p0", 0)
+
+
+func play_nonogram(n: PuzzleGame, name: String) -> void:
+	var o: Vector2 = n.get("origin")
+	var c: float = n.get("cell")
+	await tap(o + Vector2(0.5, 0.5) * c)
+	await frames(2)
+	check(name, "tap fills a cell (phone)", n.get("cells")[0] == 1)
+	# drag along the second row paints it
+	await touch_swipe(o + Vector2(0.5, 1.5) * c, Vector2(c * 3, 0))
+	await frames(2)
+	var nn: int = n.get("n")
+	check(name, "drag paints a row (phone)", n.get("cells")[nn] == 1 and n.get("cells")[nn + 3] == 1)
+
+
+func win_nonogram(n: PuzzleGame) -> void:
+	var tgt: Array = n.get("target")
+	var cells: Array = tgt.map(func(v): return 1 if v else 0)
+	var last := tgt.rfind(true)
+	cells[last] = 0
+	n.set("cells", cells)
+	n.call("_hint")
+
+
+func play_lights_out(n: PuzzleGame, name: String) -> void:
+	var o: Vector2 = n.get("origin")
+	var c: float = n.get("cell")
+	var before: Array = n.get("lit").duplicate()
+	await tap(o + Vector2(1.5, 1.5) * c)
+	await frames(2)
+	var nn: int = n.get("n")
+	var i := nn + 1
+	var after: Array = n.get("lit")
+	check(name, "tap flips a light and its neighbours (phone)", after[i] != before[i] and after[i - 1] != before[i - 1] and after[i + nn] != before[i + nn] and after[i + 1] != before[i + 1] and after[i - nn] != before[i - nn])
+
+
+func win_lights_out(n: PuzzleGame) -> void:
+	var need: Array = n.get("need")
+	for i in need.size():
+		if need[i] and n.state == 1:
+			n.call("tap_cell", i)
+
+
 func test_knight_flows() -> void:
 	var name := "the_last_knight"
 	var scene := "res://games/the_last_knight/v2/game.tscn"

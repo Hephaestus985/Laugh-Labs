@@ -1,9 +1,9 @@
-Lab Arcade test report  2026-10-19T23:13:19
-320 checks, 0 failed
+Lab Arcade test report  2026-10-19T23:16:35
+385 checks, 0 failed
 
-PASS  menu                       games.gd is complete           13 games
+PASS  menu                       games.gd is complete           16 games
 PASS  menu                       opens on the Library without picks 
-PASS  menu                       Library has a card per game    18 cards
+PASS  menu                       Library has a card per game    21 cards
 PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
 PASS  menu                       has difficulty buttons         
@@ -21,12 +21,12 @@ PASS  menu                       search matches descriptions
 PASS  menu                       search with no match shows no cards 
 PASS  menu                       Library has a publisher drop-down 7 choices
 PASS  menu                       Library has a length drop-down 5 choices
-PASS  menu                       Library has a genre drop-down  9 choices
+PASS  menu                       Library has a genre drop-down  10 choices
 PASS  menu                       More games (by others) filter  
 PASS  menu                       Lab Arcade publisher filter    
 PASS  menu                       publisher filter (Kenney)      
 PASS  menu                       genre filter (RPG)             
-PASS  menu                       length filters split the games 18 of 18
+PASS  menu                       length filters split the games 21 of 21
 PASS  menu                       choosing a genre in the drop-down filters 
 PASS  menu                       filters are kept after playing a game genre 'Racing'
 PASS  menu                       all sort orders work           
@@ -221,6 +221,71 @@ PASS  minesweeper v1             new Normal round starts
 PASS  minesweeper v1             solving it wins and saves the best score state 2 won true best 2440
 PASS  minesweeper v1             new Hard round starts          
 PASS  minesweeper v1             no errors while solving        0: 
+PASS  solitaire v1               scene loads                    
+PASS  solitaire v1               has its game code              script missing from scene
+PASS  solitaire v1               uses the landscape game screen 
+PASS  solitaire v1               title screen renders           not checked: running headless
+PASS  solitaire v1               starts on the title            
+PASS  solitaire v1               tap starts the game            state 1
+PASS  solitaire v1               survives 20 s of play          
+PASS  solitaire v1               screen still renders           not checked: running headless
+PASS  solitaire v1               high score is saved            
+PASS  solitaire v1               difficulty setting is used     
+PASS  solitaire v1               has a way back to the menu     
+PASS  solitaire v1               no errors                      0: 
+PASS  solitaire v1               tap starts a round             
+PASS  solitaire v1               tap the deck draws a card (phone) 
+PASS  solitaire v1               dragging a card onto a pile moves it (phone) 
+PASS  solitaire v1               touch play changes the board (phone) 
+PASS  solitaire v1               Continue restores the board    
+PASS  solitaire v1               new Easy round starts          
+PASS  solitaire v1               new Normal round starts        
+PASS  solitaire v1               solving it wins and saves the best score state 2 won true best 2518
+PASS  solitaire v1               new Hard round starts          
+PASS  solitaire v1               no errors while solving        0: 
+PASS  nonogram v1                scene loads                    
+PASS  nonogram v1                has its game code              script missing from scene
+PASS  nonogram v1                uses the landscape game screen 
+PASS  nonogram v1                title screen renders           not checked: running headless
+PASS  nonogram v1                starts on the title            
+PASS  nonogram v1                tap starts the game            state 1
+PASS  nonogram v1                survives 20 s of play          
+PASS  nonogram v1                screen still renders           not checked: running headless
+PASS  nonogram v1                high score is saved            
+PASS  nonogram v1                difficulty setting is used     
+PASS  nonogram v1                has a way back to the menu     
+PASS  nonogram v1                no errors                      0: 
+PASS  nonogram v1                tap starts a round             
+PASS  nonogram v1                tap fills a cell (phone)       
+PASS  nonogram v1                drag paints a row (phone)      
+PASS  nonogram v1                touch play changes the board (phone) 
+PASS  nonogram v1                Continue restores the board    
+PASS  nonogram v1                new Easy round starts          
+PASS  nonogram v1                new Normal round starts        
+PASS  nonogram v1                solving it wins and saves the best score state 2 won true best 1820
+PASS  nonogram v1                new Hard round starts          
+PASS  nonogram v1                no errors while solving        0: 
+PASS  lights_out v1              scene loads                    
+PASS  lights_out v1              has its game code              script missing from scene
+PASS  lights_out v1              uses the landscape game screen 
+PASS  lights_out v1              title screen renders           not checked: running headless
+PASS  lights_out v1              starts on the title            
+PASS  lights_out v1              tap starts the game            state 1
+PASS  lights_out v1              survives 20 s of play          
+PASS  lights_out v1              screen still renders           not checked: running headless
+PASS  lights_out v1              high score is saved            
+PASS  lights_out v1              difficulty setting is used     
+PASS  lights_out v1              has a way back to the menu     
+PASS  lights_out v1              no errors                      0: 
+PASS  lights_out v1              tap starts a round             
+PASS  lights_out v1              tap flips a light and its neighbours (phone) 
+PASS  lights_out v1              touch play changes the board (phone) 
+PASS  lights_out v1              Continue restores the board    
+PASS  lights_out v1              new Easy round starts          
+PASS  lights_out v1              new Normal round starts        
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1440
+PASS  lights_out v1              new Hard round starts          
+PASS  lights_out v1              no errors while solving        0: 
 PASS  the_last_knight            all 5 levels load              
 PASS  the_last_knight            boss fight starts              
 PASS  the_last_knight            boss has 3 phases              [1, 2, 3]
