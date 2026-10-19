@@ -1,16 +1,16 @@
-Lab Arcade test report  2026-10-19T21:46:13
-256 checks, 0 failed
+Lab Arcade test report  2026-10-19T23:13:19
+320 checks, 0 failed
 
-PASS  menu                       games.gd is complete           10 games
+PASS  menu                       games.gd is complete           13 games
 PASS  menu                       opens on the Library without picks 
-PASS  menu                       Library has a card per game    15 cards
+PASS  menu                       Library has a card per game    18 cards
 PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
 PASS  menu                       has difficulty buttons         
 PASS  menu                       difficulty button cycles       Difficulty: Normal -> Difficulty: Hard
 PASS  menu                       tap on Play opens that card's game 
 PASS  menu                       swipe scrolls from card, label or button 
-PASS  menu                       tap on Info opens that card's page page bend_it_like_einstein
+PASS  menu                       tap on Info opens that card's page page platformer_3d
 PASS  menu                       info page scrolls by swipe     
 PASS  menu                       Home is empty until you pick games 
 PASS  menu                       Home shows your picks          
@@ -26,7 +26,7 @@ PASS  menu                       More games (by others) filter
 PASS  menu                       Lab Arcade publisher filter    
 PASS  menu                       publisher filter (Kenney)      
 PASS  menu                       genre filter (RPG)             
-PASS  menu                       length filters split the games 15 of 15
+PASS  menu                       length filters split the games 18 of 18
 PASS  menu                       choosing a genre in the drop-down filters 
 PASS  menu                       filters are kept after playing a game genre 'Racing'
 PASS  menu                       all sort orders work           
@@ -157,6 +157,70 @@ PASS  the_last_knight v2         high score is saved
 PASS  the_last_knight v2         difficulty setting is used     
 PASS  the_last_knight v2         has a way back to the menu     
 PASS  the_last_knight v2         no errors                      0: 
+PASS  game_2048 v1               scene loads                    
+PASS  game_2048 v1               has its game code              script missing from scene
+PASS  game_2048 v1               uses the landscape game screen 
+PASS  game_2048 v1               title screen renders           not checked: running headless
+PASS  game_2048 v1               starts on the title            
+PASS  game_2048 v1               tap starts the game            state 1
+PASS  game_2048 v1               survives 20 s of play          
+PASS  game_2048 v1               screen still renders           not checked: running headless
+PASS  game_2048 v1               high score is saved            
+PASS  game_2048 v1               difficulty setting is used     
+PASS  game_2048 v1               has a way back to the menu     
+PASS  game_2048 v1               no errors                      0: 
+PASS  game_2048 v1               tap starts a round             
+PASS  game_2048 v1               touch play changes the board (phone) 
+PASS  game_2048 v1               Continue restores the board    
+PASS  game_2048 v1               new Easy round starts          
+PASS  game_2048 v1               new Normal round starts        
+PASS  game_2048 v1               solving it wins and saves the best score state 2 won true best 2048
+PASS  game_2048 v1               new Hard round starts          
+PASS  game_2048 v1               no errors while solving        0: 
+PASS  sudoku v1                  scene loads                    
+PASS  sudoku v1                  has its game code              script missing from scene
+PASS  sudoku v1                  uses the landscape game screen 
+PASS  sudoku v1                  title screen renders           not checked: running headless
+PASS  sudoku v1                  starts on the title            
+PASS  sudoku v1                  tap starts the game            state 1
+PASS  sudoku v1                  survives 20 s of play          
+PASS  sudoku v1                  screen still renders           not checked: running headless
+PASS  sudoku v1                  high score is saved            
+PASS  sudoku v1                  difficulty setting is used     
+PASS  sudoku v1                  has a way back to the menu     
+PASS  sudoku v1                  no errors                      0: 
+PASS  sudoku v1                  tap starts a round             
+PASS  sudoku v1                  tap a cell, then a number, fills it (phone) 
+PASS  sudoku v1                  the puzzle has exactly one solution 
+PASS  sudoku v1                  touch play changes the board (phone) 
+PASS  sudoku v1                  Continue restores the board    
+PASS  sudoku v1                  new Easy round starts          
+PASS  sudoku v1                  new Normal round starts        
+PASS  sudoku v1                  solving it wins and saves the best score state 2 won true best 3000
+PASS  sudoku v1                  new Hard round starts          
+PASS  sudoku v1                  no errors while solving        0: 
+PASS  minesweeper v1             scene loads                    
+PASS  minesweeper v1             has its game code              script missing from scene
+PASS  minesweeper v1             uses the landscape game screen 
+PASS  minesweeper v1             title screen renders           not checked: running headless
+PASS  minesweeper v1             starts on the title            
+PASS  minesweeper v1             tap starts the game            state 1
+PASS  minesweeper v1             survives 20 s of play          
+PASS  minesweeper v1             screen still renders           not checked: running headless
+PASS  minesweeper v1             high score is saved            
+PASS  minesweeper v1             difficulty setting is used     
+PASS  minesweeper v1             has a way back to the menu     
+PASS  minesweeper v1             no errors                      0: 
+PASS  minesweeper v1             tap starts a round             
+PASS  minesweeper v1             first tap opens safe cells (phone) 
+PASS  minesweeper v1             long-press places a flag (phone) 
+PASS  minesweeper v1             touch play changes the board (phone) 
+PASS  minesweeper v1             Continue restores the board    
+PASS  minesweeper v1             new Easy round starts          
+PASS  minesweeper v1             new Normal round starts        
+PASS  minesweeper v1             solving it wins and saves the best score state 2 won true best 2440
+PASS  minesweeper v1             new Hard round starts          
+PASS  minesweeper v1             no errors while solving        0: 
 PASS  the_last_knight            all 5 levels load              
 PASS  the_last_knight            boss fight starts              
 PASS  the_last_knight            boss has 3 phases              [1, 2, 3]

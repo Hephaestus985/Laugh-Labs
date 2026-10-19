@@ -222,6 +222,18 @@ func spawn(scene_path: String) -> Node:
 # ---------------------------------------------------------------- the tests
 
 func run_all() -> void:
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("only="):  # quick run of some games: only=sudoku,minesweeper
+			var ids: PackedStringArray = arg.substr(5).split(",")
+			for g in Games.LIST + Games.EXTERNAL:
+				if g["id"] in ids:
+					if Games.EXTERNAL.has(g):
+						await test_external(g)
+					else:
+						for v in g["versions"]:
+							await test_game(g, v)
+							await puzzle_checks(g, v)
+			return
 	if "external" in OS.get_cmdline_user_args():
 		for g in Games.EXTERNAL:
 			await test_external(g)
@@ -232,6 +244,7 @@ func run_all() -> void:
 	for g in Games.LIST:
 		for v in g["versions"]:
 			await test_game(g, v)
+			await puzzle_checks(g, v)
 	await test_knight_flows()
 	for g in Games.EXTERNAL:
 		await test_external(g)
@@ -564,6 +577,158 @@ func test_game(g: Dictionary, v: Dictionary) -> void:
 	await frames(2)
 	var e := new_errors(errs)
 	check(name, "no errors", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
+
+
+## The calm board games (PuzzleGame): touch play, save and Continue, winning.
+func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
+	var probe: Node = load(v["scene"]).instantiate()
+	var is_puzzle := probe is PuzzleGame
+	probe.free()
+	if not is_puzzle:
+		return
+	var name := "%s v%d" % [g["id"], v["v"]]
+	var errs := log_counter.errors.size()
+	ArcadeGame.set_difficulty(g["id"], 1)
+	var n: PuzzleGame = spawn(v["scene"])
+	await frames(3)
+	n.clear_save()
+	await tap(Vector2(640, 360))
+	await frames(4)
+	if not check(name, "tap starts a round", n.state == 1):
+		n.queue_free()
+		return
+	var before := JSON.stringify(n.to_save())
+	await call("play_" + g["id"], n, name)
+	await frames(3)
+	var after := JSON.stringify(n.to_save())
+	if n.state == 1:
+		check(name, "touch play changes the board (phone)", before != after)
+		# leave and come back: Continue restores the same board
+		n.save_game()
+		n.queue_free()
+		await frames(2)
+		Engine.set_meta("launch_mode", "continue")
+		var n2: PuzzleGame = spawn(v["scene"])
+		await frames(3)
+		check(name, "Continue restores the board", n2.state == 1 and JSON.stringify(n2.to_save()) == after)
+		n2.queue_free()
+		await frames(2)
+	else:
+		n.queue_free()
+		await frames(2)
+	DirAccess.remove_absolute("user://best_%s.dat" % g["id"])
+	# a fresh round on every difficulty
+	for d in 3:
+		ArcadeGame.set_difficulty(g["id"], d)
+		Engine.set_meta("launch_mode", "new")
+		var nd: PuzzleGame = spawn(v["scene"])
+		await frames(2)
+		check(name, "new %s round starts" % ArcadeGame.DIFF_NAMES[d], nd.state == 1 and nd.diff == d)
+		if d == 1:
+			await call("win_" + g["id"], nd)
+			await frames(2)
+			check(name, "solving it wins and saves the best score", nd.state == 2 and nd.won and nd.best > 0 and nd.best == nd.score and not FileAccess.file_exists(nd.save_path()), "state %d won %s best %d" % [nd.state, nd.won, nd.best])
+		nd.queue_free()
+		await frames(2)
+	ArcadeGame.set_difficulty(g["id"], 1)
+	DirAccess.remove_absolute("user://best_%s.dat" % g["id"])
+	DirAccess.remove_absolute("user://%s_save.json" % g["id"])
+	var e := new_errors(errs)
+	check(name, "no errors while solving", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
+
+
+# ---- per-game touch play and a way to win (used by puzzle_checks)
+
+func play_game_2048(n: PuzzleGame, _name: String) -> void:
+	for d in [Vector2(-300, 0), Vector2(0, 300), Vector2(300, 0), Vector2(0, -300)]:
+		await touch_swipe(Vector2(540, 380), d)
+
+
+func win_game_2048(n: PuzzleGame) -> void:
+	var c: Array = n.get("cells")
+	c.fill(0)
+	c[0] = 1024
+	c[1] = 1024
+	n.set("cells", c)
+	n.call("move", Vector2i.LEFT)  # makes 2048; the round goes on
+	await frames(1)
+	# fill the board so no move is left, which ends the round with the 2048 reached
+	var k := 0
+	for i in c.size():
+		c[i] = 2 << (k % 10) if i != 0 else 2048
+		k += 3 if (i % n.get("n")) == 0 else 1
+	var vals := [2, 4, 8, 16, 32, 64, 128, 256, 512]
+	for i in c.size():
+		var x: int = i % int(n.get("n"))
+		var y: int = i / int(n.get("n"))
+		c[i] = vals[(x + 2 * y) % vals.size()] if i != 0 else 2048
+	c[c.size() - 1] = 0
+	n.set("cells", c)
+	n.call("move", Vector2i.RIGHT)
+
+
+func play_sudoku(n: PuzzleGame, name: String) -> void:
+	var grid: Array = n.get("grid")
+	var empty := grid.find(0)
+	var cell_pos: Vector2 = n.ORIGIN + Vector2(empty % 9 + 0.5, empty / 9 + 0.5) * n.CELL
+	await tap(cell_pos)
+	await frames(2)
+	var want: int = n.get("solution")[empty]
+	var pad: Vector2 = n.PAD_O + Vector2((want - 1) % 3 + 0.45, (want - 1) / 3 + 0.45) * n.PAD_C
+	await tap(pad)
+	await frames(2)
+	check(name, "tap a cell, then a number, fills it (phone)", n.get("grid")[empty] == want)
+	var copy: Array = n.get("solution").duplicate()
+	var given: Array = n.get("given")
+	var puzzle := []
+	for i in 81:
+		puzzle.append(copy[i] if given[i] else 0)
+	check(name, "the puzzle has exactly one solution", n._solve(puzzle, 2, false) == 1)
+
+
+func win_sudoku(n: PuzzleGame) -> void:
+	var sol: Array = n.get("solution")
+	var g: Array = sol.duplicate()
+	var last := 0
+	for i in 81:
+		if not n.get("given")[i]:
+			last = i
+	g[last] = 0
+	n.set("grid", g)
+	n.set("sel", last)
+	n.call("put", sol[last])
+
+
+func play_minesweeper(n: PuzzleGame, name: String) -> void:
+	var o: Vector2 = n.get("origin")
+	var c: float = n.get("cell")
+	await tap(o + Vector2(3.5, 3.5) * c)
+	await frames(2)
+	check(name, "first tap opens safe cells (phone)", n.get("open").count(true) > 1 and n.state == 1)
+	# long-press a closed cell to flag it
+	var closed: int = n.get("open").find(false)
+	var p: Vector2 = o + Vector2(closed % int(n.get("cols")) + 0.5, closed / int(n.get("cols")) + 0.5) * c
+	var e := InputEventScreenTouch.new()
+	e.position = to_window(p)
+	e.pressed = true
+	Input.parse_input_event(e)
+	await frames(45)
+	var r := InputEventScreenTouch.new()
+	r.position = e.position
+	Input.parse_input_event(r)
+	await frames(3)
+	check(name, "long-press places a flag (phone)", n.get("flag")[closed])
+
+
+func win_minesweeper(n: PuzzleGame) -> void:
+	n.call("reveal", 0)  # places the mines
+	var mine: Array = n.get("mine")
+	var open: Array = n.get("open")
+	for i in mine.size():
+		if not mine[i] and not open[i]:
+			n.call("reveal", i)
+			if n.state != 1:
+				return
 
 
 func test_knight_flows() -> void:

@@ -195,6 +195,8 @@ func save_info(g: Dictionary) -> String:
 	var o = JSON.parse_string(FileAccess.get_file_as_string(g["save_file"]))
 	if typeof(o) != TYPE_DICTIONARY:
 		return "saved"
+	if o.has("info"):
+		return str(o["info"])
 	if o.get("boss", false):
 		return "at the boss"
 	return "level %d" % int(o.get("lv", 1))

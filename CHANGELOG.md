@@ -2,6 +2,11 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.14 (2026-10-19)
+- New games: **2048**, **Sudoku** (generated puzzles with exactly one solution, notes, hints) and **Minesweeper** (tap to open, long-press to flag, safe first tap). All have Easy / Normal / Hard, save after every move with Continue / New game, and finger-sized buttons
+- Shared base for calm board games (`arcade/common/puzzle_game.gd`); tests play each one by touch, check Continue, and solve a round
+- `tools/test.sh only=<id>,<id>` tests just those games
+
 ## Lab Arcade 1.13 (2026-10-19)
 - The Library keeps your search and filters after you play a game (and the next time you open the app)
 
