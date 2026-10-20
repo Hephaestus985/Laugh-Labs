@@ -2,6 +2,11 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.18 (2026-10-20)
+- All 12 board and puzzle games now turn with the phone: a portrait layout with the buttons along the bottom (Minesweeper and Sokoban turn their board on its side to fill the tall screen)
+- Animations everywhere: 2048 tiles slide, merge with a pop and new tiles grow in; Sudoku numbers pop and finished rows / columns / boxes glow; Minesweeper cells open in a ripple and mines go off with a blast; Solitaire cards fly to their place and turn over; Nonogram cells pop and solved lines glow; Lights Out lights fade with a ripple; Sliding Puzzle tiles slide; Mahjong pairs lift away and shuffles wobble; Sokoban's worker and crates walk smoothly; Flow pipes pulse when connected; Block Stacker rows flash and drops leave a trail; Connect Four discs fall into place; the end screen fades in
+- Tests now also play every one of the 12 games on a tall (portrait) screen
+
 ## Lab Arcade 1.17 (2026-10-19)
 - New games: **Flow** (generated pipe puzzles that can always be filled), **Block Stacker** (falling blocks; drag to slide, tap to turn, swipe down to drop; clear 20 / 40 / 60 rows to win) and **Connect Four** (against the computer, looking 1, 4 or 6 moves ahead)
 - That completes the 12 simple games: 2048, Sudoku, Minesweeper, Solitaire, Nonogram, Lights Out, Sliding Puzzle, Mahjong Solitaire, Sokoban, Flow, Block Stacker and Connect Four

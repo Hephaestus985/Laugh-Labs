@@ -5,11 +5,14 @@ extends PuzzleGame
 # writes small pencil marks.
 
 const N := 9
-const CELL := 64.0
-const ORIGIN := Vector2(70, 72)
 const GIVENS := [44, 34, 27]
-const PAD_O := Vector2(690, 160)
-const PAD_C := 96.0
+
+var CELL := 64.0
+var ORIGIN := Vector2(70, 72)
+var PAD_O := Vector2(690, 160)
+var PAD_C := 96.0
+var last_put := -1
+var flash_cells: Array = []  # a row, column or box that was just completed
 
 var solution: Array = []  # 81 ints
 var given: Array = []  # 81 bools
@@ -154,6 +157,28 @@ func play_buttons() -> Array:
 	]
 
 
+# ---------------------------------------------------------------- layout
+
+func layout() -> void:
+	if portrait:
+		CELL = floorf(minf(board_rect.size.x / 9.0, (board_rect.size.y - 20) / 10.2))
+		ORIGIN = Vector2(board_rect.position.x + (board_rect.size.x - 9 * CELL) / 2.0, board_rect.position.y)
+		PAD_C = CELL
+		PAD_O = ORIGIN + Vector2(0, 9 * CELL + 16)
+	else:
+		CELL = 64.0
+		ORIGIN = Vector2(70, 72)
+		PAD_C = 96.0
+		PAD_O = Vector2(690, 160)
+
+
+## The number pad: 3x3 beside the board, or one row of 9 under it in portrait.
+func pad_rect(d: int) -> Rect2:
+	if portrait:
+		return Rect2(PAD_O + Vector2((d - 1) * PAD_C, 0), Vector2(PAD_C - 6, PAD_C - 6))
+	return Rect2(PAD_O + Vector2(((d - 1) % 3) * PAD_C, ((d - 1) / 3) * PAD_C), Vector2(PAD_C - 8, PAD_C - 8))
+
+
 # ---------------------------------------------------------------- playing
 
 func _push_undo() -> void:
@@ -185,6 +210,9 @@ func put(d: int) -> void:
 		notes[sel] = 0
 		if grid[sel] != 0:
 			_clear_notes_around(sel, d)
+			last_put = sel
+			start_anim("put", 0.25)
+			_flash_done_units(sel)
 		moves += 1
 	_check_done()
 
@@ -193,6 +221,21 @@ func _clear_notes_around(i: int, d: int) -> void:
 	for j in 81:
 		if _row(j) == _row(i) or _col(j) == _col(i) or _box(j) == _box(i):
 			notes[j] &= ~(1 << d)
+
+
+## Light up a row, column or box that this number just completed (correctly).
+func _flash_done_units(i: int) -> void:
+	flash_cells = []
+	for unit in [range(81).filter(func(j): return _row(j) == _row(i)), range(81).filter(func(j): return _col(j) == _col(i)), range(81).filter(func(j): return _box(j) == _box(i))]:
+		var ok := true
+		for j in unit:
+			if grid[j] == 0 or _clashes(j):
+				ok = false
+				break
+		if ok:
+			flash_cells.append_array(unit)
+	if not flash_cells.is_empty():
+		start_anim("flash", 0.7)
 
 
 func _erase() -> void:
@@ -219,6 +262,9 @@ func _hint() -> void:
 	notes[target] = 0
 	_clear_notes_around(target, solution[target])
 	sel = target
+	last_put = target
+	start_anim("put", 0.25)
+	_flash_done_units(target)
 	hints += 1
 	toast("Hint: a %d goes here" % solution[target])
 	_check_done()
@@ -247,9 +293,10 @@ func game_tap(p: Vector2) -> void:
 	if rel.x >= 0 and rel.y >= 0 and rel.x < 9 and rel.y < 9:
 		sel = int(rel.y) * N + int(rel.x)
 		return
-	var pr := (p - PAD_O) / PAD_C
-	if pr.x >= 0 and pr.y >= 0 and pr.x < 3 and pr.y < 3:
-		put(int(pr.y) * 3 + int(pr.x) + 1)
+	for d in range(1, 10):
+		if pad_rect(d).grow(4).has_point(p):
+			put(d)
+			return
 
 
 func game_key(k: int) -> void:
@@ -291,6 +338,8 @@ func draw_game() -> void:
 			bg = Color(0.75, 0.82, 0.98)
 		if i == sel:
 			bg = Color(1.0, 0.85, 0.5)
+		if flash_cells.has(i) and animating("flash"):
+			bg = bg.lerp(Color(0.55, 0.95, 0.6), 1.0 - anim("flash"))
 		draw_rect(r, bg)
 		draw_rect(r, Color(0.6, 0.6, 0.7), false, 1.0)
 		var v: int = grid[i]
@@ -298,21 +347,23 @@ func draw_game() -> void:
 			var col := Color(0.12, 0.12, 0.2) if given[i] else Color(0.15, 0.35, 0.85)
 			if _clashes(i):
 				col = Color(0.85, 0.15, 0.2)
-			draw_string(font, Vector2(r.position.x, r.position.y + 46), str(v), HORIZONTAL_ALIGNMENT_CENTER, CELL, 40, col)
+			var fs := int(CELL * 0.62 * (pop(anim("put")) if i == last_put and animating("put") else 1.0))
+			draw_string(font, Vector2(r.position.x, r.position.y + CELL * 0.5 + fs * 0.36), str(v), HORIZONTAL_ALIGNMENT_CENTER, CELL, fs, col)
 		elif notes[i]:
 			for d in range(1, 10):
 				if notes[i] & (1 << d):
-					var np := r.position + Vector2(((d - 1) % 3) * CELL / 3.0, ((d - 1) / 3) * CELL / 3.0 + 18)
-					draw_string(font, np, str(d), HORIZONTAL_ALIGNMENT_CENTER, CELL / 3.0, 16, Color(0.35, 0.35, 0.45))
+					var np := r.position + Vector2(((d - 1) % 3) * CELL / 3.0, ((d - 1) / 3) * CELL / 3.0 + CELL * 0.28)
+					draw_string(font, np, str(d), HORIZONTAL_ALIGNMENT_CENTER, CELL / 3.0, int(CELL * 0.25), Color(0.35, 0.35, 0.45))
 	for k in 4:
 		draw_line(ORIGIN + Vector2(k * 3 * CELL, 0), ORIGIN + Vector2(k * 3 * CELL, 9 * CELL), Color(0.1, 0.1, 0.15), 3.0)
 		draw_line(ORIGIN + Vector2(0, k * 3 * CELL), ORIGIN + Vector2(9 * CELL, k * 3 * CELL), Color(0.1, 0.1, 0.15), 3.0)
 	# number pad
 	for d in range(1, 10):
-		var pr := Rect2(PAD_O + Vector2(((d - 1) % 3) * PAD_C, ((d - 1) / 3) * PAD_C), Vector2(PAD_C - 8, PAD_C - 8))
+		var pr := pad_rect(d)
 		var left := 9 - grid.filter(func(v): return v == d).size()
 		draw_rect(pr, Color(0.22, 0.25, 0.38) if left > 0 else Color(0.16, 0.17, 0.24))
 		draw_rect(pr, Color(1, 1, 1, 0.3), false, 2.0)
-		draw_string(font, Vector2(pr.position.x, pr.position.y + 58), str(d), HORIZONTAL_ALIGNMENT_CENTER, pr.size.x, 46, ACCENT if notes_mode else INK)
-	draw_string(font, Vector2(PAD_O.x, PAD_O.y + 3 * PAD_C + 30), "Notes mode" if notes_mode else "Tap a cell, then a number", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, DIM)
+		draw_string(font, Vector2(pr.position.x, pr.get_center().y + pr.size.y * 0.2), str(d), HORIZONTAL_ALIGNMENT_CENTER, pr.size.x, int(pr.size.y * 0.55), ACCENT if notes_mode else INK)
+	var hint_y := (PAD_O.y + PAD_C + 26) if portrait else (PAD_O.y + 3 * PAD_C + 30)
+	draw_string(font, Vector2(PAD_O.x, hint_y), "Notes mode" if notes_mode else "Tap a cell, then a number", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, DIM)
 	draw_stats(["%s   %s" % [DIFF_NAMES[diff], time_text(elapsed)], "Hints %d" % hints])

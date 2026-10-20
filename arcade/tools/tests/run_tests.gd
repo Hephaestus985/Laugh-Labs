@@ -616,6 +616,25 @@ func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
 	else:
 		n.queue_free()
 		await frames(2)
+	# turn the phone: a tall screen gets a portrait layout that still plays by touch
+	var win_size := get_window().size
+	get_window().size = Vector2i(1080, 1920)
+	await frames(2)
+	Engine.set_meta("launch_mode", "new")
+	var np: PuzzleGame = spawn(v["scene"])
+	await frames(4)
+	var fits := np.portrait and get_window().content_scale_size == Vector2i(720, 1280)
+	for b in np.buttons:
+		fits = fits and Rect2(0, 0, 720, 1280).encloses(b[0]) and not (b[0] as Rect2).intersects(np.board_rect)
+	check(name, "portrait: turns with the phone, buttons fit (phone)", fits, "portrait %s, %d buttons" % [np.portrait, np.buttons.size()])
+	var pb := JSON.stringify(np.to_save())
+	await call("play_" + g["id"], np, name + " portrait")
+	await frames(3)
+	check(name, "portrait: touch play works (phone)", np.state != 1 or JSON.stringify(np.to_save()) != pb)
+	np.queue_free()
+	await frames(2)
+	get_window().size = win_size
+	await frames(2)
 	DirAccess.remove_absolute("user://best_%s.dat" % g["id"])
 	# a fresh round on every difficulty
 	for d in 3:
@@ -639,9 +658,14 @@ func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
 
 # ---- per-game touch play and a way to win (used by puzzle_checks)
 
-func play_game_2048(n: PuzzleGame, _name: String) -> void:
+func play_game_2048(n: PuzzleGame, name: String) -> void:
+	var moved_anim := false
 	for d in [Vector2(-300, 0), Vector2(0, 300), Vector2(300, 0), Vector2(0, -300)]:
-		await touch_swipe(Vector2(540, 380), d)
+		var before := JSON.stringify(n.get("cells"))
+		await touch_swipe(n.get("borigin") + Vector2(n.get("bsize"), n.get("bsize")) * 0.5 - d * 0.5, d)
+		if JSON.stringify(n.get("cells")) != before and not n.get("slides").is_empty():
+			moved_anim = true
+	check(name, "tiles slide with an animation", moved_anim)
 
 
 func win_game_2048(n: PuzzleGame) -> void:
@@ -674,7 +698,7 @@ func play_sudoku(n: PuzzleGame, name: String) -> void:
 	await tap(cell_pos)
 	await frames(2)
 	var want: int = n.get("solution")[empty]
-	var pad: Vector2 = n.PAD_O + Vector2((want - 1) % 3 + 0.45, (want - 1) / 3 + 0.45) * n.PAD_C
+	var pad: Vector2 = n.call("pad_rect", want).get_center()
 	await tap(pad)
 	await frames(2)
 	check(name, "tap a cell, then a number, fills it (phone)", n.get("grid")[empty] == want)
@@ -700,14 +724,14 @@ func win_sudoku(n: PuzzleGame) -> void:
 
 
 func play_minesweeper(n: PuzzleGame, name: String) -> void:
-	var o: Vector2 = n.get("origin")
 	var c: float = n.get("cell")
-	await tap(o + Vector2(3.5, 3.5) * c)
+	var start_cell: int = 3 * int(n.get("cols")) + 3
+	await tap(n.call("cell_pos", start_cell) + Vector2(c, c) * 0.5)
 	await frames(2)
 	check(name, "first tap opens safe cells (phone)", n.get("open").count(true) > 1 and n.state == 1)
 	# long-press a closed cell to flag it
 	var closed: int = n.get("open").find(false)
-	var p: Vector2 = o + Vector2(closed % int(n.get("cols")) + 0.5, closed / int(n.get("cols")) + 0.5) * c
+	var p: Vector2 = n.call("cell_pos", closed) + Vector2(c, c) * 0.5
 	var e := InputEventScreenTouch.new()
 	e.position = to_window(p)
 	e.pressed = true

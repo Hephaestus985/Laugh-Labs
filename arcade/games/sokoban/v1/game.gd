@@ -4,7 +4,6 @@ extends PuzzleGame
 # worker pulls them away, so playing those moves forwards always solves the
 # level. Easy 2 crates, Normal 3, Hard 4. Each solved level unlocks the next.
 
-const AREA := Rect2(40, 70, 930, 630)
 const LEVEL_FILE := "user://sokoban_level.dat"
 
 var w := 9
@@ -21,6 +20,9 @@ var cell := 64.0
 var origin := Vector2.ZERO
 var walk_path: Array = []
 var walk_t := 0.0
+var from_player := -1  # last step, for the walking animation
+var box_from := -1
+var box_to := -1
 
 
 func _init() -> void:
@@ -165,9 +167,32 @@ func _open_sides(wl: Array, c: int) -> int:
 	return n
 
 
+## In portrait the warehouse is shown turned on its side so it fills the tall
+## screen; swipes and taps are turned the same way.
+func _disp() -> Vector2:
+	return Vector2(h, w) if portrait else Vector2(w, h)
+
+
+func layout() -> void:
+	_fit()
+
+
 func _fit() -> void:
-	cell = floorf(minf(minf(AREA.size.x / w, AREA.size.y / h), 96.0))
-	origin = AREA.position + (AREA.size - Vector2(w, h) * cell) / 2.0
+	var d := _disp()
+	cell = floorf(minf(minf(board_rect.size.x / d.x, board_rect.size.y / d.y), 96.0))
+	origin = board_rect.position + (board_rect.size - d * cell) / 2.0
+
+
+## Top-left corner of a square on screen.
+func spos(i: int) -> Vector2:
+	var x := i % w
+	var y := i / w
+	return origin + (Vector2(y, x) if portrait else Vector2(x, y)) * cell
+
+
+## A direction on screen as a direction in the warehouse.
+func _logical(d: Vector2i) -> Vector2i:
+	return Vector2i(d.y, d.x) if portrait else d
 
 
 func to_save() -> Dictionary:
@@ -207,14 +232,19 @@ func step(d: Vector2i) -> bool:
 	if walls[to]:
 		return false
 	var bi := boxes.find(to)
+	box_from = -1
 	if bi >= 0:
 		var beyond := to + dd
 		if walls[beyond] or boxes.has(beyond):
 			return false
 		undo_stack.append([player, boxes.duplicate()])
 		boxes[bi] = beyond
+		box_from = to
+		box_to = beyond
 	else:
 		undo_stack.append([player, boxes.duplicate()])
+	from_player = player
+	start_anim("step", 0.09)
 	player = to
 	moves += 1
 	_check()
@@ -241,6 +271,8 @@ func _undo() -> void:
 	player = u[0]
 	boxes = u[1]
 	walk_path = []
+	from_player = -1
+	box_from = -1
 	save_game()
 
 
@@ -249,6 +281,8 @@ func _restart() -> void:
 	player = start_player
 	undo_stack.clear()
 	walk_path = []
+	from_player = -1
+	box_from = -1
 	save_game()
 
 
@@ -287,9 +321,10 @@ func _path_to(goal: int) -> Array:
 
 func game_tap(p: Vector2) -> void:
 	var r := (p - origin) / cell
-	if r.x < 0 or r.y < 0 or r.x >= w or r.y >= h:
+	var d := _disp()
+	if r.x < 0 or r.y < 0 or r.x >= d.x or r.y >= d.y:
 		return
-	var target := int(r.y) * w + int(r.x)
+	var target := (int(r.x) * w + int(r.y)) if portrait else (int(r.y) * w + int(r.x))
 	var dx := target % w - player % w
 	var dy := target / w - player / w
 	if absi(dx) + absi(dy) == 1:
@@ -300,16 +335,16 @@ func game_tap(p: Vector2) -> void:
 
 func game_swipe(dir: Vector2i) -> void:
 	walk_path = []
-	step(dir)
+	step(_logical(dir))
 
 
 func game_key(k: int) -> void:
 	walk_path = []
 	match k:
-		KEY_LEFT, KEY_A: step(Vector2i.LEFT)
-		KEY_RIGHT, KEY_D: step(Vector2i.RIGHT)
-		KEY_UP, KEY_W: step(Vector2i.UP)
-		KEY_DOWN, KEY_S: step(Vector2i.DOWN)
+		KEY_LEFT, KEY_A: step(_logical(Vector2i.LEFT))
+		KEY_RIGHT, KEY_D: step(_logical(Vector2i.RIGHT))
+		KEY_UP, KEY_W: step(_logical(Vector2i.UP))
+		KEY_DOWN, KEY_S: step(_logical(Vector2i.DOWN))
 		KEY_U, KEY_Z: _undo()
 		KEY_R: _restart()
 
@@ -326,7 +361,7 @@ func game_update(delta: float) -> void:
 
 func draw_game() -> void:
 	for i in w * h:
-		var r := Rect2(origin + Vector2(i % w, i / w) * cell, Vector2(cell, cell))
+		var r := Rect2(spos(i), Vector2(cell, cell))
 		if walls[i]:
 			draw_rect(r, Color(0.32, 0.26, 0.22))
 			draw_rect(r.grow(-3), Color(0.42, 0.34, 0.28))
@@ -334,16 +369,21 @@ func draw_game() -> void:
 			draw_rect(r, Color(0.78, 0.74, 0.66))
 			draw_rect(r, Color(0, 0, 0, 0.08), false, 1.0)
 	for g in goals:
-		var c := origin + Vector2(g % w + 0.5, g / w + 0.5) * cell
+		var c := spos(g) + Vector2(cell, cell) * 0.5
 		draw_arc(c, cell * 0.28, 0, TAU, 32, Color(0.85, 0.2, 0.2), 4.0)
 	for b in boxes:
-		var r := Rect2(origin + Vector2(b % w, b / w) * cell, Vector2(cell, cell)).grow(-cell * 0.1)
+		var at := spos(b)
+		if b == box_to and box_from >= 0 and animating("step"):
+			at = spos(box_from).lerp(at, ease_out(anim("step")))
+		var r := Rect2(at, Vector2(cell, cell)).grow(-cell * 0.1)
 		var on := goals.has(b)
 		draw_rect(r, Color(0.35, 0.65, 0.30) if on else Color(0.80, 0.55, 0.25))
 		draw_rect(r, Color(0.2, 0.12, 0.05), false, 3.0)
 		draw_line(r.position, r.end, Color(0.2, 0.12, 0.05, 0.5), 2.0)
 		draw_line(Vector2(r.end.x, r.position.y), Vector2(r.position.x, r.end.y), Color(0.2, 0.12, 0.05, 0.5), 2.0)
-	var pc := origin + Vector2(player % w + 0.5, player / w + 0.5) * cell
+	var pc := spos(player) + Vector2(cell, cell) * 0.5
+	if from_player >= 0 and animating("step"):
+		pc = (spos(from_player) + Vector2(cell, cell) * 0.5).lerp(pc, ease_out(anim("step")))
 	draw_circle(pc, cell * 0.32, Color(0.2, 0.4, 0.85))
 	draw_circle(pc + Vector2(0, -cell * 0.06), cell * 0.14, Color(0.98, 0.85, 0.7))
 	var on_goal := boxes.filter(func(b): return goals.has(b)).size()

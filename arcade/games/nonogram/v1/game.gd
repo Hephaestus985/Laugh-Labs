@@ -5,7 +5,6 @@ extends PuzzleGame
 # Easy 5x5, Normal 8x8, Hard 10x10. Tap to fill, long-press or Cross mode to mark
 # a cell as empty, drag to paint along a row or column.
 
-const AREA := Rect2(40, 70, 940, 630)
 const SIZES := [5, 8, 10]
 
 var n := 5
@@ -20,6 +19,9 @@ var cell := 50.0
 var origin := Vector2.ZERO
 var clue_w := 100.0
 var clue_h := 100.0
+
+var changed_at := {}  # cell -> time it was last filled or crossed (for the pop)
+var line_flash := {}  # "r3" / "c5" -> time that row / column became right
 
 var _paint_value := -1  # what a drag paints
 var _paint_start := -1
@@ -81,6 +83,8 @@ func new_game() -> void:
 	undo_stack.clear()
 	hints = 0
 	cross_mode = false
+	changed_at = {}
+	line_flash = {}
 
 
 func _make_clues() -> void:
@@ -96,12 +100,23 @@ func _make_clues() -> void:
 		max_r = maxi(max_r, c.size())
 	for c in col_clues:
 		max_c = maxi(max_c, c.size())
-	# cell size from the space left after the clues (clue numbers need ~26 px each)
-	cell = floorf(minf((AREA.size.x - max_r * 28) / n, (AREA.size.y - max_c * 28) / n))
+	_clue_counts = Vector2i(max_r, max_c)
+	layout()
+
+
+var _clue_counts := Vector2i(1, 1)
+
+
+func layout() -> void:
+	# cell size from the space left after the clues (clue numbers need ~28 px each)
+	var a := board_rect
+	var max_r := _clue_counts.x
+	var max_c := _clue_counts.y
+	cell = floorf(minf((a.size.x - max_r * 28) / n, (a.size.y - max_c * 28) / n))
 	cell = minf(cell, 90.0)
 	clue_w = max_r * 28.0 + 8
 	clue_h = max_c * 28.0 + 8
-	origin = AREA.position + Vector2(clue_w, clue_h) + (AREA.size - Vector2(clue_w, clue_h) - Vector2(n, n) * cell) / 2.0
+	origin = a.position + Vector2(clue_w, clue_h) + (a.size - Vector2(clue_w, clue_h) - Vector2(n, n) * cell) / 2.0
 
 
 func to_save() -> Dictionary:
@@ -119,6 +134,8 @@ func from_save(d: Dictionary) -> void:
 	_make_clues()
 	undo_stack.clear()
 	cross_mode = false
+	changed_at = {}
+	line_flash = {}
 
 
 func save_info() -> String:
@@ -152,6 +169,7 @@ func game_press(p: Vector2) -> void:
 	else:
 		_paint_value = 0 if cells[i] == 1 else 1
 	cells[i] = _paint_value
+	changed_at[i] = t
 
 
 func game_drag(from: Vector2, to: Vector2) -> void:
@@ -171,10 +189,23 @@ func game_drag(from: Vector2, to: Vector2) -> void:
 		x = sx
 	var lo := Vector2i(mini(sx, x), mini(sy, y))
 	var hi := Vector2i(maxi(sx, x), maxi(sy, y))
+	var was := cells.duplicate()
 	cells = _paint_before.duplicate()
 	for yy in range(lo.y, hi.y + 1):
 		for xx in range(lo.x, hi.x + 1):
 			cells[yy * n + xx] = _paint_value
+	for k in cells.size():
+		if cells[k] != was[k]:
+			changed_at[k] = t
+
+
+## Note which cells just changed, so they can pop.
+func _mark_changes(before: Array) -> void:
+	if before.size() != cells.size():
+		return
+	for i in cells.size():
+		if cells[i] != before[i]:
+			changed_at[i] = t
 
 
 func game_release(_from: Vector2, _to: Vector2) -> void:
@@ -194,6 +225,7 @@ func game_long_press(p: Vector2) -> void:
 	# the press already filled it: mark it as empty instead
 	cells = _paint_before.duplicate() if not _paint_before.is_empty() else cells
 	cells[i] = 0 if cells[i] == 2 else 2
+	changed_at[i] = t
 	if cells != _paint_before:
 		undo_stack.append(_paint_before)
 		moves += 1
@@ -219,6 +251,7 @@ func _hint() -> void:
 	undo_stack.append(cells.duplicate())
 	var i: int = wrong[randi() % wrong.size()]
 	cells[i] = 1 if target[i] else 2
+	changed_at[i] = t
 	hints += 1
 	toast("Hint: one cell fixed")
 	_check()
@@ -229,6 +262,21 @@ func line_done(clue: Array, line: Array) -> bool:
 
 
 func _check() -> void:
+	# rows and columns that just became right glow for a moment
+	for y in n:
+		var key := "r%d" % y
+		var ok := line_done(row_clues[y], range(n).map(func(x): return cells[y * n + x]))
+		if ok and not line_flash.has(key):
+			line_flash[key] = t
+		elif not ok:
+			line_flash.erase(key)
+	for x in n:
+		var key := "c%d" % x
+		var ok := line_done(col_clues[x], range(n).map(func(y): return cells[y * n + x]))
+		if ok and not line_flash.has(key):
+			line_flash[key] = t
+		elif not ok:
+			line_flash.erase(key)
 	for y in n:
 		if not line_done(row_clues[y], range(n).map(func(x): return cells[y * n + x])):
 			save_game()
@@ -250,12 +298,23 @@ func game_key(k: int) -> void:
 func draw_game() -> void:
 	var board := Rect2(origin, Vector2(n, n) * cell)
 	draw_rect(board, Color(0.93, 0.93, 0.97))
+	for key in line_flash:
+		var k: float = clampf((t - float(line_flash[key])) / 0.6, 0.0, 1.0)
+		if k < 1.0:
+			var idx := int(key.substr(1))
+			var band := Rect2(origin + Vector2(0, idx * cell), Vector2(n * cell, cell)) if key.begins_with("r") else Rect2(origin + Vector2(idx * cell, 0), Vector2(cell, n * cell))
+			draw_rect(band, Color(0.5, 0.95, 0.55, 0.6 * (1.0 - k)))
 	for i in n * n:
 		var r := Rect2(origin + Vector2(i % n, i / n) * cell, Vector2(cell, cell))
+		var pk := 1.0
+		if changed_at.has(i):
+			pk = clampf((t - float(changed_at[i])) / 0.18, 0.0, 1.0)
 		if cells[i] == 1:
-			draw_rect(r.grow(-2), Color(0.18, 0.20, 0.32))
+			var g := r.grow(-2)
+			var s := 0.6 + 0.4 * ease_out(pk)
+			draw_rect(Rect2(g.get_center() - g.size * s / 2.0, g.size * s), Color(0.18, 0.20, 0.32))
 		elif cells[i] == 2:
-			var c := r.grow(-cell * 0.3)
+			var c := r.grow(-cell * (0.3 + 0.15 * (1.0 - pk)))
 			draw_line(c.position, c.end, Color(0.75, 0.35, 0.35), 3.0)
 			draw_line(Vector2(c.end.x, c.position.y), Vector2(c.position.x, c.end.y), Color(0.75, 0.35, 0.35), 3.0)
 	for k in n + 1:
@@ -275,4 +334,4 @@ func draw_game() -> void:
 			draw_string(font, Vector2(origin.x + x * cell, yy), str(clue[k]), HORIZONTAL_ALIGNMENT_CENTER, cell, fs, DIM if done else INK)
 	draw_stats(["%s   %s" % [DIFF_NAMES[diff], time_text(elapsed)], "Hints %d" % hints])
 	if cross_mode:
-		text(Vector2(AREA.position.x, H - 6), "Cross mode: taps mark empty cells", 20, ACCENT)
+		text(Vector2(board_rect.position.x, board_rect.end.y + 4), "Cross mode: taps mark empty cells", 20, ACCENT)

@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-19T23:23:27
-513 checks, 0 failed
+Lab Arcade test report  2026-10-20T07:12:21
+556 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
@@ -170,8 +170,12 @@ PASS  game_2048 v1               difficulty setting is used
 PASS  game_2048 v1               has a way back to the menu     
 PASS  game_2048 v1               no errors                      0: 
 PASS  game_2048 v1               tap starts a round             
+PASS  game_2048 v1               tiles slide with an animation  
 PASS  game_2048 v1               touch play changes the board (phone) 
 PASS  game_2048 v1               Continue restores the board    
+PASS  game_2048 v1               portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
+PASS  game_2048 v1 portrait      tiles slide with an animation  
+PASS  game_2048 v1               portrait: touch play works (phone) 
 PASS  game_2048 v1               new Easy round starts          
 PASS  game_2048 v1               new Normal round starts        
 PASS  game_2048 v1               solving it wins and saves the best score state 2 won true best 2048
@@ -194,6 +198,10 @@ PASS  sudoku v1                  tap a cell, then a number, fills it (phone)
 PASS  sudoku v1                  the puzzle has exactly one solution 
 PASS  sudoku v1                  touch play changes the board (phone) 
 PASS  sudoku v1                  Continue restores the board    
+PASS  sudoku v1                  portrait: turns with the phone, buttons fit (phone) portrait true, 5 buttons
+PASS  sudoku v1 portrait         tap a cell, then a number, fills it (phone) 
+PASS  sudoku v1 portrait         the puzzle has exactly one solution 
+PASS  sudoku v1                  portrait: touch play works (phone) 
 PASS  sudoku v1                  new Easy round starts          
 PASS  sudoku v1                  new Normal round starts        
 PASS  sudoku v1                  solving it wins and saves the best score state 2 won true best 3000
@@ -216,6 +224,10 @@ PASS  minesweeper v1             first tap opens safe cells (phone)
 PASS  minesweeper v1             long-press places a flag (phone) 
 PASS  minesweeper v1             touch play changes the board (phone) 
 PASS  minesweeper v1             Continue restores the board    
+PASS  minesweeper v1             portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
+PASS  minesweeper v1 portrait    first tap opens safe cells (phone) 
+PASS  minesweeper v1 portrait    long-press places a flag (phone) 
+PASS  minesweeper v1             portrait: touch play works (phone) 
 PASS  minesweeper v1             new Easy round starts          
 PASS  minesweeper v1             new Normal round starts        
 PASS  minesweeper v1             solving it wins and saves the best score state 2 won true best 2440
@@ -238,6 +250,10 @@ PASS  solitaire v1               tap the deck draws a card (phone)
 PASS  solitaire v1               dragging a card onto a pile moves it (phone) 
 PASS  solitaire v1               touch play changes the board (phone) 
 PASS  solitaire v1               Continue restores the board    
+PASS  solitaire v1               portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
+PASS  solitaire v1 portrait      tap the deck draws a card (phone) 
+PASS  solitaire v1 portrait      dragging a card onto a pile moves it (phone) 
+PASS  solitaire v1               portrait: touch play works (phone) 
 PASS  solitaire v1               new Easy round starts          
 PASS  solitaire v1               new Normal round starts        
 PASS  solitaire v1               solving it wins and saves the best score state 2 won true best 2518
@@ -260,6 +276,10 @@ PASS  nonogram v1                tap fills a cell (phone)
 PASS  nonogram v1                drag paints a row (phone)      
 PASS  nonogram v1                touch play changes the board (phone) 
 PASS  nonogram v1                Continue restores the board    
+PASS  nonogram v1                portrait: turns with the phone, buttons fit (phone) portrait true, 4 buttons
+PASS  nonogram v1 portrait       tap fills a cell (phone)       
+PASS  nonogram v1 portrait       drag paints a row (phone)      
+PASS  nonogram v1                portrait: touch play works (phone) 
 PASS  nonogram v1                new Easy round starts          
 PASS  nonogram v1                new Normal round starts        
 PASS  nonogram v1                solving it wins and saves the best score state 2 won true best 1820
@@ -281,9 +301,12 @@ PASS  lights_out v1              tap starts a round
 PASS  lights_out v1              tap flips a light and its neighbours (phone) 
 PASS  lights_out v1              touch play changes the board (phone) 
 PASS  lights_out v1              Continue restores the board    
+PASS  lights_out v1              portrait: turns with the phone, buttons fit (phone) portrait true, 4 buttons
+PASS  lights_out v1 portrait     tap flips a light and its neighbours (phone) 
+PASS  lights_out v1              portrait: touch play works (phone) 
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1480
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1640
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -302,6 +325,9 @@ PASS  sliding_puzzle v1          tap starts a round
 PASS  sliding_puzzle v1          tap a tile next to the gap slides it (phone) 
 PASS  sliding_puzzle v1          touch play changes the board (phone) 
 PASS  sliding_puzzle v1          Continue restores the board    
+PASS  sliding_puzzle v1          portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
+PASS  sliding_puzzle v1 portrait tap a tile next to the gap slides it (phone) 
+PASS  sliding_puzzle v1          portrait: touch play works (phone) 
 PASS  sliding_puzzle v1          new Easy round starts          
 PASS  sliding_puzzle v1          new Normal round starts        
 PASS  sliding_puzzle v1          solving it wins and saves the best score state 2 won true best 1798
@@ -323,6 +349,9 @@ PASS  mahjong v1                 tap starts a round
 PASS  mahjong v1                 tap two matching free tiles removes them (phone) 
 PASS  mahjong v1                 touch play changes the board (phone) 
 PASS  mahjong v1                 Continue restores the board    
+PASS  mahjong v1                 portrait: turns with the phone, buttons fit (phone) portrait true, 4 buttons
+PASS  mahjong v1 portrait        tap two matching free tiles removes them (phone) 
+PASS  mahjong v1                 portrait: touch play works (phone) 
 PASS  mahjong v1                 new Easy round starts          
 PASS  mahjong v1                 new Normal round starts        
 PASS  mahjong v1                 solving it wins and saves the best score state 2 won true best 2350
@@ -344,6 +373,9 @@ PASS  sokoban v1                 tap starts a round
 PASS  sokoban v1                 swipe walks the worker (phone) 
 PASS  sokoban v1                 touch play changes the board (phone) 
 PASS  sokoban v1                 Continue restores the board    
+PASS  sokoban v1                 portrait: turns with the phone, buttons fit (phone) portrait true, 3 buttons
+PASS  sokoban v1 portrait        swipe walks the worker (phone) 
+PASS  sokoban v1                 portrait: touch play works (phone) 
 PASS  sokoban v1                 new Easy round starts          
 PASS  sokoban v1                 new Normal round starts        
 PASS  sokoban v1                 solving it wins and saves the best score state 2 won true best 400
@@ -365,6 +397,9 @@ PASS  flow v1                    tap starts a round
 PASS  flow v1                    dragging from a dot to its partner connects them (phone) 
 PASS  flow v1                    touch play changes the board (phone) 
 PASS  flow v1                    Continue restores the board    
+PASS  flow v1                    portrait: turns with the phone, buttons fit (phone) portrait true, 4 buttons
+PASS  flow v1 portrait           dragging from a dot to its partner connects them (phone) 
+PASS  flow v1                    portrait: touch play works (phone) 
 PASS  flow v1                    new Easy round starts          
 PASS  flow v1                    new Normal round starts        
 PASS  flow v1                    solving it wins and saves the best score state 2 won true best 1276
@@ -387,9 +422,13 @@ PASS  block_stacker v1           dragging sideways slides the piece (phone)
 PASS  block_stacker v1           swipe down drops the piece (phone) 
 PASS  block_stacker v1           touch play changes the board (phone) 
 PASS  block_stacker v1           Continue restores the board    
+PASS  block_stacker v1           portrait: turns with the phone, buttons fit (phone) portrait true, 4 buttons
+PASS  block_stacker v1 portrait  dragging sideways slides the piece (phone) 
+PASS  block_stacker v1 portrait  swipe down drops the piece (phone) 
+PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 346
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 332
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    
@@ -409,6 +448,10 @@ PASS  connect_four v1            tap a column drops a disc (phone)
 PASS  connect_four v1            the computer answers           
 PASS  connect_four v1            touch play changes the board (phone) 
 PASS  connect_four v1            Continue restores the board    
+PASS  connect_four v1            portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
+PASS  connect_four v1 portrait   tap a column drops a disc (phone) 
+PASS  connect_four v1 portrait   the computer answers           
+PASS  connect_four v1            portrait: touch play works (phone) 
 PASS  connect_four v1            new Easy round starts          
 PASS  connect_four v1            new Normal round starts        
 PASS  connect_four v1            solving it wins and saves the best score state 2 won true best 1360

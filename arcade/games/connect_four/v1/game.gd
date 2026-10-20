@@ -6,8 +6,8 @@ extends PuzzleGame
 
 const COLS := 7
 const ROWS := 6
-const CELL := 92.0
-const ORIGIN := Vector2(170, 110)
+var CELL := 92.0
+var ORIGIN := Vector2(170, 110)
 const YOU := 1
 const CPU := 2
 
@@ -61,6 +61,11 @@ func play_buttons() -> Array:
 	return [["Undo", _undo], ["New game", start_new]]
 
 
+func layout() -> void:
+	CELL = floorf(minf(minf((board_rect.size.x - 30) / COLS, (board_rect.size.y - 60) / ROWS), 110.0))
+	ORIGIN = board_rect.position + Vector2((board_rect.size.x - COLS * CELL) / 2.0, 40 + (board_rect.size.y - 50 - ROWS * CELL) / 2.0)
+
+
 static func drop_row(b: Array, c: int) -> int:
 	for r in range(ROWS - 1, -1, -1):
 		if b[r * COLS + c] == 0:
@@ -96,6 +101,7 @@ func play(c: int, who: int) -> bool:
 		undo_stack.append([board.duplicate(), turn])
 	board[r * COLS + c] = who
 	last_drop = r * COLS + c
+	start_anim("drop", 0.12 + 0.04 * r)
 	moves += 1
 	win_line = find_four(board)
 	if not win_line.is_empty():
@@ -245,21 +251,29 @@ func _score(b: Array) -> float:
 
 func draw_game() -> void:
 	var frame := Rect2(ORIGIN - Vector2(12, 12), Vector2(COLS, ROWS) * CELL + Vector2(24, 24))
+	# the falling disc is drawn behind the frame's holes: draw it first, then the frame with holes
 	draw_rect(frame, Color(0.15, 0.30, 0.75))
 	for r in ROWS:
 		for c in COLS:
 			var i := r * COLS + c
 			var center := ORIGIN + Vector2(c + 0.5, r + 0.5) * CELL
 			var col := Color(0.08, 0.09, 0.15)
-			if board[i] == YOU:
+			var falling := i == last_drop and animating("drop")
+			if board[i] == YOU and not falling:
 				col = Color(0.92, 0.20, 0.20)
-			elif board[i] == CPU:
+			elif board[i] == CPU and not falling:
 				col = Color(0.98, 0.82, 0.20)
 			draw_circle(center, CELL * 0.4, col)
-			if i == last_drop:
+			if i == last_drop and not falling:
 				draw_arc(center, CELL * 0.42, 0, TAU, 32, Color(1, 1, 1, 0.6), 3.0)
 			if win_line.has(i):
 				draw_arc(center, CELL * 0.3, 0, TAU, 32, Color.WHITE, 5.0)
+	if last_drop >= 0 and animating("drop"):
+		var k := anim("drop")
+		var target := ORIGIN + Vector2(last_drop % COLS + 0.5, last_drop / COLS + 0.5) * CELL
+		var start := Vector2(target.x, ORIGIN.y - CELL * 0.5)
+		var col2 := Color(0.92, 0.20, 0.20) if board[last_drop] == YOU else Color(0.98, 0.82, 0.20)
+		draw_circle(start.lerp(target, k * k), CELL * 0.4, col2)
 	for c in COLS:
 		draw_string(font, ORIGIN + Vector2(c * CELL, -22), "v", HORIZONTAL_ALIGNMENT_CENTER, CELL, 26, Color(1, 1, 1, 0.25 if turn == YOU else 0.08))
 	draw_stats(["You: red   CPU: yellow", ("Your turn" if turn == YOU else "Computer is thinking...")])

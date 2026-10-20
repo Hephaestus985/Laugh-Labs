@@ -4,7 +4,6 @@ extends PuzzleGame
 # Deals are built backwards (pairs are taken off free spots of the full stack), so
 # every deal can be cleared. Shuffle re-deals the tiles left, again solvably.
 
-const AREA := Rect2(30, 70, 960, 640)
 # layers as [columns, rows] centred on each other
 const LAYOUTS := [
 	[[8, 4], [4, 2]],
@@ -24,6 +23,7 @@ var sel := -1
 var hint_pair: Array = []
 var undo_stack: Array = []
 var shuffles := 0
+var gone: Array = []  # the pair just removed: [rect, face], fading away
 
 
 func _init() -> void:
@@ -56,10 +56,14 @@ func new_game() -> void:
 	shuffles = 0
 
 
+func layout() -> void:
+	_fit()
+
+
 func _fit() -> void:
-	tw = floorf(minf(AREA.size.x / (cols + 0.6), AREA.size.y / (rows + 0.6) * 0.8))
+	tw = floorf(minf(board_rect.size.x / (cols + 0.6), board_rect.size.y / (rows + 0.6) * 0.8))
 	th = floorf(tw * 1.25)
-	origin = AREA.position + (AREA.size - Vector2(cols * tw, rows * th)) / 2.0 + Vector2(10, 10)
+	origin = board_rect.position + (board_rect.size - Vector2(cols * tw, rows * th)) / 2.0 + Vector2(10, 10)
 
 
 ## Give faces to the tiles at these indices so they can all be removed in pairs.
@@ -174,6 +178,7 @@ func _shuffle() -> void:
 		return
 	undo_stack.append(JSON.stringify(tiles))
 	_deal(alive)
+	start_anim("shuffle", 0.35)
 	shuffles += 1
 	sel = -1
 	hint_pair = []
@@ -201,6 +206,8 @@ func pick(i: int) -> void:
 		sel = -1 if sel == i else i
 		return
 	if tiles[sel][3] == tiles[i][3]:
+		gone = [[tile_rect(sel), tiles[sel][3]], [tile_rect(i), tiles[i][3]]]
+		start_anim("gone", 0.35)
 		undo_stack.append(JSON.stringify(tiles))
 		tiles[sel][3] = -1
 		tiles[i][3] = -1
@@ -254,6 +261,11 @@ func draw_game() -> void:
 	order.sort_custom(func(a, b): return tiles[a][2] < tiles[b][2] or (tiles[a][2] == tiles[b][2] and (tiles[a][1] < tiles[b][1] or (tiles[a][1] == tiles[b][1] and tiles[a][0] > tiles[b][0]))))
 	for i in order:
 		var r := tile_rect(i)
+		if i == sel:
+			r.position.y -= 6  # picked up
+		if animating("shuffle"):
+			var s := 1.0 - 0.25 * sin(anim("shuffle") * PI)
+			r = Rect2(r.get_center() - r.size * Vector2(s, 1.0) / 2.0, r.size * Vector2(s, 1.0))
 		draw_rect(Rect2(r.position + Vector2(5, 5), r.size), Color(0.35, 0.30, 0.22))
 		var free := is_free(i)
 		var bg := Color(0.98, 0.96, 0.88) if free else Color(0.84, 0.82, 0.74)
@@ -264,4 +276,12 @@ func draw_game() -> void:
 		draw_rect(r, bg)
 		draw_rect(r, Color(0.3, 0.25, 0.2), false, 2.0)
 		draw_face(r, tiles[i][3])
+	if animating("gone"):
+		var k := anim("gone")
+		for g in gone:
+			var r: Rect2 = g[0]
+			var s := 1.0 - 0.6 * k
+			var rr := Rect2(r.get_center() - r.size * s / 2.0 + Vector2(0, -40 * k), r.size * s)
+			draw_rect(rr, Color(1.0, 0.9, 0.5, 1.0 - k))
+			draw_face(rr, g[1])
 	draw_stats(["Tiles left %d" % _alive().size(), "%s   %s" % [DIFF_NAMES[diff], time_text(elapsed)]])

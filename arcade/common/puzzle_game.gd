@@ -6,10 +6,13 @@ extends ArcadeGame
 #   - difficulty from the menu (diff: 0 easy, 1 normal, 2 hard)
 #   - a save after every move, with Continue / New game (menu and title)
 #   - finger-sized on-screen buttons (Undo, New, Hint...) and tap / drag / swipe input
+#   - landscape and portrait: the screen turns with the phone. The game lays itself
+#     out in board_rect (buttons go in panel_rect) from layout(), which runs again
+#     whenever the phone turns. sw / sh are the screen size (1280x720 or 720x1280).
+#   - a little animation clock: anim(key) gives 0..1 progress of a started effect
 # A game overrides the hooks below and calls save_game() after each move and
 # finish(won, score) when the round is over.
 
-const PANEL_X := 1000.0  # buttons live in the right-hand column
 const BTN_H := 70.0
 const BG := Color(0.10, 0.11, 0.17)
 const INK := Color(0.95, 0.95, 1.0)
@@ -28,6 +31,14 @@ var help: Array[String] = []  # lines on the title screen
 var buttons: Array = []  # [Rect2, label, Callable] rebuilt every frame by the game
 var message := ""
 var message_t := 0.0
+
+var portrait := false
+var sw := 1280.0
+var sh := 720.0
+var board_rect := Rect2(30, 76, 950, 630)
+var panel_rect := Rect2(1000, 100, 256, 600)
+var panel_slots := 0  # reserve room for this many buttons (if some come and go)
+var _anims := {}  # key -> [start time, duration]
 
 var _press_pos := Vector2.ZERO
 var _pressing := false
@@ -98,6 +109,81 @@ func game_update(_delta: float) -> void:
 	pass
 
 
+## Place the board inside board_rect. Runs at the start and whenever the phone turns.
+func layout() -> void:
+	pass
+
+
+# ---------------------------------------------------------------- screen and animation
+
+func _want_portrait() -> bool:
+	var s := get_window().size
+	return s.y > s.x
+
+
+func apply_screen(force := false) -> void:
+	var p := _want_portrait()
+	if p == portrait and not force:
+		return
+	portrait = p
+	var win := get_window()
+	win.content_scale_size = Vector2i(720, 1280) if portrait else Vector2i(1280, 720)
+	win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
+	sw = 720.0 if portrait else 1280.0
+	sh = 1280.0 if portrait else 720.0
+	_place_areas()
+	layout()
+
+
+func _place_areas() -> void:
+	var n := maxi(play_buttons().size(), panel_slots)
+	if portrait:
+		var rows := maxi(1, ceili(n / 2.0))
+		var ph := rows * (BTN_H + 12.0)
+		panel_rect = Rect2(20, sh - ph - 16, sw - 40, ph)
+		board_rect = Rect2(20, 86, sw - 40, panel_rect.position.y - 86 - 14)
+	else:
+		panel_rect = Rect2(1000, 100, 256, sh - 110)
+		board_rect = Rect2(30, 76, 950, sh - 86)
+
+
+## Start (or restart) a named animation.
+func start_anim(key: String, duration: float) -> void:
+	_anims[key] = [t, duration]
+
+
+## Progress of a named animation: 0 just started .. 1 done (also 1 if never started).
+func anim(key: String) -> float:
+	if not _anims.has(key):
+		return 1.0
+	var a: Array = _anims[key]
+	return clampf((t - a[0]) / a[1], 0.0, 1.0)
+
+
+func animating(key: String) -> bool:
+	return anim(key) < 1.0
+
+
+static func ease_out(x: float) -> float:
+	return 1.0 - (1.0 - x) * (1.0 - x)
+
+
+## A quick "pop": grows past full size and settles (for new or merged things).
+static func pop(x: float) -> float:
+	return 1.0 + 0.18 * sin(clampf(x, 0.0, 1.0) * PI)
+
+
+## Text centred on the screen, wrapped to the screen width.
+func ctext(y: float, s: String, size: int, c: Color) -> void:
+	var w := sw - 40.0
+	draw_multiline_string_outline(font, Vector2(20, y), s, HORIZONTAL_ALIGNMENT_CENTER, w, size, 3, 6, Color(0.08, 0.08, 0.15, 0.9 * c.a))
+	draw_multiline_string(font, Vector2(20, y), s, HORIZONTAL_ALIGNMENT_CENTER, w, size, 3, c)
+
+
+func text_lines(s: String, size: int) -> int:
+	return maxi(1, int(font.get_multiline_string_size(s, HORIZONTAL_ALIGNMENT_CENTER, sw - 40.0, size).y / (font.get_height(size) * 0.98)))
+
+
 # ---------------------------------------------------------------- flow
 
 func save_path() -> String:
@@ -105,6 +191,9 @@ func save_path() -> String:
 
 
 func _ready() -> void:
+	if OS.has_feature("mobile"):
+		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR)
+	apply_screen(true)
 	use_stick = false
 	use_b = false
 	show_a = false
@@ -129,6 +218,8 @@ func start_new() -> void:
 	message = ""
 	new_game()
 	state = 1
+	_place_areas()
+	layout()
 	save_game()
 
 
@@ -145,6 +236,8 @@ func continue_game() -> void:
 	message = ""
 	from_save(o["data"])
 	state = 1
+	_place_areas()
+	layout()
 
 
 func save_game() -> void:
@@ -165,6 +258,7 @@ func clear_save() -> void:
 
 ## The round is over. Saves the best score and removes the save.
 func finish(did_win: bool, final_score: int) -> void:
+	start_anim("finish", 0.45)
 	won = did_win
 	score = final_score
 	state = 2
@@ -189,7 +283,7 @@ func on_input(event: InputEvent) -> void:
 		if state == 1:
 			game_key(event.keycode)
 		elif event.keycode in [KEY_SPACE, KEY_ENTER, KEY_KP_ENTER]:
-			_title_tap(Vector2(W / 2, H / 2))
+			_title_tap(Vector2(sw / 2, sh / 2))
 		return
 	var p := Vector2.ZERO
 	var down := false
@@ -286,6 +380,7 @@ func _title_tap(p: Vector2) -> void:
 
 func _process(delta: float) -> void:
 	tick(delta)
+	apply_screen()
 	if state == 1:
 		elapsed += delta
 		# long press (for flags / notes) while the finger stays put
@@ -301,50 +396,68 @@ func _process(delta: float) -> void:
 
 func _layout_buttons() -> void:
 	buttons.clear()
+	var mid := sh * 0.5
 	if state == 0:
 		if has_save:
-			buttons.append([Rect2(W / 2 - 170, 560, 340, BTN_H), "New game", start_new])
+			buttons.append([Rect2(sw / 2 - 170, sh * 0.78, 340, BTN_H), "New game", start_new])
 		return
 	if state == 2:
-		buttons.append([Rect2(W / 2 - 330, 520, 300, BTN_H), "Play again", start_new])
-		buttons.append([Rect2(W / 2 + 30, 520, 300, BTN_H), "Menu", back_to_menu])
+		if portrait:
+			buttons.append([Rect2(sw / 2 - 170, mid + 120, 340, BTN_H), "Play again", start_new])
+			buttons.append([Rect2(sw / 2 - 170, mid + 210, 340, BTN_H), "Menu", back_to_menu])
+		else:
+			buttons.append([Rect2(sw / 2 - 330, mid + 160, 300, BTN_H), "Play again", start_new])
+			buttons.append([Rect2(sw / 2 + 30, mid + 160, 300, BTN_H), "Menu", back_to_menu])
 		return
-	var y := 110.0
-	for pb in play_buttons():
-		buttons.append([Rect2(PANEL_X, y, W - PANEL_X - 24, BTN_H), pb[0], pb[1]])
-		y += BTN_H + 14
+	var pbs := play_buttons()
+	if portrait:
+		var cols := 2
+		var bw := (panel_rect.size.x - 12.0 * (cols - 1)) / cols
+		for k in pbs.size():
+			var r := Rect2(panel_rect.position + Vector2((k % cols) * (bw + 12), (k / cols) * (BTN_H + 12)), Vector2(bw, BTN_H))
+			buttons.append([r, pbs[k][0], pbs[k][1]])
+	else:
+		var y := panel_rect.position.y + 10
+		for pb in pbs:
+			buttons.append([Rect2(panel_rect.position.x, y, panel_rect.size.x, BTN_H), pb[0], pb[1]])
+			y += BTN_H + 14
 
 
 # ---------------------------------------------------------------- drawing
 
 func _draw() -> void:
-	draw_rect(Rect2(0, 0, W, H), BG)
+	draw_rect(Rect2(0, 0, sw, sh), BG)
 	if state == 0:
 		_draw_title()
 	else:
 		draw_game()
 		if state == 2:
-			draw_rect(Rect2(0, 0, W, H), Color(0, 0, 0, 0.55))
-			text(Vector2(0, 250), ("You win!" if won else "Game over"), 72, ACCENT, true)
-			text(Vector2(0, 330), "Score %d   Best %d" % [score, best], 34, INK, true)
-			text(Vector2(0, 380), "Time %s   Moves %d" % [time_text(elapsed), moves], 26, DIM, true)
+			var k := ease_out(anim("finish"))
+			draw_rect(Rect2(0, 0, sw, sh), Color(0, 0, 0, 0.55 * k))
+			var mid := sh * 0.5
+			ctext(mid - 110 - 40 * (1.0 - k), ("You win!" if won else "Game over"), 72, Color(ACCENT, k))
+			ctext(mid - 20, "Score %d   Best %d" % [score, best], 34, Color(INK, k))
+			ctext(mid + 30, "Time %s   Moves %d" % [time_text(elapsed), moves], 26, Color(DIM, k))
 	for b in buttons:
 		draw_button(b[0], b[1])
 	if message_t > 0.0 and message != "":
 		var a := clampf(message_t, 0.0, 1.0)
-		draw_rect(Rect2(W / 2 - 300, H - 90, 600, 60), Color(0, 0, 0, 0.6 * a))
-		text(Vector2(0, H - 50), message, 26, Color(1, 1, 1, a), true)
+		var y := (panel_rect.position.y - 70) if portrait else sh - 90
+		draw_rect(Rect2(sw / 2 - minf(300, sw / 2 - 10), y, minf(600, sw - 20), 60), Color(0, 0, 0, 0.6 * a))
+		ctext(y + 40, message, 26, Color(1, 1, 1, a))
 	draw_overlay()
 
 
 func _draw_title() -> void:
-	text(Vector2(0, 150), title, 76, ACCENT, true)
-	text(Vector2(0, 200), "%s   -   Best %d" % [DIFF_NAMES[diff], best], 26, DIM, true)
-	var y := 270.0
+	var y := sh * 0.2
+	ctext(y, title, 76, ACCENT)
+	y += 52
+	ctext(y, "%s   -   Best %d" % [DIFF_NAMES[diff], best], 26, DIM)
+	y += 70
 	for line in help:
-		text(Vector2(0, y), line, 26, INK, true)
-		y += 40
-	text(Vector2(0, 520), "Tap to continue" if has_save else "Tap to play", 34, ACCENT if fmod(t, 1.2) < 0.8 else DIM, true)
+		ctext(y, line, 26, INK)
+		y += 40 * text_lines(line, 26)
+	ctext(maxf(y + 40, sh * 0.7), "Tap to continue" if has_save else "Tap to play", 34, ACCENT if fmod(t, 1.2) < 0.8 else DIM)
 
 
 func draw_button(r: Rect2, label: String) -> void:
@@ -353,9 +466,10 @@ func draw_button(r: Rect2, label: String) -> void:
 	draw_string(font, Vector2(r.position.x, r.get_center().y + 10), label, HORIZONTAL_ALIGNMENT_CENTER, r.size.x, 28, INK)
 
 
-## A stat line in the right-hand column (above the buttons).
+## Two short stat lines: above the buttons (landscape) or next to MENU (portrait).
 func draw_stats(lines: Array) -> void:
-	var y := 50.0
+	var x := 150.0 if portrait else panel_rect.position.x
+	var y := 36.0 if portrait else 50.0
 	for line in lines:
-		draw_string(font, Vector2(PANEL_X, y), str(line), HORIZONTAL_ALIGNMENT_LEFT, W - PANEL_X - 20, 26, DIM)
-		y += 30
+		draw_string(font, Vector2(x, y), str(line), HORIZONTAL_ALIGNMENT_LEFT, sw - x - 16, 24 if portrait else 26, DIM)
+		y += 28

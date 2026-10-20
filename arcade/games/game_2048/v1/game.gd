@@ -7,6 +7,12 @@ var cells: Array = []  # n*n ints, 0 = empty
 var undo_stack: Array = []  # [cells, score]
 var undos_left := 3
 var reached := false
+# animation of the last move: tiles sliding [value, from, to], merged and new cells
+var slides: Array = []
+var merged: Array = []
+var spawned := -1
+var bsize := 600.0
+var borigin := Vector2.ZERO
 
 
 func _init() -> void:
@@ -25,6 +31,13 @@ func new_game() -> void:
 	reached = false
 	_spawn()
 	_spawn()
+	slides = []
+	merged = []
+
+
+func layout() -> void:
+	bsize = minf(minf(board_rect.size.x, board_rect.size.y), 640.0)
+	borigin = board_rect.position + (board_rect.size - Vector2(bsize, bsize)) / 2.0
 
 
 func to_save() -> Dictionary:
@@ -64,35 +77,48 @@ func _spawn() -> void:
 	if empty.is_empty():
 		return
 	var four_chance: float = [0.1, 0.1, 0.25][diff]
-	cells[empty[randi() % empty.size()]] = 4 if randf() < four_chance else 2
+	spawned = empty[randi() % empty.size()]
+	cells[spawned] = 4 if randf() < four_chance else 2
 
 
 func _idx(x: int, y: int) -> int:
 	return y * n + x
 
 
-## Slide one line towards its start. Returns [new_line, points].
+## Slide one line towards its start. Returns [new_line, points, sources] where
+## sources[k] lists the line positions whose tiles ended up at position k.
 func _slide(line: Array) -> Array:
-	var vals := line.filter(func(v): return v != 0)
+	var vals := []
+	var where := []
+	for k in line.size():
+		if line[k] != 0:
+			vals.append(line[k])
+			where.append(k)
 	var out := []
+	var src := []
 	var pts := 0
 	var i := 0
 	while i < vals.size():
 		if i + 1 < vals.size() and vals[i] == vals[i + 1]:
 			out.append(vals[i] * 2)
+			src.append([where[i], where[i + 1]])
 			pts += vals[i] * 2
 			i += 2
 		else:
 			out.append(vals[i])
+			src.append([where[i]])
 			i += 1
 	while out.size() < n:
 		out.append(0)
-	return [out, pts]
+		src.append([])
+	return [out, pts, src]
 
 
 func move(dir: Vector2i) -> bool:
 	var before := cells.duplicate()
 	var gained := 0
+	var new_slides := []
+	var new_merged := []
 	for a in n:
 		var idxs := []
 		for b in n:
@@ -112,9 +138,16 @@ func move(dir: Vector2i) -> bool:
 		var r := _slide(line)
 		for k in n:
 			cells[idxs[k]] = r[0][k]
+			for s in r[2][k]:
+				new_slides.append([line[s], idxs[s], idxs[k]])
+			if r[2][k].size() == 2:
+				new_merged.append(idxs[k])
 		gained += r[1]
 	if cells == before:
 		return false
+	slides = new_slides
+	merged = new_merged
+	start_anim("move", 0.24)
 	undo_stack.append([before, score])
 	if undo_stack.size() > 20:
 		undo_stack.pop_front()
@@ -151,6 +184,9 @@ func _undo() -> void:
 	var last: Array = undo_stack.pop_back()
 	cells = last[0]
 	score = last[1]
+	slides = []
+	merged = []
+	spawned = -1
 	undos_left -= 1
 	save_game()
 
@@ -176,19 +212,48 @@ func _tile_color(v: int) -> Color:
 	return Color.from_hsv(hues[(k - 1) % hues.size()], 0.55 + 0.03 * mini(k, 10), 0.95 - 0.02 * mini(k, 10))
 
 
+func _cell_rect(i: int, gap: float, c: float) -> Rect2:
+	return Rect2(borigin + Vector2(gap + (i % n) * (c + gap), gap + (i / n) * (c + gap)), Vector2(c, c))
+
+
+func _draw_tile(r: Rect2, v: int, scale := 1.0) -> void:
+	if scale != 1.0:
+		r = Rect2(r.get_center() - r.size * scale / 2.0, r.size * scale)
+	draw_rect(r, _tile_color(v))
+	var c := r.size.x
+	var fs := int(c * (0.42 if v < 100 else (0.34 if v < 1000 else 0.27)))
+	draw_string(font, Vector2(r.position.x, r.get_center().y + fs * 0.36), str(v), HORIZONTAL_ALIGNMENT_CENTER, c, fs, Color(0.1, 0.1, 0.15) if v < 8 else Color.WHITE)
+
+
 func draw_game() -> void:
-	var size := 600.0
-	var o := Vector2((PANEL_X - size) / 2.0 + 40, 80)
 	var gap := 10.0
-	var c := (size - gap * (n + 1)) / n
-	draw_rect(Rect2(o, Vector2(size, size)), Color(0.14, 0.15, 0.23))
-	for y in n:
-		for x in n:
-			var v: int = cells[_idx(x, y)]
-			var r := Rect2(o + Vector2(gap + x * (c + gap), gap + y * (c + gap)), Vector2(c, c))
-			draw_rect(r, _tile_color(v))
-			if v > 0:
-				var fs := int(c * (0.42 if v < 100 else (0.34 if v < 1000 else 0.27)))
-				draw_string(font, Vector2(r.position.x, r.get_center().y + fs * 0.36), str(v), HORIZONTAL_ALIGNMENT_CENTER, c, fs, Color(0.1, 0.1, 0.15) if v < 8 else Color.WHITE)
+	var c := (bsize - gap * (n + 1)) / n
+	draw_rect(Rect2(borigin, Vector2(bsize, bsize)), Color(0.14, 0.15, 0.23))
+	for i in n * n:
+		draw_rect(_cell_rect(i, gap, c), _tile_color(0))
+	var a := anim("move")
+	var slide_part := 0.45
+	if a < slide_part and not slides.is_empty():
+		# phase 1: tiles glide to where they are going
+		var k := ease_out(a / slide_part)
+		for s in slides:
+			var r0 := _cell_rect(s[1], gap, c)
+			var r1 := _cell_rect(s[2], gap, c)
+			_draw_tile(Rect2(r0.position.lerp(r1.position, k), r0.size), s[0])
+	else:
+		# phase 2: merged tiles pop, the new tile grows in
+		var k := (a - slide_part) / (1.0 - slide_part) if a < 1.0 else 1.0
+		for i in n * n:
+			var v: int = cells[i]
+			if v == 0:
+				continue
+			var sc := 1.0
+			if i == spawned and a < 1.0:
+				sc = ease_out(k)
+			elif merged.has(i):
+				sc = pop(k)
+			if sc > 0.01:
+				_draw_tile(_cell_rect(i, gap, c), v, sc)
 	draw_stats(["Score %d" % score, "Best %d" % maxi(best, score)])
-	text(Vector2(o.x, H - 20), "Swipe to slide the tiles", 22, DIM)
+	if not portrait:
+		text(Vector2(borigin.x, sh - 6), "Swipe to slide the tiles", 22, DIM)

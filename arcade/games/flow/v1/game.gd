@@ -5,7 +5,6 @@ extends PuzzleGame
 # may differ from it: any one that connects every pair and fills the board wins).
 # Easy 5x5, Normal 7x7, Hard 9x9.
 
-const AREA := Rect2(60, 70, 900, 630)
 const PALETTE := [
 	Color(0.92, 0.20, 0.20), Color(0.20, 0.45, 0.95), Color(0.15, 0.70, 0.25), Color(0.98, 0.85, 0.15),
 	Color(0.95, 0.55, 0.10), Color(0.15, 0.80, 0.85), Color(0.85, 0.25, 0.85), Color(0.60, 0.35, 0.15),
@@ -21,6 +20,7 @@ var origin := Vector2.ZERO
 var drawing := -1  # colour being drawn
 var hints := 0
 var undo_stack: Array = []
+var done_at := {}  # colour -> time its pipe got connected (for the pulse)
 
 
 func _init() -> void:
@@ -45,12 +45,17 @@ func new_game() -> void:
 	drawing = -1
 	hints = 0
 	undo_stack.clear()
+	done_at = {}
+	_fit()
+
+
+func layout() -> void:
 	_fit()
 
 
 func _fit() -> void:
-	cell = floorf(minf(AREA.size.x, AREA.size.y) / n)
-	origin = AREA.position + (AREA.size - Vector2(n, n) * cell) / 2.0
+	cell = floorf(minf(minf(board_rect.size.x, board_rect.size.y) / n, 130.0))
+	origin = board_rect.position + (board_rect.size - Vector2(n, n) * cell) / 2.0
 
 
 func _nb(i: int) -> Array:
@@ -147,6 +152,7 @@ func from_save(d: Dictionary) -> void:
 	dots = solution.map(func(p): return [p[0], p[p.size() - 1]])
 	drawing = -1
 	undo_stack.clear()
+	done_at = {}
 	_fit()
 
 
@@ -273,6 +279,12 @@ func game_release(_from: Vector2, _to: Vector2) -> void:
 
 
 func _check() -> void:
+	for k in paths.size():
+		if pipe_done(k):
+			if not done_at.has(k):
+				done_at[k] = t
+		else:
+			done_at.erase(k)
 	if _connected_count() == dots.size():
 		var filled := 0
 		for k in paths.size():
@@ -335,8 +347,15 @@ func draw_game() -> void:
 			draw_line(a, b, PALETTE[k], cell * 0.32)
 			draw_circle(b, cell * 0.16, PALETTE[k])
 	for k in dots.size():
+		var pulse := -1.0
+		if done_at.has(k):
+			pulse = clampf((t - float(done_at[k])) / 0.5, 0.0, 1.0)
 		for d in dots[k]:
-			draw_circle(origin + Vector2(d % n + 0.5, d / n + 0.5) * cell, cell * 0.36, PALETTE[k])
+			var c: Vector2 = origin + Vector2(d % n + 0.5, d / n + 0.5) * cell
+			draw_circle(c, cell * 0.36, PALETTE[k])
+			if pulse >= 0.0 and pulse < 1.0:
+				var pc: Color = PALETTE[k]
+				draw_arc(c, cell * (0.36 + 0.5 * pulse), 0, TAU, 32, Color(pc, 1.0 - pulse), 4.0)
 	var filled := 0
 	for k in paths.size():
 		filled += paths[k].size()

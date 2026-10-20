@@ -3,13 +3,13 @@ extends PuzzleGame
 # Shuffled by making random legal moves from the solved board, so it can always
 # be solved. Easy 3x3, Normal 4x4, Hard 5x5.
 
-const AREA := Rect2(170, 70, 640, 630)
 
 var n := 4
 var tiles: Array = []  # n*n ints, 0 = the gap
 var cell := 150.0
 var origin := Vector2.ZERO
 var undo_stack: Array = []
+var moving: Array = []  # tiles sliding: [value, from, to]
 
 
 func _init() -> void:
@@ -38,9 +38,13 @@ func new_game() -> void:
 	undo_stack.clear()
 
 
+func layout() -> void:
+	_fit()
+
+
 func _fit() -> void:
-	cell = floorf(minf(AREA.size.x, AREA.size.y) / n)
-	origin = AREA.position + (AREA.size - Vector2(n, n) * cell) / 2.0
+	cell = floorf(minf(minf(board_rect.size.x, board_rect.size.y) / n, 170.0))
+	origin = board_rect.position + (board_rect.size - Vector2(n, n) * cell) / 2.0
 
 
 func _neighbours(i: int) -> Array:
@@ -101,10 +105,13 @@ func slide(i: int) -> bool:
 	undo_stack.append(tiles.duplicate())
 	var step := (1 if x > gx else -1) if y == gy else (n if y > gy else -n)
 	var cur := g
+	moving = []
 	while cur != i:
+		moving.append([tiles[cur + step], cur + step, cur])
 		tiles[cur] = tiles[cur + step]
 		cur += step
 	tiles[i] = 0
+	start_anim("slide", 0.12)
 	moves += 1
 	if _solved():
 		finish(true, maxi(100, (diff + 1) * 900 - moves * 2 - int(elapsed)))
@@ -118,6 +125,7 @@ func _undo() -> void:
 		toast("Nothing to undo")
 		return
 	tiles = undo_stack.pop_back()
+	moving = []
 	save_game()
 
 
@@ -152,7 +160,13 @@ func draw_game() -> void:
 		var v: int = tiles[i]
 		if v == 0:
 			continue
-		var r := Rect2(origin + Vector2(i % n, i / n) * cell, Vector2(cell, cell)).grow(-5)
+		var at := origin + Vector2(i % n, i / n) * cell
+		if animating("slide"):
+			for m in moving:
+				if m[2] == i:
+					var from: Vector2 = origin + Vector2(m[1] % n, m[1] / n) * cell
+					at = from.lerp(at, ease_out(anim("slide")))
+		var r := Rect2(at, Vector2(cell, cell)).grow(-5)
 		var home := v == i + 1
 		var hue := float((v - 1) / n) / n
 		draw_rect(r, Color.from_hsv(0.58 + hue * 0.35, 0.45, 0.85 if home else 0.65))

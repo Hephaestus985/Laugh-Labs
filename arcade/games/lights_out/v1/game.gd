@@ -4,7 +4,6 @@ extends PuzzleGame
 # solved; the hint shows one of the presses that is still needed.
 # Easy 4x4, Normal 5x5, Hard 6x6.
 
-const AREA := Rect2(60, 70, 900, 620)
 
 var n := 5
 var lit: Array = []  # bools
@@ -15,6 +14,8 @@ var undo_stack: Array = []
 var hint_cell := -1
 var cell := 100.0
 var origin := Vector2.ZERO
+var glow: Array = []  # shown brightness 0..1 per light, eases towards on / off
+var ripple_at := -1
 
 
 func _init() -> void:
@@ -41,9 +42,13 @@ func new_game() -> void:
 	hint_cell = -1
 
 
+func layout() -> void:
+	_fit()
+
+
 func _fit() -> void:
-	cell = floorf(minf(AREA.size.x, AREA.size.y) / n)
-	origin = AREA.position + (AREA.size - Vector2(n, n) * cell) / 2.0
+	cell = floorf(minf(minf(board_rect.size.x, board_rect.size.y) / n, 150.0))
+	origin = board_rect.position + (board_rect.size - Vector2(n, n) * cell) / 2.0
 
 
 func _press(i: int) -> void:
@@ -88,6 +93,8 @@ func tap_cell(i: int) -> void:
 		return
 	undo_stack.append([lit.duplicate(), need.duplicate()])
 	_press(i)
+	ripple_at = i
+	start_anim("ripple", 0.35)
 	moves += 1
 	hint_cell = -1
 	if lit.count(true) == 0:
@@ -127,6 +134,13 @@ func _restart() -> void:
 	save_game()
 
 
+func game_update(delta: float) -> void:
+	if glow.size() != lit.size():
+		glow = lit.map(func(v): return 1.0 if v else 0.0)
+	for i in lit.size():
+		glow[i] = move_toward(glow[i], 1.0 if lit[i] else 0.0, delta * 7.0)
+
+
 func game_tap(p: Vector2) -> void:
 	var r := (p - origin) / cell
 	if r.x < 0 or r.y < 0 or r.x >= n or r.y >= n:
@@ -137,11 +151,13 @@ func game_tap(p: Vector2) -> void:
 func draw_game() -> void:
 	for i in lit.size():
 		var r := Rect2(origin + Vector2(i % n, i / n) * cell, Vector2(cell, cell)).grow(-6)
-		if lit[i]:
-			draw_rect(r.grow(4), Color(1.0, 0.85, 0.35, 0.25))
-			draw_rect(r, Color(1.0, 0.86, 0.40))
-		else:
-			draw_rect(r, Color(0.20, 0.22, 0.32))
+		var g: float = glow[i] if i < glow.size() else (1.0 if lit[i] else 0.0)
+		if g > 0.0:
+			draw_rect(r.grow(4 + 6 * g), Color(1.0, 0.85, 0.35, 0.25 * g))
+		draw_rect(r, Color(0.20, 0.22, 0.32).lerp(Color(1.0, 0.86, 0.40), g))
+		if i == ripple_at and animating("ripple"):
+			var k := anim("ripple")
+			draw_arc(r.get_center(), cell * (0.3 + 1.1 * k), 0, TAU, 40, Color(1, 1, 1, 0.5 * (1.0 - k)), 3.0)
 		if i == hint_cell:
 			draw_arc(r.get_center(), r.size.x * 0.3, 0, TAU, 40, Color(0.3, 0.9, 1.0), 5.0)
 	var par := start_need.count(true)

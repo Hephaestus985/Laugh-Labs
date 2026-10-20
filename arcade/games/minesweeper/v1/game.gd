@@ -5,7 +5,6 @@ extends PuzzleGame
 # The first tap is always safe.
 
 const SIZES := [[10, 7, 10], [14, 9, 22], [16, 10, 35]]  # columns, rows, mines
-const AREA := Rect2(30, 80, 950, 620)
 
 var cols := 10
 var rows := 7
@@ -18,6 +17,7 @@ var flag: Array = []  # bools
 var placed := false
 var flag_mode := false
 var boom := -1
+var open_at := {}  # cell -> time it opens (cells open in a ripple from the tap)
 
 
 func _init() -> void:
@@ -40,11 +40,29 @@ func new_game() -> void:
 	placed = false
 	flag_mode = false
 	boom = -1
+	open_at = {}
+
+
+## In portrait the board is shown turned on its side (columns become rows), so it
+## fills the tall screen. Only the drawing and the tap position change.
+func _disp() -> Vector2:
+	return Vector2(rows, cols) if portrait else Vector2(cols, rows)
+
+
+func layout() -> void:
+	_fit()
 
 
 func _fit() -> void:
-	cell = floorf(minf(AREA.size.x / cols, AREA.size.y / rows))
-	origin = AREA.position + (AREA.size - Vector2(cols, rows) * cell) / 2.0
+	var d := _disp()
+	cell = floorf(minf(minf(board_rect.size.x / d.x, board_rect.size.y / d.y), 96.0))
+	origin = board_rect.position + (board_rect.size - d * cell) / 2.0
+
+
+func cell_pos(i: int) -> Vector2:
+	var x := i % cols
+	var y := i / cols
+	return origin + (Vector2(y, x) if portrait else Vector2(x, y)) * cell
 
 
 func to_save() -> Dictionary:
@@ -65,6 +83,7 @@ func from_save(d: Dictionary) -> void:
 	_fit()
 	flag_mode = false
 	boom = -1
+	open_at = {}
 
 
 func save_info() -> String:
@@ -112,8 +131,11 @@ func _place(safe: int) -> void:
 
 func _cell_at(p: Vector2) -> int:
 	var r := (p - origin) / cell
-	if r.x < 0 or r.y < 0 or r.x >= cols or r.y >= rows:
+	var d := _disp()
+	if r.x < 0 or r.y < 0 or r.x >= d.x or r.y >= d.y:
 		return -1
+	if portrait:
+		return int(r.x) * cols + int(r.y)
 	return int(r.y) * cols + int(r.x)
 
 
@@ -128,9 +150,11 @@ func reveal(i: int) -> void:
 	moves += 1
 	if mine[i]:
 		boom = i
+		start_anim("boom", 0.8)
 		for j in mine.size():
 			if mine[j]:
 				open[j] = true
+				open_at[j] = t + 0.15 + cell_pos(j).distance_to(cell_pos(i)) / cell * 0.04
 		finish(false, 0)
 		return
 	_flood(i)
@@ -139,14 +163,19 @@ func reveal(i: int) -> void:
 
 func _flood(start: int) -> void:
 	var todo := [start]
-	while not todo.is_empty():
-		var i: int = todo.pop_back()
+	var dist := {start: 0}
+	var k := 0
+	while k < todo.size():
+		var i: int = todo[k]
+		k += 1
 		if open[i] or flag[i]:
 			continue
 		open[i] = true
+		open_at[i] = t + dist[i] * 0.03
 		if _count(i) == 0:
 			for j in _neighbours(i):
-				if not open[j]:
+				if not open[j] and not dist.has(j):
+					dist[j] = dist[i] + 1
 					todo.append(j)
 
 
@@ -202,8 +231,16 @@ func game_key(k: int) -> void:
 
 func draw_game() -> void:
 	for i in mine.size():
-		var r := Rect2(origin + Vector2(i % cols, i / cols) * cell, Vector2(cell, cell)).grow(-2)
-		if open[i]:
+		var r := Rect2(cell_pos(i), Vector2(cell, cell)).grow(-2)
+		var opened_k := 1.0
+		if open[i] and open_at.has(i):
+			opened_k = clampf((t - float(open_at[i])) / 0.18, 0.0, 1.0)
+		if open[i] and opened_k <= 0.0:
+			draw_rect(r, Color(0.34, 0.40, 0.58))
+		elif open[i]:
+			if opened_k < 1.0:
+				draw_rect(r, Color(0.34, 0.40, 0.58))
+				r = Rect2(r.get_center() - r.size * opened_k / 2.0, r.size * opened_k)
 			draw_rect(r, Color(0.85, 0.86, 0.92) if i != boom else Color(0.95, 0.3, 0.3))
 			if mine[i]:
 				draw_circle(r.get_center(), cell * 0.25, Color(0.1, 0.1, 0.12))
@@ -220,5 +257,8 @@ func draw_game() -> void:
 				draw_line(c + Vector2(-cell * 0.1, cell * 0.28), c + Vector2(-cell * 0.1, -cell * 0.28), Color.WHITE, 3.0)
 				draw_colored_polygon(PackedVector2Array([c + Vector2(-cell * 0.1, -cell * 0.28), c + Vector2(cell * 0.25, -cell * 0.15), c + Vector2(-cell * 0.1, -cell * 0.02)]), Color(0.95, 0.25, 0.2))
 	draw_stats(["Mines left %d" % (mines - flag.count(true)), "%s   %s" % [DIFF_NAMES[diff], time_text(elapsed)]])
+	if boom >= 0 and animating("boom"):
+		var k := anim("boom")
+		draw_circle(cell_pos(boom) + Vector2(cell, cell) / 2.0, cell * (0.5 + 4.0 * k), Color(1.0, 0.5, 0.2, 0.5 * (1.0 - k)))
 	if flag_mode:
-		text(Vector2(origin.x, H - 4), "Flag mode: taps place flags", 20, ACCENT)
+		text(Vector2(origin.x, origin.y - 8), "Flag mode: taps place flags", 20, ACCENT)

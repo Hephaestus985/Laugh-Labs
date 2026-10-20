@@ -7,8 +7,10 @@ extends PuzzleGame
 
 const COLS := 10
 const ROWS := 20
-const CELL := 32.0
-const ORIGIN := Vector2(330, 40)
+var CELL := 32.0
+var ORIGIN := Vector2(330, 40)
+var cleared_rows: Array = []  # rows that just vanished, for the flash
+var trail: Array = []  # hard drop: [x columns, from y, to y]
 const SHAPES := {
 	"I": [Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)],
 	"O": [Vector2i(1, 0), Vector2i(2, 0), Vector2i(1, 1), Vector2i(2, 1)],
@@ -84,6 +86,15 @@ func _fits(cs: Array, p: Vector2i) -> bool:
 	return true
 
 
+func layout() -> void:
+	if portrait:
+		CELL = floorf(minf(board_rect.size.x * 0.7 / COLS, board_rect.size.y / ROWS))
+		ORIGIN = Vector2(board_rect.position.x, board_rect.position.y + (board_rect.size.y - ROWS * CELL) / 2.0)
+	else:
+		CELL = 32.0
+		ORIGIN = Vector2(330, 40)
+
+
 func fall_interval() -> float:
 	var base: float = [0.85, 0.65, 0.45][diff]
 	return maxf(0.06, base * pow(0.85, level - 1))
@@ -118,9 +129,13 @@ func soft_drop() -> bool:
 
 func hard_drop() -> void:
 	var dropped := 0
+	var from_y := pos.y
 	while _fits(cells, pos + Vector2i(0, 1)):
 		pos.y += 1
 		dropped += 1
+	if dropped > 0:
+		trail = [cells.map(func(c): return c.x + pos.x), from_y, pos.y, cells.duplicate()]
+		start_anim("trail", 0.2)
 	score += dropped * 2
 	_lock()
 
@@ -133,6 +148,7 @@ func _lock() -> void:
 			return
 		grid[y * COLS + c.x + pos.x] = piece
 	var cleared := 0
+	var gone := []
 	var y := ROWS - 1
 	while y >= 0:
 		var full := true
@@ -141,6 +157,7 @@ func _lock() -> void:
 				full = false
 				break
 		if full:
+			gone.append(y + cleared)  # where it was before the rows above it moved
 			cleared += 1
 			for yy in range(y, 0, -1):
 				for x in COLS:
@@ -155,6 +172,8 @@ func _lock() -> void:
 		lines += cleared
 		level = 1 + lines / 10
 		flash = 0.25
+		cleared_rows = gone
+		start_anim("clear", 0.35)
 		if was < target and lines >= target:
 			toast("Target reached! Keep going for a high score")
 	moves += 1
@@ -236,7 +255,9 @@ func game_key(k: int) -> void:
 		KEY_SPACE: hard_drop()
 
 
-func _draw_block(p: Vector2, col: Color, size := CELL) -> void:
+func _draw_block(p: Vector2, col: Color, size := -1.0) -> void:
+	if size < 0.0:
+		size = CELL
 	var r := Rect2(p, Vector2(size, size)).grow(-1)
 	draw_rect(r, col)
 	draw_rect(Rect2(r.position, Vector2(r.size.x, 4)), Color(1, 1, 1, 0.3))
@@ -250,6 +271,18 @@ func draw_game() -> void:
 	for i in grid.size():
 		if grid[i] != "":
 			_draw_block(ORIGIN + Vector2(i % COLS, i / COLS) * CELL, COLORS[grid[i]])
+	if animating("clear"):
+		var k := anim("clear")
+		for row in cleared_rows:
+			draw_rect(Rect2(ORIGIN + Vector2(0, row * CELL), Vector2(COLS * CELL, CELL)), Color(1, 1, 1, 0.8 * (1.0 - k)))
+	if animating("trail") and trail.size() == 4:
+		var k := anim("trail")
+		var cs: Array = trail[3]
+		for c in cs:
+			var x: float = ORIGIN.x + (c.x + trail[0][0] - cs[0].x) * CELL
+			var y0: float = ORIGIN.y + (c.y + trail[1]) * CELL
+			var y1: float = ORIGIN.y + (c.y + trail[2]) * CELL
+			draw_rect(Rect2(x + 4, y0, CELL - 8, y1 - y0), Color(1, 1, 1, 0.18 * (1.0 - k)))
 	if state == 1:
 		# where it would land
 		var ghost := pos
@@ -262,10 +295,13 @@ func draw_game() -> void:
 			if c.y + pos.y >= 0:
 				_draw_block(ORIGIN + Vector2(c.x + pos.x, c.y + pos.y) * CELL, COLORS[piece])
 	# next piece
-	draw_string(font, Vector2(720, 90), "Next", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, DIM)
+	var side := ORIGIN + Vector2(COLS * CELL + (24 if portrait else 70), 50)
+	draw_string(font, side, "Next", HORIZONTAL_ALIGNMENT_LEFT, -1, 26, DIM)
+	var ns := 26.0 if portrait else 28.0
 	for c in SHAPES[next_piece]:
-		_draw_block(Vector2(730, 110) + Vector2(c.x, c.y) * 28.0, COLORS[next_piece], 28.0)
-	draw_string(font, Vector2(720, 240), "Rows %d / %d" % [lines, target], HORIZONTAL_ALIGNMENT_LEFT, -1, 26, INK)
-	draw_string(font, Vector2(720, 275), "Level %d" % level, HORIZONTAL_ALIGNMENT_LEFT, -1, 26, INK)
+		_draw_block(side + Vector2(10, 20) + Vector2(c.x, c.y) * ns, COLORS[next_piece], ns)
+	draw_string(font, side + Vector2(0, 150), "Rows %d/%d" % [lines, target], HORIZONTAL_ALIGNMENT_LEFT, -1, 24, INK)
+	draw_string(font, side + Vector2(0, 185), "Level %d" % level, HORIZONTAL_ALIGNMENT_LEFT, -1, 24, INK)
 	draw_stats(["Score %d" % score, "Best %d" % maxi(best, score)])
-	text(Vector2(40, H - 20), "drag: slide   tap: turn   swipe down: drop", 18, DIM)
+	if not portrait:
+		text(Vector2(40, sh - 20), "drag: slide   tap: turn   swipe down: drop", 18, DIM)
