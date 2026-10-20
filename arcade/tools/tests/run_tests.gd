@@ -100,6 +100,14 @@ func mouse(pos: Vector2, down: bool) -> void:
 	Input.parse_input_event(e)
 
 
+func mouse_move(pos: Vector2) -> void:
+	var d := InputEventMouseMotion.new()
+	d.position = to_window(pos)
+	d.global_position = d.position
+	d.button_mask = MOUSE_BUTTON_MASK_LEFT
+	Input.parse_input_event(d)
+
+
 ## A finger swipe as the phone reports it (emulated mouse press, moves, release).
 func swipe(from: Vector2, dy: float) -> void:
 	mouse(from, true)
@@ -352,26 +360,57 @@ func test_menu() -> void:
 	check("menu", "info page scrolls by swipe", isc != null and isc.scroll_vertical > 50)
 	m.go_back()
 	await frames(3)
-	# Home tab: the games you pick
+	# Home tab: a Steam-style front page with a hero banner and sideways rows
 	m.tab = 0
 	m.show_list()
 	await frames(2)
-	cards = m.find_child("Cards", true, false)
-	check("menu", "Home is empty until you pick games", cards != null and cards.get_child_count() == 0)
+	check("menu", "Home has a hero banner", m.find_child("Hero", true, false) != null and m.find_child("HeroPlay", true, false) != null)
+	check("menu", "Home has no picks row until you pick games", m.find_child("Row_picks", true, false) == null)
+	check("menu", "Home has a row per genre", m.get_tree().get_nodes_in_group("hrow").size() >= m.values_of("genre").size())
 	m.toggle_favorite("the_last_knight")
 	m.toggle_favorite("outpost_assault")
 	m.show_list()
+	await frames(3)
+	var prow: ScrollContainer = m.find_child("Row_picks", true, false)
+	check("menu", "Home shows your picks", prow != null and prow.get_child(0).get_child_count() == 2)
+	# a sideways swipe on a long row scrolls that row, not the page
+	var grow: ScrollContainer = null
+	for r in m.get_tree().get_nodes_in_group("hrow"):
+		if r.get_child(0).get_child_count() >= 5 and (grow == null or r.get_global_rect().position.y < grow.get_global_rect().position.y):
+			grow = r
+	if grow:
+		var page: ScrollContainer = m.current_scroll()
+		page.scroll_vertical = int(grow.position.y)
+		await frames(2)
+		var gr := grow.get_global_rect()
+		var p0 := Vector2(gr.position.x + gr.size.x * 0.8, gr.position.y + 40)
+		var v0 := page.scroll_vertical
+		mouse(p0, true)
+		await frames(1)
+		for i in 6:
+			mouse_move(p0 - Vector2(60 * (i + 1), 3))
+			await frames(1)
+		mouse(p0 - Vector2(360, 3), false)
+		await frames(2)
+		check("menu", "swiping a Home row scrolls it sideways", grow.scroll_horizontal > 100 and absi(page.scroll_vertical - v0) < 10, "h %d, v moved %d" % [grow.scroll_horizontal, page.scroll_vertical - v0])
+	else:
+		check("menu", "swiping a Home row scrolls it sideways", false, "no long row")
+	# - on a Library card removes a pick
+	m.tab = 1
+	m.show_list()
+	await frames(2)
+	m.search = "knight"
+	m.fill_cards()
 	await frames(2)
 	cards = m.find_child("Cards", true, false)
-	check("menu", "Home shows your picks", cards != null and cards.get_child_count() == 2)
 	var ht: Button = cards.get_child(0).find_child("HomeToggle", true, false)
 	var hc := ht.get_global_rect().get_center()
 	mouse(hc, true)
 	await frames(1)
 	mouse(hc, false)
 	await frames(3)
-	cards = m.find_child("Cards", true, false)
-	check("menu", "- Home removes a pick", cards != null and cards.get_child_count() == 1 and m.favorites().size() == 1)
+	check("menu", "- removes a pick from Home", m.favorites().size() == 1 and not m.is_favorite("the_last_knight"))
+	m.search = ""
 	m.set_setting("ui", "favorites", [])
 	# Library: search and filters
 	m.tab = 1
@@ -573,6 +612,56 @@ func test_launcher_extras() -> void:
 	await frames(2)
 	var texts := m.find_children("*", "Label", true, false).map(func(l): return l.text)
 	check("launcher", "the profile shows time played and most played", texts.has("Most played") and texts.has("Sudoku"), str(texts.slice(0, 6)))
+	m.queue_free()
+	await frames(2)
+	# ratings, collections, the collection filter and the Feel toggles
+	m = spawn("res://menu.tscn")
+	await frames(3)
+	var sg: Dictionary = m.all_games().filter(func(x): return x["id"] == "sudoku")[0]
+	m.show_info(sg)
+	await frames(2)
+	var star: Button = m.find_child("Star4", true, false)
+	check("launcher", "a game page has rating stars", star != null)
+	if star:
+		star.emit_signal("pressed")
+		await frames(2)
+	check("launcher", "tapping a star rates the game", GameData.rating("sudoku") == 4 and (m.find_child("Star4", true, false) as StarButton).filled and not (m.find_child("Star5", true, false) as StarButton).filled)
+	var le: LineEdit = m.find_child("NewCollection", true, false)
+	le.text = "Brain teasers"
+	(m.find_child("AddCollection", true, false) as Button).emit_signal("pressed")
+	await frames(2)
+	check("launcher", "a new collection holds the game", GameData.collections().has("Brain teasers") and GameData.in_collection("Brain teasers", "sudoku") and m.find_child("Coll_Brain teasers", true, false) != null)
+	m.tab = 0
+	m.show_list()
+	await frames(2)
+	var crow: ScrollContainer = m.find_child("Row_coll_Brain teasers", true, false)
+	check("launcher", "a collection gets its own Home row", crow != null and crow.get_child(0).get_child_count() == 1)
+	m.tab = 1
+	m.f_collection = "Brain teasers"
+	m.show_list()
+	await frames(2)
+	var cc: GridContainer = m.find_child("Cards", true, false)
+	check("launcher", "the Library filters by collection", cc.get_child_count() == 1 and String(cc.get_child(0).name) == "Card_sudoku")
+	m.f_collection = ""
+	m.set_setting("ui", "sort", 7)
+	m.fill_cards()
+	check("launcher", "sorting by your rating puts rated games first", String(cc.get_child(0).name) == "Card_sudoku")
+	m.set_setting("ui", "sort", 0)
+	m.show_settings()
+	await frames(2)
+	var ts: Button = m.find_child("TapSounds", true, false)
+	var was := UiFx.sounds_on()
+	ts.emit_signal("pressed")
+	await frames(2)
+	check("launcher", "tap sounds can be switched off", UiFx.sounds_on() != was)
+	var vb: Button = m.find_child("Vibration", true, false)
+	var vwas := UiFx.vibration_on()
+	vb.emit_signal("pressed")
+	await frames(2)
+	check("launcher", "vibration can be switched off", UiFx.vibration_on() != vwas)
+	GameData.delete_collection("Brain teasers")
+	GameData.set_rating("sudoku", 0)
+	check("launcher", "collections can be deleted", not GameData.collections().has("Brain teasers"))
 	m.queue_free()
 	await frames(2)
 

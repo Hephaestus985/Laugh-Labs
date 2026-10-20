@@ -6,7 +6,7 @@ config_version=5
 config/quit_on_go_back=false
 
 config/name="Lab Arcade"
-config/version="1.23"
+config/version="1.24"
 config/use_custom_user_dir=true
 config/custom_user_dir_name="Laugh Lab Arcade"
 config/description="All the Lab games in one app."

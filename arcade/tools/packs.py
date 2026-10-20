@@ -119,7 +119,7 @@ def write_presets(base_files, pack_files=None, linux_pack_files=None):
     # the launcher APK: only the files the launcher needs
     a = re.sub(r'export_filter="[^"]*"', 'export_filter="resources"\nexport_files=%s' % packed(base), android, count=1)
     if "permissions/internet" not in a:
-        a = a.replace("[preset.0.options]\n", "[preset.0.options]\n\npermissions/internet=true\n", 1)
+        a = a.replace("[preset.0.options]\n", "[preset.0.options]\n\npermissions/internet=true\npermissions/vibrate=true\n", 1)
     out = a + linux
     n = 2
 

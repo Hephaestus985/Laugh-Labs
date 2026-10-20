@@ -8,7 +8,7 @@ const Games := preload("res://games.gd")
 const SETTINGS := "user://settings.cfg"
 const LANDSCAPE := Vector2i(1280, 720)
 const PORTRAIT := Vector2i(720, 1280)
-const SORTS := ["A to Z", "Recently played", "Most played", "Shortest first", "Longest first", "Most effort first", "Newest first"]
+const SORTS := ["A to Z", "Recently played", "Most played", "Shortest first", "Longest first", "Most effort first", "Newest first", "Your rating"]
 const ORIENTS := ["Auto (turn the phone)", "Always landscape", "Always portrait"]
 const BG := Color(0.11, 0.10, 0.17)
 const PANEL := Color(0.17, 0.16, 0.25)
@@ -29,6 +29,7 @@ var f_publisher := ""  # "" any, BY_OTHERS, or a publisher's name
 var f_length := 0  # index in LENGTHS
 var f_genre := ""  # "" any, or a genre
 var f_unplayed := false
+var f_collection := ""  # "" any, or one of your collections
 var launch_hook := Callable()  # tests replace launching with this
 const BY_OTHERS := "More games (by others)"
 const LENGTHS := ["Any length", "Short (under 5 min)", "Medium (5-15 min)", "Long (15 min or more)", "No end (free play)"]
@@ -104,6 +105,18 @@ func current_scroll() -> ScrollContainer:
 	return body.find_child("Scroll", true, false) as ScrollContainer if body else null
 
 
+var drag_row: ScrollContainer = null  # a Home row under the finger (scrolls sideways)
+var drag_row_start := 0
+var drag_horizontal := false
+
+
+func row_at(p: Vector2) -> ScrollContainer:
+	for r in get_tree().get_nodes_in_group("hrow"):
+		if r is ScrollContainer and r.is_visible_in_tree() and r.get_global_rect().has_point(p):
+			return r
+	return null
+
+
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
@@ -116,6 +129,9 @@ func _input(event: InputEvent) -> void:
 			drag_scroll = sc
 			drag_from = event.position
 			drag_start_scroll = sc.scroll_vertical
+			drag_row = row_at(event.position)
+			drag_row_start = drag_row.scroll_horizontal if drag_row else 0
+			drag_horizontal = false
 			drag_press = event.duplicate()
 			last_drag_y = event.position.y
 			last_drag_t = Time.get_ticks_msec()
@@ -134,9 +150,14 @@ func _input(event: InputEvent) -> void:
 		if not (event.button_mask & MOUSE_BUTTON_MASK_LEFT):
 			return  # a stray pointer move (e.g. a real mouse hovering), not the finger
 		var dy: float = event.position.y - drag_from.y
-		if not dragging and absf(dy) > DRAG_START:
+		var dx: float = event.position.x - drag_from.x
+		if not dragging and maxf(absf(dx), absf(dy)) > DRAG_START:
 			dragging = true
-		if dragging and is_instance_valid(drag_scroll):
+			# sideways on a Home row scrolls that row; otherwise the page
+			drag_horizontal = is_instance_valid(drag_row) and absf(dx) > absf(dy)
+		if dragging and drag_horizontal and is_instance_valid(drag_row):
+			drag_row.scroll_horizontal = drag_row_start - int(dx)
+		elif dragging and is_instance_valid(drag_scroll):
 			drag_scroll.scroll_vertical = drag_start_scroll - int(dy)
 			var now := Time.get_ticks_msec()
 			var dt := maxf(1.0, now - last_drag_t) / 1000.0
@@ -282,6 +303,8 @@ func matches(g: Dictionary) -> bool:
 		return false
 	if f_genre != "" and g.get("genre", "") != f_genre:
 		return false
+	if f_collection != "" and not GameData.in_collection(f_collection, g["id"]):
+		return false
 	if f_unplayed and plays(g["id"]) > 0:
 		return false
 	var q := search.strip_edges().to_lower()
@@ -325,6 +348,8 @@ func sorted_games() -> Array:
 			list.sort_custom(func(a, b): return effort_level(a) > effort_level(b) or (effort_level(a) == effort_level(b) and a["_order"] > b["_order"]))
 		6:
 			list.sort_custom(func(a, b): return a["_order"] > b["_order"])
+		7:
+			list.sort_custom(func(a, b): return GameData.rating(a["id"]) > GameData.rating(b["id"]) or (GameData.rating(a["id"]) == GameData.rating(b["id"]) and String(a["name"]) < String(b["name"])))
 	return list
 
 
@@ -368,6 +393,7 @@ func clear_body() -> void:
 	for c in body.get_children():
 		body.remove_child(c)
 		c.queue_free()
+	UiFx.fade_in(body, 0.16)
 
 
 func label(s: String, size: int, color := Color(1, 1, 1), center := false) -> Label:
@@ -400,6 +426,8 @@ func style_button(b: Button, c: Color, radius := 14) -> void:
 	f.border_color = Color(1, 1, 1)
 	f.set_border_width_all(3)
 	b.add_theme_stylebox_override("focus", f)
+	if not b.pressed.is_connected(UiFx.tap):
+		b.pressed.connect(UiFx.tap.bind(b))
 
 
 func button(txt: String, c: Color, size := 22, expand := true) -> Button:
@@ -436,6 +464,9 @@ func picture(tex: Texture2D, on_tap := Callable(), fallback := Color(0.1, 0.12, 
 		cr.set_anchors_preset(Control.PRESET_FULL_RECT)
 		cr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		tr.add_child(cr)
+	if tex:
+		tr.modulate.a = 0.0
+		tr.ready.connect(func(): UiFx.fade_in(tr, 0.3))
 	if on_tap.is_valid():
 		var b := Button.new()
 		b.name = "Cover"
@@ -517,7 +548,7 @@ func show_list() -> void:
 	var bar := HBoxContainer.new()
 	bar.add_theme_constant_override("separation", 10)
 	for t in 2:
-		var tb := button(("Home (%d)" % favorites().size()) if t == 0 else ("Library (%d)" % all_games().size()), Color(0.85, 0.55, 0.15) if tab == t else PANEL, 21, false)
+		var tb := button("Home" if t == 0 else ("Library (%d)" % all_games().size()), Color(0.85, 0.55, 0.15) if tab == t else PANEL, 21, false)
 		tb.name = "Tab%d" % t
 		tb.custom_minimum_size = Vector2(150, 50)
 		tb.pressed.connect(func():
@@ -539,7 +570,8 @@ func show_list() -> void:
 	ob.item_selected.connect(func(i):
 		set_setting("ui", "sort", i)
 		fill_cards())
-	bar.add_child(ob)
+	if tab == 1:
+		bar.add_child(ob)
 	body.add_child(bar)
 	if tab == 1:
 		var se := LineEdit.new()
@@ -565,8 +597,13 @@ func show_list() -> void:
 		fl.add_child(filter_menu("Publisher", "Any publisher", pubs, f_publisher, func(v): f_publisher = v))
 		fl.add_child(filter_menu("Length", LENGTHS[0], LENGTHS.slice(1), "" if f_length == 0 else LENGTHS[f_length], func(v): f_length = maxi(0, LENGTHS.find(v))))
 		fl.add_child(filter_menu("Genre", "Any genre", values_of("genre"), f_genre, func(v): f_genre = v))
+		if not GameData.collections().is_empty():
+			fl.add_child(filter_menu("Collection", "Any collection", GameData.collections().keys(), f_collection, func(v): f_collection = v))
 		fl.add_child(filter_button("Unplayed", "Not played yet", f_unplayed, func(): f_unplayed = not f_unplayed))
 	var inner := scroll_box()
+	if tab == 0:
+		build_home(inner)
+		return
 	var count := label("", 19, MUTED)
 	count.name = "Count"
 	inner.add_child(count)
@@ -611,7 +648,7 @@ func filter_button(id: String, txt: String, on: bool, action: Callable) -> Butto
 
 ## Rebuild only the cards (keeps the search box and keyboard open while typing).
 ## The Library's search and filters are kept between visits (playing a game reloads the menu).
-const FILTER_KEYS := ["search", "f_publisher", "f_length", "f_genre", "f_unplayed"]
+const FILTER_KEYS := ["search", "f_publisher", "f_length", "f_genre", "f_unplayed", "f_collection"]
 
 
 func load_filters() -> void:
@@ -625,6 +662,8 @@ func load_filters() -> void:
 		f_genre = ""
 	if f_publisher not in ["", BY_OTHERS] and not values_of("publisher").has(f_publisher):
 		f_publisher = ""
+	if f_collection != "" and not GameData.collections().has(f_collection):
+		f_collection = ""
 
 
 func save_filters() -> void:
@@ -692,7 +731,8 @@ func make_card(g: Dictionary) -> Control:
 	title_l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	v.add_child(title_l)
 	var pt := GameData.playtime(g["id"])
-	var meta := label("%s  ·  %s%s" % [g.get("genre", ""), g.get("length", "").get_slice(" (", 0), ("  ·  " + GameData.time_text(pt) + " played") if pt > 0 else ""], 17, MUTED)
+	var stars := GameData.rating(g["id"])
+	var meta := label("%s  ·  %s%s%s" % [g.get("genre", ""), g.get("length", "").get_slice(" (", 0), ("  ·  " + GameData.time_text(pt) + " played") if pt > 0 else "", ("  ·  rated %d/5" % stars) if stars > 0 else ""], 17, MUTED)
 	meta.autowrap_mode = TextServer.AUTOWRAP_OFF
 	meta.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	v.add_child(meta)
@@ -748,6 +788,111 @@ func launch(g: Dictionary, scene: String, mode: String = "") -> void:
 	Engine.set_meta("hub_game", g["id"])
 	Engine.set_meta("hub_scene", scene)
 	get_tree().change_scene_to_file(GameData.HUB)
+
+
+# ---------------------------------------------------------------- home: a Steam-style front page
+
+## A big banner for the game you played last (or one to start with), then rows of
+## covers you swipe sideways: your picks, your collections, recently played, new and
+## updated, and one row per genre.
+func build_home(inner: VBoxContainer) -> void:
+	var games := all_games()
+	var last := games.filter(func(g): return last_played(g["id"]) > 0)
+	last.sort_custom(func(a, b): return last_played(a["id"]) > last_played(b["id"]))
+	var hero_game: Dictionary = last[0] if not last.is_empty() else {}
+	var hero_title := "Continue playing"
+	if hero_game.is_empty():
+		# never played anything: suggest the newest game
+		var by_new := games.duplicate()
+		by_new.sort_custom(func(a, b): return String(newest(a)["date"]) > String(newest(b)["date"]) or (newest(a)["date"] == newest(b)["date"] and int(a.get("order", 0)) > int(b.get("order", 0))))
+		hero_game = by_new[0]
+		hero_title = "Start here"
+	_hero(inner, hero_game, hero_title)
+	var picks := games.filter(func(g): return is_favorite(g["id"]))
+	_row(inner, "picks", "Your picks", picks, "Tap + on a game in the Library to pin it here.")
+	var cols := GameData.collections()
+	for cname in cols:
+		var ids: Array = cols[cname]
+		_row(inner, "coll_" + cname.validate_node_name(), cname, games.filter(func(g): return ids.has(g["id"])), "Empty: add games to it on their page.")
+	_row(inner, "recent", "Recently played", last.slice(0, 12), "")
+	var fresh := games.filter(func(g): return GameData.badge(g) != "")
+	_row(inner, "new", "New and updated", fresh, "")
+	for genre in values_of("genre"):
+		_row(inner, "genre_" + genre.validate_node_name(), genre, games.filter(func(g): return g.get("genre", "") == genre), "")
+
+
+func _hero(parent: Control, g: Dictionary, title: String) -> void:
+	var panel := PanelContainer.new()
+	panel.name = "Hero"
+	panel.add_theme_stylebox_override("panel", flat(Color(0.11, 0.16, 0.22), 16, 0))
+	parent.add_child(panel)
+	var box: BoxContainer = VBoxContainer.new() if portrait else HBoxContainer.new()
+	box.add_theme_constant_override("separation", 0)
+	panel.add_child(box)
+	var art := cover_art(g, func(): show_info(g))
+	# a wide banner of fixed height, so the rows below stay in view
+	if art is TextureRect and (art as TextureRect).texture:
+		(art as TextureRect).expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.custom_minimum_size = Vector2(0, 300 if portrait else 380)
+	art.size_flags_stretch_ratio = 1.4
+	box.add_child(art)
+	var pad := MarginContainer.new()
+	pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for side in ["left", "right", "top", "bottom"]:
+		pad.add_theme_constant_override("margin_" + side, 18)
+	box.add_child(pad)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 8)
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	pad.add_child(v)
+	v.add_child(label(title.to_upper(), 17, MUTED))
+	v.add_child(label(g["name"], 32))
+	var facts := []
+	if last_played(g["id"]) > 0:
+		facts.append("Last played " + Time.get_date_string_from_unix_time(last_played(g["id"])))
+	if GameData.playtime(g["id"]) > 0:
+		facts.append(GameData.time_text(GameData.playtime(g["id"])) + " played")
+	v.add_child(label("  ·  ".join(facts) if not facts.is_empty() else g["tagline"], 19, Color(0.55, 0.75, 0.95)))
+	var scene: String = newest(g)["scene"]
+	var pk := Packs.key_for(g, scene)
+	var pst := Packs.status(pk)
+	var play := button("Resume" if title == "Continue playing" and pst == "ready" else ("Get  " + Packs.size_text(Packs.size_of(pk)) if pst != "ready" else "Play"), Color(0.33, 0.62, 0.10) if pst == "ready" else Color(0.15, 0.45, 0.75), 26, false)
+	play.name = "HeroPlay"
+	play.custom_minimum_size = Vector2(220, 66)
+	play.pressed.connect(func(): launch(g, scene))
+	v.add_child(play)
+
+
+## A titled row of small covers that scrolls sideways.
+func _row(parent: Control, id: String, title: String, games: Array, empty_text: String) -> void:
+	if games.is_empty() and empty_text == "":
+		return
+	parent.add_child(label(title, 24, GOLD))
+	if games.is_empty():
+		parent.add_child(label(empty_text, 18, MUTED))
+		return
+	var sc := ScrollContainer.new()
+	sc.name = "Row_" + id
+	sc.add_to_group("hrow")
+	sc.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
+	sc.mouse_filter = Control.MOUSE_FILTER_PASS
+	parent.add_child(sc)
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 12)
+	sc.add_child(h)
+	var w := 250.0 if portrait else 290.0
+	for g in games:
+		var tile := VBoxContainer.new()
+		tile.name = "Tile_" + str(g["id"])
+		tile.custom_minimum_size = Vector2(w, 0)
+		tile.add_theme_constant_override("separation", 4)
+		tile.add_child(cover_art(g, func(): show_info(g)))
+		var nl := label(g["name"], 18)
+		nl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		nl.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		tile.add_child(nl)
+		h.add_child(tile)
 
 
 # ---------------------------------------------------------------- app updates and what's new
@@ -1108,6 +1253,26 @@ func show_info(g: Dictionary) -> void:
 	for tg in [g.get("genre", ""), g.get("length", ""), "Open source" if is_external(g) else "Lab Arcade original", "Saves progress" if g.has("save_file") else "", "Difficulty levels" if not g.get("no_difficulty", false) else ""]:
 		if tg != "":
 			tags.add_child(chip(tg, Color(0.40, 0.60, 0.80, 0.25)))
+	# your rating and collections
+	var you := HFlowContainer.new()
+	you.add_theme_constant_override("h_separation", 6)
+	you.add_theme_constant_override("v_separation", 8)
+	inner.add_child(you)
+	you.add_child(label("Your rating", 19, MUTED))
+	var stars_row := HBoxContainer.new()
+	stars_row.name = "Rating"
+	you.add_child(stars_row)
+	var cur := GameData.rating(gid)
+	for s in range(1, 6):
+		var sbtn := StarButton.new()
+		sbtn.name = "Star%d" % s
+		sbtn.filled = s <= cur
+		sbtn.pressed.connect(func():
+			GameData.set_rating(gid, 0 if GameData.rating(gid) == s else s)
+			UiFx.tap(self)
+			show_info(g))
+		stars_row.add_child(sbtn)
+	_collections_editor(inner, g)
 	# screenshots
 	var shots: Array = g.get("shots", [])
 	if not shots.is_empty():
@@ -1189,6 +1354,41 @@ func show_info(g: Dictionary) -> void:
 			inner.add_child(label("•  " + str(w), 19, MUTED))
 
 
+## Put a game in (or out of) your collections, or start a new one.
+func _collections_editor(parent: Control, g: Dictionary) -> void:
+	var gid: String = g["id"]
+	var row := HFlowContainer.new()
+	row.name = "Collections"
+	row.add_theme_constant_override("h_separation", 8)
+	row.add_theme_constant_override("v_separation", 8)
+	parent.add_child(row)
+	row.add_child(label("Collections", 19, MUTED))
+	for cname in GameData.collections():
+		var inside := GameData.in_collection(cname, gid)
+		var cb := button(("In: " if inside else "+ ") + cname, Color(0.85, 0.55, 0.15) if inside else Color(0.20, 0.27, 0.36), 18, false)
+		cb.name = "Coll_" + cname.validate_node_name()
+		cb.pressed.connect(func():
+			GameData.toggle_in_collection(cname, gid)
+			show_info(g))
+		row.add_child(cb)
+	var le := LineEdit.new()
+	le.name = "NewCollection"
+	le.placeholder_text = "New collection..."
+	le.custom_minimum_size = Vector2(220, 52)
+	le.add_theme_font_size_override("font_size", 19)
+	row.add_child(le)
+	var add := button("Add", Color(0.20, 0.27, 0.36), 18, false)
+	add.name = "AddCollection"
+	add.pressed.connect(func():
+		var n := le.text.strip_edges()
+		if n != "":
+			GameData.add_collection(n)
+			if not GameData.in_collection(n, gid):
+				GameData.toggle_in_collection(n, gid)
+			show_info(g))
+	row.add_child(add)
+
+
 ## A screenshot full screen; tap anywhere to close.
 func show_picture(tex: Texture2D) -> void:
 	var layer := CanvasLayer.new()
@@ -1248,6 +1448,35 @@ func show_settings() -> void:
 			apply_orientation()
 			show_settings())
 		orow.add_child(b)
+	section(inner, "Feel")
+	var frow := HFlowContainer.new()
+	frow.add_theme_constant_override("h_separation", 8)
+	frow.add_theme_constant_override("v_separation", 8)
+	inner.add_child(frow)
+	var so := button("Tap sounds: on" if UiFx.sounds_on() else "Tap sounds: off", PANEL, 20, false)
+	so.name = "TapSounds"
+	so.pressed.connect(func():
+		set_setting("ui", "sounds", not UiFx.sounds_on())
+		show_settings())
+	frow.add_child(so)
+	var vi := button("Vibration: on" if UiFx.vibration_on() else "Vibration: off", PANEL, 20, false)
+	vi.name = "Vibration"
+	vi.pressed.connect(func():
+		set_setting("ui", "vibration", not UiFx.vibration_on())
+		show_settings())
+	frow.add_child(vi)
+	if not GameData.collections().is_empty():
+		section(inner, "Your collections")
+		for cname in GameData.collections():
+			var crow := HBoxContainer.new()
+			crow.add_theme_constant_override("separation", 10)
+			inner.add_child(crow)
+			crow.add_child(label("%s  (%d games)" % [cname, (GameData.collections()[cname] as Array).size()], 20))
+			var del := button("Delete", Color(0.45, 0.18, 0.22), 18, false)
+			del.pressed.connect(func():
+				GameData.delete_collection(cname)
+				show_settings())
+			crow.add_child(del)
 	section(inner, "App updates")
 	inner.add_child(label("Lab Arcade %s. %s" % [GameData.app_version(), update_status], 19, MUTED))
 	var urow := HFlowContainer.new()

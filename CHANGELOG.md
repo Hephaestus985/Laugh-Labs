@@ -2,6 +2,12 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.24 (2026-10-20)
+- A Steam-style Home: a big banner for the game you played last (Resume) or one to start with, then rows of covers you swipe sideways: your picks, your collections, recently played, new and updated, and one row per genre
+- Rate games (1 to 5 stars on their page) and sort the Library by your rating
+- Collections: make your own lists of games on a game's page; each gets a Home row and a Library filter, and can be deleted in Settings
+- Smoother feel: a soft tap sound and a short vibration on buttons (both can be switched off in Settings under "Feel"), and pages and covers fade in
+
 ## Lab Arcade 1.23 (2026-10-20)
 - Updates inside the app: Lab Arcade checks GitHub for a newer version and shows an Update banner (one tap downloads it). Settings has "Check for updates"
 - What's new: the first start after an update shows what changed (also in Settings), and games get NEW or UPDATED badges until you open them

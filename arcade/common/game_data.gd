@@ -214,3 +214,54 @@ static func compare_versions(a: String, b: String) -> int:
 
 static func app_version() -> String:
 	return str(ProjectSettings.get_setting("application/config/version", "0"))
+
+
+# ---------------------------------------------------------------- your ratings and collections
+
+static func rating(id: String) -> int:
+	return clampi(int(get_setting("ratings", id, 0)), 0, 5)
+
+
+static func set_rating(id: String, stars: int) -> void:
+	set_setting("ratings", id, clampi(stars, 0, 5))
+
+
+## Your own lists of games: {"Favourites": ["sudoku", ...], ...}
+static func collections() -> Dictionary:
+	var c = get_setting("collections", "all", {})
+	return c if typeof(c) == TYPE_DICTIONARY else {}
+
+
+static func _save_collections(c: Dictionary) -> void:
+	set_setting("collections", "all", c)
+
+
+static func in_collection(name: String, id: String) -> bool:
+	return (collections().get(name, []) as Array).has(id)
+
+
+static func toggle_in_collection(name: String, id: String) -> void:
+	var c := collections()
+	var ids: Array = c.get(name, [])
+	if ids.has(id):
+		ids.erase(id)
+	else:
+		ids.append(id)
+	c[name] = ids
+	_save_collections(c)
+
+
+static func add_collection(name: String) -> void:
+	name = name.strip_edges()
+	if name == "":
+		return
+	var c := collections()
+	if not c.has(name):
+		c[name] = []
+		_save_collections(c)
+
+
+static func delete_collection(name: String) -> void:
+	var c := collections()
+	c.erase(name)
+	_save_collections(c)
