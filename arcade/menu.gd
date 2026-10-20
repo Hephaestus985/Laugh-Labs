@@ -407,6 +407,44 @@ func button(txt: String, c: Color, size := 22, expand := true) -> Button:
 	return b
 
 
+## A game's cover art (Steam-style header, 920x430), optionally tappable.
+## Its height follows its width, so it keeps its shape on any screen.
+func cover_art(g: Dictionary, on_tap := Callable()) -> Control:
+	var path: String = g.get("cover", "")
+	var tex: Texture2D = load(path) if path != "" and ResourceLoader.exists(path) else null
+	return picture(tex, on_tap, Color(g["color"]).darkened(0.3))
+
+
+func picture(tex: Texture2D, on_tap := Callable(), fallback := Color(0.1, 0.12, 0.18)) -> Control:
+	var tr := TextureRect.new()
+	tr.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tr.mouse_filter = Control.MOUSE_FILTER_PASS
+	if tex:
+		tr.texture = tex
+		tr.expand_mode = TextureRect.EXPAND_FIT_HEIGHT_PROPORTIONAL
+		tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	else:
+		tr.custom_minimum_size = Vector2(0, 160)
+		var cr := ColorRect.new()
+		cr.color = fallback
+		cr.set_anchors_preset(Control.PRESET_FULL_RECT)
+		cr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tr.add_child(cr)
+	if on_tap.is_valid():
+		var b := Button.new()
+		b.name = "Cover"
+		b.flat = true
+		b.set_anchors_preset(Control.PRESET_FULL_RECT)
+		b.mouse_filter = Control.MOUSE_FILTER_PASS
+		b.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+		b.add_theme_stylebox_override("hover", flat(Color(1, 1, 1, 0.06), 0, 0))
+		b.add_theme_stylebox_override("pressed", flat(Color(0, 0, 0, 0.15), 0, 0))
+		b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+		b.pressed.connect(on_tap)
+		tr.add_child(b)
+	return tr
+
+
 func chip(txt: String, c := Color(0, 0, 0, 0.28)) -> Control:
 	var p := PanelContainer.new()
 	p.add_theme_stylebox_override("panel", flat(c, 10, 7))
@@ -522,7 +560,7 @@ func show_list() -> void:
 	inner.add_child(count)
 	var grid := GridContainer.new()
 	grid.name = "Cards"
-	grid.columns = 1 if portrait else 2
+	grid.columns = 1 if portrait else 3
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	grid.add_theme_constant_override("h_separation", 16)
 	grid.add_theme_constant_override("v_separation", 16)
@@ -603,83 +641,93 @@ func fill_cards() -> void:
 		count.text = "%d of %d games" % [games.size(), all_games().size()] + ("" if games.size() > 0 else ". Nothing matches: clear the search or a filter.")
 
 
+## A Steam-library style tile: the cover (tap for the game's page), its name, one line
+## of facts, and Play / difficulty / Info / Home.
 func make_card(g: Dictionary) -> Control:
 	var card := PanelContainer.new()
 	card.name = "Card_" + g["id"]
 	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	card.add_theme_stylebox_override("panel", flat(Color(g["color"]).darkened(0.15), 18, 16))
+	var sb := flat(Color(0.11, 0.16, 0.22), 12, 0)
+	sb.set_content_margin(SIDE_BOTTOM, 12)
+	card.add_theme_stylebox_override("panel", sb)
+	var outer := VBoxContainer.new()
+	outer.add_theme_constant_override("separation", 8)
+	card.add_child(outer)
+	outer.add_child(cover_art(g, func(): show_info(g)))
+	var pad := MarginContainer.new()
+	for side in ["left", "right"]:
+		pad.add_theme_constant_override("margin_" + side, 12)
+	outer.add_child(pad)
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 8)
-	card.add_child(v)
-	v.add_child(label(g["name"], 30))
-	v.add_child(label(g["tagline"], 20, Color(1, 1, 1, 0.85)))
-	var chips := HFlowContainer.new()
-	chips.add_theme_constant_override("h_separation", 8)
-	chips.add_theme_constant_override("v_separation", 8)
-	v.add_child(chips)
-	chips.add_child(chip(g.get("genre", "")))
-	chips.add_child(chip(g.get("length", "")))
-	if not g.get("no_score", false):
-		var best := read_best(g)
-		chips.add_child(chip("Best %d" % best if best > 0 else "No score yet", Color(1, 0.85, 0.35, 0.28) if best > 0 else Color(0, 0, 0, 0.28)))
-	var n := plays(g["id"])
-	if n > 0:
-		chips.add_child(chip("Played %dx" % n))
-	chips.add_child(chip(short_effort(g.get("effort", ""))))
+	v.add_theme_constant_override("separation", 6)
+	pad.add_child(v)
+	var title_l := label(g["name"], 23)
+	title_l.name = "Title"
+	title_l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	title_l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	v.add_child(title_l)
+	var meta := label("%s  ·  %s" % [g.get("genre", ""), g.get("length", "").get_slice(" (", 0)], 17, MUTED)
+	meta.autowrap_mode = TextServer.AUTOWRAP_OFF
+	meta.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	v.add_child(meta)
 	var sv := save_info(g)
+	var notes := []
+	if not g.get("no_score", false) and read_best(g) > 0:
+		notes.append("Best %d" % read_best(g))
 	if sv != "":
-		chips.add_child(chip("Saved: " + sv, Color(0.2, 0.6, 0.35, 0.5)))
-	if is_external(g):
-		chips.add_child(chip("More games", Color(0.3, 0.5, 0.25, 0.5)))
-	var hid: String = g["id"]
-	var home := button("- Home" if is_favorite(hid) else "+ Home", Color(0.85, 0.55, 0.15, 0.85) if is_favorite(hid) else Color(0, 0, 0, 0.35), 18, false)
-	home.name = "HomeToggle"
-	home.custom_minimum_size = Vector2(110, 40)
-	home.pressed.connect(func():
-		toggle_favorite(hid)
-		if tab == 0:
-			show_list()
-		else:
-			home.text = "- Home" if is_favorite(hid) else "+ Home"
-			style_button(home, Color(0.85, 0.55, 0.15, 0.85) if is_favorite(hid) else Color(0, 0, 0, 0.35))
-			var t0: Button = body.find_child("Tab0", true, false)
-			if t0:
-				t0.text = "Home (%d)" % favorites().size())
-	chips.add_child(home)
+		notes.append("Saved: " + sv)
+	if plays(g["id"]) > 0:
+		notes.append("Played %dx" % plays(g["id"]))
+	if not notes.is_empty():
+		var nl := label("  ·  ".join(notes), 17, GOLD)
+		nl.autowrap_mode = TextServer.AUTOWRAP_OFF
+		nl.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		v.add_child(nl)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 8)
+	row.add_theme_constant_override("separation", 6)
 	v.add_child(row)
 	var scene: String = newest(g)["scene"]
 	var pk := Packs.key_for(g, scene)
 	var pst := Packs.status(pk)
 	var ptxt := "Continue" if sv != "" else "Play"
 	if pst == "download":
-		ptxt = "Get  " + Packs.size_text(Packs.size_of(pk))
+		ptxt = "Get " + Packs.size_text(Packs.size_of(pk))
 	elif pst == "update":
-		ptxt = "Update  " + Packs.size_text(Packs.size_of(pk))
-	var play := button(ptxt, Color(0.16, 0.62, 0.38) if pst == "ready" else Color(0.15, 0.45, 0.75), 24)
+		ptxt = "Update"
+	var play := button(ptxt, Color(0.33, 0.62, 0.10) if pst == "ready" else Color(0.15, 0.45, 0.75), 21)
 	play.name = "Play"
+	play.size_flags_stretch_ratio = 1.6
 	play.pressed.connect(func(): launch(g, scene, "continue" if sv != "" else ""))
 	row.add_child(play)
 	var gid: String = g["id"]
-	if g.get("no_difficulty", false):
-		var info0 := button("Info", Color(0, 0, 0, 0.3), 20)
-		info0.name = "Info"
-		info0.pressed.connect(func(): show_info(g))
-		row.add_child(info0)
-		return card
-	var db := button("Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0, 0, 0, 0.3), 19)
-	db.name = "Difficulty"
-	db.tooltip_text = "Difficulty: tap to change"
-	db.pressed.connect(func():
-		var d := (ArcadeGame.get_difficulty(gid) + 1) % 3
-		ArcadeGame.set_difficulty(gid, d)
-		db.text = "Difficulty: " + ArcadeGame.DIFF_NAMES[d])
-	row.add_child(db)
-	var info := button("Info", Color(0, 0, 0, 0.3), 20)
+	if not g.get("no_difficulty", false):
+		var db := button(ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0.20, 0.27, 0.36), 17)
+		db.name = "Difficulty"
+		db.tooltip_text = "Difficulty: tap to change"
+		db.pressed.connect(func():
+			var d := (ArcadeGame.get_difficulty(gid) + 1) % 3
+			ArcadeGame.set_difficulty(gid, d)
+			db.text = ArcadeGame.DIFF_NAMES[d])
+		row.add_child(db)
+	var info := button("Info", Color(0.20, 0.27, 0.36), 17)
 	info.name = "Info"
 	info.pressed.connect(func(): show_info(g))
 	row.add_child(info)
+	var home := button("-" if is_favorite(gid) else "+", Color(0.85, 0.55, 0.15, 0.9) if is_favorite(gid) else Color(0.20, 0.27, 0.36), 20, false)
+	home.name = "HomeToggle"
+	home.tooltip_text = "Home: tap to add or remove"
+	home.custom_minimum_size = Vector2(52, 0)
+	home.pressed.connect(func():
+		toggle_favorite(gid)
+		if tab == 0:
+			show_list()
+		else:
+			home.text = "-" if is_favorite(gid) else "+"
+			style_button(home, Color(0.85, 0.55, 0.15, 0.9) if is_favorite(gid) else Color(0.20, 0.27, 0.36))
+			var t0: Button = body.find_child("Tab0", true, false)
+			if t0:
+				t0.text = "Home (%d)" % favorites().size())
+	row.add_child(home)
 	return card
 
 
@@ -829,56 +877,118 @@ func show_info(g: Dictionary) -> void:
 	back_bar(g["name"])
 	var gid: String = g["id"]
 	var inner := scroll_box()
-	inner.add_child(label(g.get("about", g["tagline"]), 22))
-	# play buttons
+	inner.add_theme_constant_override("separation", 14)
+	# hero, like a store page: the cover, and beside it (below it in portrait) the
+	# name, the short description and the key facts
+	var hero: BoxContainer = VBoxContainer.new() if portrait else HBoxContainer.new()
+	hero.add_theme_constant_override("separation", 18)
+	inner.add_child(hero)
+	var art := cover_art(g)
+	art.size_flags_stretch_ratio = 1.25
+	art.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+	hero.add_child(art)
+	var head := VBoxContainer.new()
+	head.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_theme_constant_override("separation", 8)
+	hero.add_child(head)
+	head.add_child(label(g["name"], 34))
+	head.add_child(label(g["tagline"], 20, Color(1, 1, 1, 0.85)))
+	var vs: Array = g["versions"]
+	var first: Dictionary = vs[0]
+	var kv := GridContainer.new()
+	kv.columns = 2
+	kv.add_theme_constant_override("h_separation", 14)
+	kv.add_theme_constant_override("v_separation", 2)
+	head.add_child(kv)
+	for pair in [["MADE BY", g.get("publisher", "?")], ["GENRE", g.get("genre", "?")], ["RELEASED", first["date"]], ["ONE RUN", g.get("length", "?").get_slice(" (", 0)]]:
+		kv.add_child(label(pair[0], 15, MUTED))
+		var vl := label(pair[1], 17, Color(0.55, 0.75, 0.95))
+		vl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		vl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		kv.add_child(vl)
+	# the action bar: play / get, new game, difficulty, home
 	var sv := save_info(g)
 	var scene: String = newest(g)["scene"]
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
-	inner.add_child(row)
-	var play := button("Continue (%s)" % sv if sv != "" else "Play", Color(0.16, 0.62, 0.38), 24)
+	var pk := Packs.key_for(g, scene)
+	var pst := Packs.status(pk)
+	var bar := PanelContainer.new()
+	bar.add_theme_stylebox_override("panel", flat(Color(0.11, 0.16, 0.22), 12, 12))
+	inner.add_child(bar)
+	var row := HFlowContainer.new()
+	row.add_theme_constant_override("h_separation", 10)
+	row.add_theme_constant_override("v_separation", 10)
+	bar.add_child(row)
+	var ptxt := "Continue  ·  %s" % sv if sv != "" else "Play"
+	if pst == "download":
+		ptxt = "Get  ·  %s" % Packs.size_text(Packs.size_of(pk))
+	elif pst == "update":
+		ptxt = "Update  ·  %s" % Packs.size_text(Packs.size_of(pk))
+	var play := button(ptxt, Color(0.33, 0.62, 0.10) if pst == "ready" else Color(0.15, 0.45, 0.75), 26, false)
+	play.name = "Play"
+	play.custom_minimum_size = Vector2(260, 64)
 	play.pressed.connect(func(): launch(g, scene, "continue" if sv != "" else ""))
 	row.add_child(play)
 	if sv != "":
-		var ng := button("New game", Color(0.30, 0.28, 0.42), 22)
+		var ng := button("New game", Color(0.22, 0.30, 0.40), 22, false)
+		ng.custom_minimum_size = Vector2(0, 64)
 		ng.pressed.connect(func(): launch(g, scene, "new"))
 		row.add_child(ng)
-	var hb := button("Remove from Home" if is_favorite(gid) else "Add to Home", Color(0.30, 0.28, 0.42), 20)
+	if not g.get("no_difficulty", false):
+		var db := button("Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0.22, 0.30, 0.40), 20, false)
+		db.name = "Difficulty"
+		db.custom_minimum_size = Vector2(0, 64)
+		db.pressed.connect(func():
+			ArcadeGame.set_difficulty(gid, (ArcadeGame.get_difficulty(gid) + 1) % 3)
+			db.text = "Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)])
+		row.add_child(db)
+	var hb := button("- Home" if is_favorite(gid) else "+ Home", Color(0.22, 0.30, 0.40), 20, false)
 	hb.name = "HomeToggle"
+	hb.custom_minimum_size = Vector2(0, 64)
 	hb.pressed.connect(func():
 		toggle_favorite(gid)
 		show_info(g))
 	row.add_child(hb)
-	if g.has("credit"):
-		section(inner, "Made by")
-		inner.add_child(label(g["credit"], 20, Color(0.9, 0.9, 1)))
-	# difficulty
-	if not g.get("no_difficulty", false):
-		section(inner, "Difficulty")
-		var drow := HBoxContainer.new()
-		drow.add_theme_constant_override("separation", 8)
-		inner.add_child(drow)
-		for d in 3:
-			var on := ArcadeGame.get_difficulty(gid) == d
-			var b := button(ArcadeGame.DIFF_NAMES[d], Color(0.85, 0.55, 0.15) if on else PANEL, 22)
-			b.pressed.connect(func():
-				ArcadeGame.set_difficulty(gid, d)
-				show_info(g))
-			drow.add_child(b)
-	section(inner, "Controls")
-	inner.add_child(label(g.get("controls", ""), 21, Color(0.9, 0.9, 1)))
-	section(inner, "Facts")
+	# tags
+	var tags := HFlowContainer.new()
+	tags.add_theme_constant_override("h_separation", 8)
+	tags.add_theme_constant_override("v_separation", 8)
+	inner.add_child(tags)
+	for tg in [g.get("genre", ""), g.get("length", ""), "Open source" if is_external(g) else "Lab Arcade original", "Saves progress" if g.has("save_file") or sv != "" else "", "Difficulty levels" if not g.get("no_difficulty", false) else ""]:
+		if tg != "":
+			tags.add_child(chip(tg, Color(0.40, 0.60, 0.80, 0.25)))
+	# screenshots
+	var shots: Array = g.get("shots", [])
+	if not shots.is_empty():
+		var strip := HBoxContainer.new()
+		strip.add_theme_constant_override("separation", 10)
+		inner.add_child(strip)
+		for path in shots:
+			if not ResourceLoader.exists(path):
+				continue
+			var tex: Texture2D = load(path)
+			var shot := picture(tex, func(): show_picture(tex))
+			shot.get_node("Cover").name = "Shot"
+			strip.add_child(shot)
+	section(inner, "About this game")
+	inner.add_child(label(g.get("about", g["tagline"]), 21))
+	section(inner, "How to play")
+	inner.add_child(label(g.get("controls", ""), 20, Color(0.9, 0.9, 1)))
+	section(inner, "Details")
 	var best := read_best(g)
 	var lp := last_played(gid)
+	var last: Dictionary = newest(g)
 	var facts := [
+		["Made by", g.get("publisher", "?")],
 		["Genre", g.get("genre", "?")],
-		["Publisher", g.get("publisher", "?")],
+		["First version", first["date"]],
+		["Latest version", "v%d, %s" % [last["v"], last["date"]]],
 		["One run", g.get("length", "?")],
+		["Download", Packs.size_text(Packs.size_of(pk)) + ("" if pst != "ready" or Packs.builtin.has(pk) else " (on this phone)")],
 		["Best score", "not tracked" if g.get("no_score", false) else (str(best) if best > 0 else "none yet")],
 		["Played", "%d times" % plays(gid) + ("" if lp == 0 else ", last on " + Time.get_date_string_from_unix_time(lp))],
-		["Effort", g.get("effort", "?")],
-		["Godot version built in", g.get("godot_time", "?")],
 		["Saved progress", sv if sv != "" else ("none" if g.has("save_file") else "not saved between sessions")],
+		["Effort", g.get("effort", "?")],
+		["Built in Godot in", g.get("godot_time", "?")],
 	]
 	var grid := GridContainer.new()
 	grid.columns = 2
@@ -888,17 +998,22 @@ func show_info(g: Dictionary) -> void:
 	for f in facts:
 		var k := Label.new()
 		k.text = f[0]
-		k.add_theme_font_size_override("font_size", 20)
+		k.add_theme_font_size_override("font_size", 19)
 		k.add_theme_color_override("font_color", MUTED)
 		grid.add_child(k)
-		grid.add_child(label(f[1], 20))
+		var val := label(f[1], 19)
+		val.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		val.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		grid.add_child(val)
+	if g.has("credit"):
+		section(inner, "Credits")
+		inner.add_child(label(g["credit"], 19, Color(0.9, 0.9, 1)))
 	section(inner, "Versions")
-	var vs: Array = g["versions"]
 	for i in range(vs.size() - 1, -1, -1):
 		var v: Dictionary = vs[i]
 		var vk := Packs.key_for(g, v["scene"])
 		var get_txt := "" if Packs.status(vk) == "ready" else "  ·  download %s" % Packs.size_text(Packs.size_of(vk))
-		var b := button("Play v%d%s  ·  %s%s\n%s" % [v["v"], "  (newest)" if i == vs.size() - 1 else "", v["date"], get_txt, v["notes"]], Color(g["color"]).darkened(0.1 if i == vs.size() - 1 else 0.4), 20)
+		var b := button("Play v%d%s  ·  %s%s\n%s" % [v["v"], "  (newest)" if i == vs.size() - 1 else "", v["date"], get_txt, v["notes"]], Color(0.15, 0.21, 0.29) if i == vs.size() - 1 else Color(0.12, 0.16, 0.22), 19)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		var vscene: String = v["scene"]
@@ -925,6 +1040,32 @@ func show_info(g: Dictionary) -> void:
 		inner.add_child(label("Earlier web versions in Laugh Lab (not playable here):", 19, MUTED))
 		for w in web:
 			inner.add_child(label("•  " + str(w), 19, MUTED))
+
+
+## A screenshot full screen; tap anywhere to close.
+func show_picture(tex: Texture2D) -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "Picture"
+	layer.layer = 9
+	add_child(layer)
+	var shade := ColorRect.new()
+	shade.color = Color(0, 0, 0, 0.9)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(shade)
+	var tr := TextureRect.new()
+	tr.texture = tex
+	tr.set_anchors_preset(Control.PRESET_FULL_RECT)
+	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	layer.add_child(tr)
+	var close := Button.new()
+	close.name = "ClosePicture"
+	close.flat = true
+	close.set_anchors_preset(Control.PRESET_FULL_RECT)
+	close.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	close.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	close.pressed.connect(func(): layer.queue_free())
+	layer.add_child(close)
 
 
 # ---------------------------------------------------------------- settings page

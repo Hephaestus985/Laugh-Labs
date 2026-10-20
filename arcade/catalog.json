@@ -22,7 +22,12 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/sock_escape/cover.jpg",
+			"shots": [
+				"res://games/sock_escape/shots/1.jpg",
+				"res://games/sock_escape/shots/2.jpg"
+			]
 		},
 		{
 			"order": 2,
@@ -47,6 +52,11 @@
 			],
 			"web": [
 				"v1 (2026-10-17): built into Laugh Lab"
+			],
+			"cover": "res://games/waveguide_snake/cover.jpg",
+			"shots": [
+				"res://games/waveguide_snake/shots/1.jpg",
+				"res://games/waveguide_snake/shots/2.jpg"
 			]
 		},
 		{
@@ -72,6 +82,11 @@
 			],
 			"web": [
 				"v1 (2026-10-17): built into Laugh Lab"
+			],
+			"cover": "res://games/cleanroom_parkour/cover.jpg",
+			"shots": [
+				"res://games/cleanroom_parkour/shots/1.jpg",
+				"res://games/cleanroom_parkour/shots/2.jpg"
 			]
 		},
 		{
@@ -98,6 +113,11 @@
 			"web": [
 				"v1 (2026-10-18): original",
 				"v2 (2026-10-19): difficulty setting, 6 levels with a new Lab Cat, broader jokes"
+			],
+			"cover": "res://games/escape_the_cavity/cover.jpg",
+			"shots": [
+				"res://games/escape_the_cavity/shots/1.jpg",
+				"res://games/escape_the_cavity/shots/2.jpg"
 			]
 		},
 		{
@@ -124,6 +144,11 @@
 			"web": [
 				"v1 (2026-10-18): original",
 				"v2 (2026-10-19): difficulty setting, real fog level, broader jokes"
+			],
+			"cover": "res://games/bend_it_like_einstein/cover.jpg",
+			"shots": [
+				"res://games/bend_it_like_einstein/shots/1.jpg",
+				"res://games/bend_it_like_einstein/shots/2.jpg"
 			]
 		},
 		{
@@ -149,6 +174,11 @@
 			],
 			"web": [
 				"v1 (2026-10-18): original"
+			],
+			"cover": "res://games/orbit_courier/cover.jpg",
+			"shots": [
+				"res://games/orbit_courier/shots/1.jpg",
+				"res://games/orbit_courier/shots/2.jpg"
 			]
 		},
 		{
@@ -174,6 +204,11 @@
 			],
 			"web": [
 				"v1 (2026-10-18): original"
+			],
+			"cover": "res://games/never_ask_for_directions/cover.jpg",
+			"shots": [
+				"res://games/never_ask_for_directions/shots/1.jpg",
+				"res://games/never_ask_for_directions/shots/2.jpg"
 			]
 		},
 		{
@@ -199,6 +234,11 @@
 			],
 			"web": [
 				"v1 (2026-10-18): original"
+			],
+			"cover": "res://games/lighthouse_keeper/cover.jpg",
+			"shots": [
+				"res://games/lighthouse_keeper/shots/1.jpg",
+				"res://games/lighthouse_keeper/shots/2.jpg"
 			]
 		},
 		{
@@ -224,6 +264,11 @@
 			],
 			"web": [
 				"v1 (2026-10-18): original"
+			],
+			"cover": "res://games/escape_velocity/cover.jpg",
+			"shots": [
+				"res://games/escape_velocity/shots/1.jpg",
+				"res://games/escape_velocity/shots/2.jpg"
 			]
 		},
 		{
@@ -251,6 +296,11 @@
 			"web": [
 				"v1 (2026-10-18): original",
 				"v2 (2026-10-19): save and continue at every level and at the boss"
+			],
+			"cover": "res://games/the_last_knight/cover.jpg",
+			"shots": [
+				"res://games/the_last_knight/shots/1.jpg",
+				"res://games/the_last_knight/shots/2.jpg"
 			]
 		},
 		{
@@ -275,7 +325,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/game_2048/cover.jpg",
+			"shots": [
+				"res://games/game_2048/shots/1.jpg"
+			]
 		},
 		{
 			"order": 12,
@@ -299,7 +353,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/sudoku/cover.jpg",
+			"shots": [
+				"res://games/sudoku/shots/1.jpg"
+			]
 		},
 		{
 			"order": 13,
@@ -323,7 +381,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/minesweeper/cover.jpg",
+			"shots": [
+				"res://games/minesweeper/shots/1.jpg"
+			]
 		},
 		{
 			"order": 14,
@@ -347,7 +409,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/solitaire/cover.jpg",
+			"shots": [
+				"res://games/solitaire/shots/1.jpg"
+			]
 		},
 		{
 			"order": 15,
@@ -371,7 +437,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/nonogram/cover.jpg",
+			"shots": [
+				"res://games/nonogram/shots/1.jpg"
+			]
 		},
 		{
 			"order": 16,
@@ -395,7 +465,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/lights_out/cover.jpg",
+			"shots": [
+				"res://games/lights_out/shots/1.jpg"
+			]
 		},
 		{
 			"order": 17,
@@ -419,7 +493,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/sliding_puzzle/cover.jpg",
+			"shots": [
+				"res://games/sliding_puzzle/shots/1.jpg"
+			]
 		},
 		{
 			"order": 18,
@@ -443,7 +521,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/mahjong/cover.jpg",
+			"shots": [
+				"res://games/mahjong/shots/1.jpg"
+			]
 		},
 		{
 			"order": 19,
@@ -467,7 +549,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/sokoban/cover.jpg",
+			"shots": [
+				"res://games/sokoban/shots/1.jpg"
+			]
 		},
 		{
 			"order": 20,
@@ -491,7 +577,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/flow/cover.jpg",
+			"shots": [
+				"res://games/flow/shots/1.jpg"
+			]
 		},
 		{
 			"order": 21,
@@ -515,7 +605,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/block_stacker/cover.jpg",
+			"shots": [
+				"res://games/block_stacker/shots/1.jpg"
+			]
 		},
 		{
 			"order": 22,
@@ -539,7 +633,11 @@
 					"notes": "First version."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://games/connect_four/cover.jpg",
+			"shots": [
+				"res://games/connect_four/shots/1.jpg"
+			]
 		}
 	],
 	"external": [
@@ -569,7 +667,12 @@
 					"notes": "Quiver's Outpost Assault (commit 1cbd622, 2026-08-21), security-reviewed, with touch pan / pinch zoom and a way back to the arcade."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://external/outpost_assault/cover.jpg",
+			"shots": [
+				"res://external/outpost_assault/shots/1.jpg",
+				"res://external/outpost_assault/shots/2.jpg"
+			]
 		},
 		{
 			"order": 24,
@@ -597,7 +700,12 @@
 					"notes": "Kenney's Starter Kit 3D Platformer (commit 3fa8a04, 2026-03-12), security-reviewed, with an on-screen stick and buttons."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://external/platformer_3d/cover.jpg",
+			"shots": [
+				"res://external/platformer_3d/shots/1.jpg",
+				"res://external/platformer_3d/shots/2.jpg"
+			]
 		},
 		{
 			"order": 25,
@@ -625,7 +733,12 @@
 					"notes": "Kenney's Starter Kit Racing (commit 2f2e5f2, 2026-08-21), security-reviewed, with on-screen steering and gas / brake buttons."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://external/racing/cover.jpg",
+			"shots": [
+				"res://external/racing/shots/1.jpg",
+				"res://external/racing/shots/2.jpg"
+			]
 		},
 		{
 			"order": 26,
@@ -653,7 +766,12 @@
 					"notes": "Godot Tactical RPG (commit cfe785e, 2026-02-21), security-reviewed, with tap controls, camera buttons and a victory / defeat ending."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://external/tactical_rpg/cover.jpg",
+			"shots": [
+				"res://external/tactical_rpg/shots/1.jpg",
+				"res://external/tactical_rpg/shots/2.jpg"
+			]
 		},
 		{
 			"order": 27,
@@ -682,7 +800,12 @@
 					"notes": "Godot Open RPG (commit d59f2f7, 2026-10-13) with Dialogic 2, security-reviewed, with tap controls for battles and a back button."
 				}
 			],
-			"web": []
+			"web": [],
+			"cover": "res://external/open_rpg/cover.jpg",
+			"shots": [
+				"res://external/open_rpg/shots/1.jpg",
+				"res://external/open_rpg/shots/2.jpg"
+			]
 		}
 	]
 }

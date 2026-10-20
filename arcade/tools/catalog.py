@@ -55,6 +55,12 @@ def load(kind):
         for k in ["main", "park"]:
             if k in g and not os.path.exists(local(g[k])):
                 errors.append("%s: %s file %s does not exist" % (where, k, g[k]))
+        res_dir = "res://%s/%s" % ("games" if kind == "lab" else "external", name)
+        if os.path.exists(os.path.join(root, name, "cover.jpg")):
+            g["cover"] = res_dir + "/cover.jpg"
+        shots_dir = os.path.join(root, name, "shots")
+        if os.path.isdir(shots_dir):
+            g["shots"] = [res_dir + "/shots/" + f for f in sorted(os.listdir(shots_dir)) if f.endswith(".jpg")]
         out.append(g)
     out.sort(key=lambda g: (g.get("order", 9999), g.get("id", "")))
     return out, errors

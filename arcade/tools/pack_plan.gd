@@ -48,6 +48,9 @@ func _init() -> void:
 		for f in _files_in(root):
 			if f.ends_with(".gd") and f.get_file() != "arcade_tests.gd":
 				base[f] = true
+			# cover art and screenshots: the launcher shows them before a game is downloaded
+			elif f.get_file() == "cover.jpg" or (f.get_base_dir().get_file() == "shots" and f.ends_with(".jpg")):
+				base[f] = true
 	var packs := {}
 	for g in Games.LIST:
 		for v in g["versions"]:

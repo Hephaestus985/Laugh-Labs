@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-20T08:10:08
-555 checks, 0 failed
+Lab Arcade test report  2026-10-20T08:27:01
+556 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
@@ -7,7 +7,7 @@ PASS  menu                       Library has a card per game    27 cards
 PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
 PASS  menu                       has difficulty buttons         
-PASS  menu                       difficulty button cycles       Difficulty: Normal -> Difficulty: Hard
+PASS  menu                       difficulty button cycles       Normal -> Hard
 PASS  menu                       tap on Play opens that card's game 
 PASS  menu                       swipe scrolls from card, label or button 
 PASS  menu                       tap on Info opens that card's page page platformer_3d
@@ -36,7 +36,7 @@ PASS  menu                       info page for every game
 PASS  menu                       settings page builds           
 PASS  menu                       back returns to the list       
 PASS  menu                       portrait layout = 1 column     skipped without a window
-PASS  menu                       landscape layout = 2 columns   
+PASS  menu                       landscape layout = 3 columns   
 PASS  menu                       no errors                      
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene
@@ -247,6 +247,7 @@ PASS  solitaire v1               has a way back to the menu
 PASS  solitaire v1               no errors                      0: 
 PASS  solitaire v1               tap starts a round             
 PASS  solitaire v1               tap the deck draws a card (phone) 
+PASS  solitaire v1               dragging a card onto a pile moves it (phone) 
 PASS  solitaire v1               touch play changes the board (phone) 
 PASS  solitaire v1               Continue restores the board    
 PASS  solitaire v1               portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
@@ -427,7 +428,7 @@ PASS  block_stacker v1 portrait  swipe down drops the piece (phone)
 PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 346
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 324
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    

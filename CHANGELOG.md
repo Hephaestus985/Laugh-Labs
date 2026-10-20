@@ -2,6 +2,11 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.21 (2026-10-20)
+- Cover art for every game (Steam-style headers): the art games by others ship with where it's good (Open RPG's banner, Outpost Assault's cover and logo), and covers made from real gameplay or drawn by hand for the rest (`arcade/tools/covers/`)
+- The Library is a grid of cover tiles (3 across in landscape): tap a cover for the game's page; Play / difficulty / Info / Home under it
+- A Steam-style game page: the cover with name, description and key facts beside it, a big Play / Get button, tags, screenshots (tap to see full screen), About, How to play, Details, Credits and Versions
+
 ## Lab Arcade 1.20 (2026-10-20)
 - Set up to scale (still one repository):
   - each game describes itself in its own folder (`arcade_info.json`); `tools/catalog.py` joins and checks them into `catalog.json`, which the app reads. Adding a game = adding its folder (see "Adding a game" in the README)

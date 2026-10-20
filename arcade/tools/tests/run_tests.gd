@@ -507,7 +507,7 @@ func test_menu() -> void:
 			if cards != null and cards.columns == 2:
 				break
 	cards = m.find_child("Cards", true, false)
-	check("menu", "landscape layout = 2 columns", cards != null and cards.columns == 2)
+	check("menu", "landscape layout = 3 columns", cards != null and cards.columns == 3)
 	m.queue_free()
 	await frames(2)
 	check("menu", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))
