@@ -12,6 +12,7 @@ var in_game_for_menu = false
 
 func _ready():
 	DdArcade.setup(self)  # [Lab Arcade] screen size, theme, sound channels and the back button
+	get_tree().root.content_scale_size = Vector2i(1152, 648)  # [Lab Arcade] text and buttons a bit bigger again
 	DdSoundManager.set_default_music_bus("BackgroundMusic")
 	DdSoundManager.set_default_ui_sound_bus("InterfaceEffects")
 	DdSoundManager.set_default_sound_bus("SoundEffects")

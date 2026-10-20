@@ -1401,8 +1401,13 @@ func back_via_menu_button(name: String) -> void:
 	var ov: TouchOverlay = ovs[0]
 	var menus: Array = ov.buttons.filter(func(b): return b[1] is String and b[1] == "__menu")
 	if menus.is_empty():
-		# screens without "< MENU" (their own menu leads back): the phone's back button
-		get_tree().root.propagate_notification(NOTIFICATION_WM_GO_BACK_REQUEST)
+		# screens without "< MENU" (their own menu leads back): the phone's back button,
+		# which first closes a pop-up the random taps may have opened (as on a phone)
+		for i in 3:
+			get_tree().root.propagate_notification(NOTIFICATION_WM_GO_BACK_REQUEST)
+			await frames(20)
+			if get_tree().current_scene != cur:
+				break
 	else:
 		await tap((menus[0][0] as Rect2).get_center())
 	await frames(20)

@@ -2,6 +2,11 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Game update: Duel Defense 1.1 (2026-10-20, no new app needed)
+- The turret shop is a column on the right with big turret buttons and prices, money on top and menu / play / fast forward below, so nothing covers the map any more
+- The map keeps its shape on wide phones (it was stretched sideways) and fits beside the shop
+- Text and buttons are bigger again
+
 ## Lab Arcade 2.4 (2026-10-20)
 - Game updates and new games no longer need a new app: the app reads a signed game list from GitHub, and each game's download now carries the game's code too
   - the list is only used when its signature checks out (the signing key stays on the PC that publishes) and it is newer than the one in the app, so a changed or old list is ignored

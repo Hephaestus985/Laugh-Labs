@@ -8,32 +8,17 @@ func _ready():
 	resized()
 
 func resized():
-	# [Lab Arcade] the arcade scales the screen: use the visible size, not the window's
+	# [Lab Arcade] the arcade scales the screen: use the visible size, not the window's.
+	# The map keeps its shape (one zoom for both directions; it used to stretch on wide
+	# phones) and fits the space left of the shop column, centred in it.
 	var window_size = get_viewport().get_visible_rect().size
 	if window_size.x <= 0 or window_size.y <= 0:
 		return
-	if window_size.x < map_size.x:
-		zoom.x = window_size.x / map_size.x
-		DdGodotLogger.info("setting camera zoom x to %s" % zoom.x)
-	else:
-		if zoom.x != 1:
-			zoom.x = 1
-			
-	if window_size.x > map_size.x:
-		position.x = -(window_size.x - map_size.x)/2
-	else:
-		if position.x != 0:
-			position.x = 0
-		
-	if window_size.y < map_size.y:
-		zoom.y = window_size.y / map_size.y
-		DdGodotLogger.info("setting camera zoom y to %s" % zoom.y)
-	else:
-		if zoom.y != 1:
-			zoom.y = 1
-			
-	if window_size.y > map_size.y:
-		position.y = -(window_size.y - map_size.y)/2
-	else:
-		if position.y != 0:
-			position.y = 0
+	var ui = get_parent().get_node_or_null("UI")
+	if ui and ui.has_method("lab_panel_width") and not get_parent().get("main_menu_mode"):
+		window_size.x -= ui.lab_panel_width()
+	var z: float = minf(window_size.x / map_size.x, window_size.y / map_size.y)
+	if get_parent().get("main_menu_mode"):
+		z = maxf(window_size.x / map_size.x, window_size.y / map_size.y)  # the menu's background map fills the screen
+	zoom = Vector2(z, z)
+	position = -(window_size / z - map_size) / 2.0

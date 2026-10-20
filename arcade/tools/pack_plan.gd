@@ -10,11 +10,18 @@ extends SceneTree
 
 const Games := preload("res://games.gd")
 
+# the whole catalog (the app's Store hides versions whose pack isn't built yet)
+var lab: Array = []
+var external: Array = []
+
 var classes := {}  # class_name -> script path
 
 
 func _init() -> void:
 	var out: String = OS.get_cmdline_user_args()[0]
+	var cat = JSON.parse_string(FileAccess.get_file_as_string("res://catalog.json"))
+	lab = cat["lab"]
+	external = cat["external"]
 	for c in ProjectSettings.get_global_class_list():
 		classes[c["class"]] = c["path"]
 	var base := {}
@@ -23,7 +30,7 @@ func _init() -> void:
 	for f in _files_in("res://common"):
 		_add(base, f)
 	# scripts the launcher calls for games by others (e.g. to put their helpers to sleep)
-	for g in Games.EXTERNAL:
+	for g in external:
 		if g.has("park"):
 			_add(base, g["park"])
 	# autoloads and everything they reach
@@ -49,14 +56,14 @@ func _init() -> void:
 			if f.get_file() == "cover.jpg" or (f.get_base_dir().get_file() == "shots" and f.ends_with(".jpg")):
 				base[f] = true
 	var packs := {}
-	for g in Games.LIST:
+	for g in lab:
 		for v in g["versions"]:
 			var dir: String = str(v["scene"]).get_base_dir()
-			packs["%s/v%d" % [g["id"], v["v"]]] = {"dir": dir, "scene": v["scene"], "files": _pack_files(dir, base)}
-	for g in Games.EXTERNAL:
+			packs["%s/v%d" % [g["id"], int(v["v"])]] = {"dir": dir, "scene": v["scene"], "files": _pack_files(dir, base)}
+	for g in external:
 		var dir: String = "res://external/" + str(g["id"])
 		for v in g["versions"]:
-			packs["%s/v%d" % [g["id"], v["v"]]] = {"dir": dir, "scene": g.get("main", v["scene"]), "files": _pack_files(dir, base)}
+			packs["%s/v%d" % [g["id"], int(v["v"])]] = {"dir": dir, "scene": g.get("main", v["scene"]), "files": _pack_files(dir, base)}
 	# the script classes each pack brings
 	var class_list := ProjectSettings.get_global_class_list()
 	for key in packs:

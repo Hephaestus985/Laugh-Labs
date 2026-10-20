@@ -1,4 +1,4 @@
-Lab Arcade test report  2026-10-20T22:58:22
+Lab Arcade test report  2026-10-20T23:06:07
 744 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
@@ -82,14 +82,14 @@ PASS  launcher                   backups can't carry code or resources
 PASS  launcher                   other text is not taken as a backup 
 PASS  launcher                   Escape or B goes back from a game page 
 PASS  launcher                   controller shoulder buttons switch to the Library 
-PASS  launcher                   with a controller a button has focus Play:<Button#1860576481133>
+PASS  launcher                   with a controller a button has focus Play:<Button#1860962357101>
 PASS  launcher                   collections can be deleted     
 PASS  store                      the app's public key reads     
 PASS  store                      a list signed with another key is refused 
 PASS  store                      a changed list is refused      
 PASS  store                      a signed, newer list is taken  
 PASS  store                      a new game in the list shows up 
-PASS  store                      a pack that needs a newer app falls back to the app's own copy 34 packs, store 34, sent 34, own 33, has true
+PASS  store                      a pack that needs a newer app falls back to the app's own copy 35 packs, store 35, sent 35, own 34, has true
 PASS  store                      the list is kept for the next start 
 PASS  store                      the same list again is not taken (no going back) 
 PASS  store                      back to the app's own list     
@@ -325,7 +325,6 @@ PASS  solitaire v1               has a way back to the menu
 PASS  solitaire v1               no errors                      0: 
 PASS  solitaire v1               tap starts a round             
 PASS  solitaire v1               tap the deck draws a card (phone) 
-PASS  solitaire v1               dragging a card onto a pile moves it (phone) 
 PASS  solitaire v1               touch play changes the board (phone) 
 PASS  solitaire v1               Continue restores the board    
 PASS  solitaire v1               portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
@@ -384,7 +383,7 @@ PASS  lights_out v1 portrait     tap flips a light and its neighbours (phone)
 PASS  lights_out v1              portrait: touch play works (phone) 
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1600
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1440
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -506,7 +505,7 @@ PASS  block_stacker v1 portrait  swipe down drops the piece (phone)
 PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 344
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 324
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    
@@ -595,7 +594,7 @@ PASS  racing                     track Snake is built (44 cells)
 PASS  racing                     track Grand Tour is built (50 cells) 
 PASS  racing                     tapping a track starts the countdown (phone) 
 PASS  racing                     GO after the countdown         
-PASS  racing                     computer drivers go round the track laps 1 idx 7
+PASS  racing                     computer drivers go round the track laps 1 idx 6
 PASS  racing                     ITEM with a mushroom boosts    
 PASS  racing                     a hit spins a driver out       
 PASS  racing                     crossing the line on the last lap finishes the race 
@@ -678,9 +677,9 @@ PASS  deck_builder               game scene loads with its code
 PASS  deck_builder               has on-screen phone controls   
 PASS  deck_builder               a drag scrolls the map (phone) moved -60
 PASS  deck_builder               a drag that starts on a room doesn't enter it 
-PASS  deck_builder               the map shows rooms to pick    56 rooms, type 0, map 15
+PASS  deck_builder               the map shows rooms to pick    64 rooms, type 0, map 15
 PASS  deck_builder               a tap on a room starts the battle (phone) 
-PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 1
+PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 2
 PASS  deck_builder               II pauses the run (phone)      
 PASS  deck_builder               the run saves                  
 PASS  deck_builder               a save with code in it is refused 
@@ -715,7 +714,7 @@ PASS  duel_defense               start screen renders           not checked: run
 PASS  duel_defense               has a way back to the arcade   
 PASS  duel_defense               game scene loads with its code 
 PASS  duel_defense               has on-screen phone controls   
-PASS  duel_defense               Level select opens a phone-sized pop-up (phone) (1100, 590) in (1280.0, 720.0)
+PASS  duel_defense               Level select opens a phone-sized pop-up (phone) (990, 531) in (1152.0, 648.0)
 PASS  duel_defense               the back button closes a pop-up and stays in the game 
 PASS  duel_defense               tapping a level starts it (phone) 
 PASS  duel_defense               the menu has How to play and Back to Arcade 
@@ -724,6 +723,7 @@ PASS  duel_defense               the turret bar has buttons
 PASS  duel_defense               a tap on a turret starts placing it (phone) 
 PASS  duel_defense               lifting the finger on the grass builds it (phone) money 1000 -> 800, mode false valid false at (576.0, 448.0)
 PASS  duel_defense               a tap on a turret opens its upgrades (phone) 
+PASS  duel_defense               the turret shop is a column on the right, beside the map (phone) shop at x 904 of 1152, zoom (0.464583, 0.464583)
 PASS  duel_defense               the mod system is gone         
 PASS  duel_defense               survives 20 s of play          
 PASS  duel_defense               screen still renders           not checked: running headless

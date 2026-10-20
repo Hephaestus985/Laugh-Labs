@@ -21,11 +21,12 @@ var remaining_number
 var bar_focus = false
 var small_ui = false
 
-var small_ui_set = 1024
+var small_ui_set = 0  # [Lab Arcade] was 1024: the shop column always has room
 
 var cooldown_timers = []
 
 func _ready():
+	_lab_side_panel()  # [Lab Arcade]
 	for i in upgrade_bar.get_children():
 		i.connect("pressed", Callable(self, "upgrade_requested").bind(i.get_name()))
 		
@@ -34,6 +35,7 @@ func _ready():
 	DdConsole.add_command("toggle_play", on_toggle_play)
 	
 	get_tree().get_root().size_changed.connect(on_window_resized)
+	get_tree().get_root().size_changed.connect(_lab_layout)  # [Lab Arcade]
 	
 func _physics_process(_delta):
 	if Input.is_action_just_pressed("dd_fastforward"):
@@ -129,7 +131,7 @@ func _on_SpeedUp_pressed():
 
 func update_money(current_money, immediate = false):
 	if immediate:
-		money.text = str(current_money)
+		money.text = str(int(current_money))  # [Lab Arcade] was str(): "1000.0"
 		money_number = current_money
 	else:
 		var tween = get_tree().create_tween()
@@ -241,6 +243,7 @@ func setup_build_buttons(buttons, parent_node, show_regardless = false, func_nam
 				button.add_child(label)
 			
 			parent_node.add_child(button)
+			_lab_style_button(button)  # [Lab Arcade] bigger, for fingers
 			
 func start_button_cooldown(build_type):
 	for button in build_bar.get_children():
@@ -301,3 +304,121 @@ func _on_menu_pressed():
 	menu_event.action = "dd_menu"
 	menu_event.pressed = true
 	Input.parse_input_event(menu_event)
+
+
+# ---------------------------------------------------------------- [Lab Arcade] phone layout
+# On a phone the shop was a bar along the bottom, over the map, with small prices. Phones
+# are wider than the 16:9 map, so the shop is now a column on the right: money at the top,
+# the turrets two by two with big prices, menu / play / fast forward at the bottom. The
+# camera fits the map into the space left of it (Camera.gd).
+const LAB_PANEL_MIN := 260.0
+const LAB_FONT := preload("res://external/duel_defense/Assets/UI/OperationNapalm-Regular.ttf")
+
+
+func lab_panel_width() -> float:
+	var vis := get_viewport().get_visible_rect().size
+	return clampf(vis.x - vis.y * 16.0 / 9.0, LAB_PANEL_MIN, maxf(LAB_PANEL_MIN, vis.x * 0.3))
+
+
+func _lab_swap(old: Node, new: Node) -> Node:
+	var n := old.name
+	old.replace_by(new, true)
+	old.free()
+	new.name = n
+	return new
+
+
+func _lab_side_panel() -> void:
+	var col: VBoxContainer = _lab_swap($HUD/InfoBar/M/H, VBoxContainer.new())
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_theme_constant_override("separation", 12)
+	for bar_name in ["BuildBar", "UpgradeBar"]:
+		var old: Node = col.get_node(bar_name)
+		var vis: bool = old.visible
+		var grid: GridContainer = _lab_swap(old, GridContainer.new())
+		grid.columns = 2
+		grid.add_theme_constant_override("h_separation", 10)
+		grid.add_theme_constant_override("v_separation", 10)
+		grid.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		grid.visible = vis
+	build_bar = col.get_node("BuildBar")
+	upgrade_bar = col.get_node("UpgradeBar")
+	# money on one line at the top
+	var row := HBoxContainer.new()
+	row.name = "MoneyRow"
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(row)
+	col.move_child(row, 0)
+	for n in ["Symbol", "Money"]:
+		var l: Label = col.get_node(n)
+		l.reparent(row)
+		l.add_theme_font_size_override("font_size", 44)
+		l.custom_minimum_size = Vector2(0, 56)
+	col.get_node("Sep2").visible = false
+	col.get_node("BuildBarSmall").visible = false
+	col.get_node("BuildBarSmall").remove_from_group("ui_buildsmall")
+	# keyboard / controller hints don't fit a phone column
+	for t in col.find_children("ControllerTextureRect", "", true, false):
+		t.visible = false
+		t.set_script(null)
+	col.get_node("Sep").size_flags_vertical = Control.SIZE_EXPAND_FILL
+	col.get_node("Sep").custom_minimum_size = Vector2.ZERO
+	var controls: HBoxContainer = col.get_node("GameControls")
+	controls.alignment = BoxContainer.ALIGNMENT_CENTER
+	controls.add_theme_constant_override("separation", 6)
+	var m: MarginContainer = $HUD/InfoBar/M
+	for side in ["left", "right", "top", "bottom"]:
+		m.add_theme_constant_override("margin_" + side, 12)
+	for b in controls.get_children():
+		if b is Button:
+			b.add_theme_font_size_override("font_size", 64)
+			b.custom_minimum_size = Vector2(76, 76)
+			if "icon_size" in b:
+				b.icon_size = 64
+	info_bar.custom_minimum_size = Vector2.ZERO
+	# a solid background: the column isn't over the map, and the map's edge shouldn't show through
+	var bg := ColorRect.new()
+	bg.name = "LabPanelBg"
+	bg.color = Color(0.035, 0.2, 0.145)
+	bg.show_behind_parent = true
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	info_bar.add_child(bg)
+	info_bar.move_child(bg, 0)
+	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_lab_layout()
+
+
+func _lab_layout() -> void:
+	var w := lab_panel_width()
+	var hud: Control = $HUD
+	hud.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hud.offset_right = -w  # the wave counter centres over the map
+	info_bar.set_anchors_preset(Control.PRESET_RIGHT_WIDE)
+	info_bar.offset_left = 0
+	info_bar.offset_right = w
+	info_bar.offset_top = 0
+	info_bar.offset_bottom = 0
+	for bar in [build_bar, upgrade_bar]:
+		for b in bar.get_children():
+			_lab_style_button(b)
+
+
+func _lab_style_button(button: Control) -> void:
+	var side := floorf((lab_panel_width() - 24.0 - 10.0) / 2.0)
+	side = clampf(side, 96.0, 150.0)
+	button.custom_minimum_size = Vector2(side, side)
+	for c in button.get_children():
+		if c is Node2D:  # the turret picture
+			c.position = Vector2(side / 2.0, side / 2.0 - 8.0)
+			c.scale = Vector2.ONE * 0.7 * side / 80.0 * 0.8
+		elif c is Label and c.get_script() == null:  # the price
+			c.text = c.text.trim_suffix(".0")
+			c.add_theme_font_override("font", LAB_FONT)
+			c.add_theme_font_size_override("font_size", 26)
+			c.add_theme_color_override("font_shadow_color", Color.BLACK)
+			c.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			c.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+			c.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			c.offset_bottom = -2
+			c.mouse_filter = Control.MOUSE_FILTER_IGNORE

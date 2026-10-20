@@ -951,6 +951,13 @@
 					"date": "2026-10-20",
 					"scene": "res://external/duel_defense/Scenes/MainScenes/SceneHandler.tscn",
 					"notes": "Duel Defense by d10sfan (commit b4e5922, 2026-03-16), security-reviewed; the online mod system and start-up command files removed."
+				},
+				{
+					"v": 2,
+					"name": "1.1",
+					"date": "2026-10-20",
+					"scene": "res://external/duel_defense/Scenes/MainScenes/SceneHandler.tscn",
+					"notes": "Phone layout: the turret shop is a column on the right with big buttons and prices, so nothing covers the map; the map keeps its shape on wide phones (it was stretched); text and buttons bigger."
 				}
 			],
 			"web": [],

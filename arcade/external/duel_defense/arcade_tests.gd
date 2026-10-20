@@ -68,5 +68,9 @@ static func phone(rt: Node, handler: Node, name: String) -> void:
 		await rt.tap((turrets[0] as Node2D).get_global_transform_with_canvas().origin)
 		await rt.frames(5)
 		rt.check(name, "a tap on a turret opens its upgrades (phone)", game.get("upgrade_mode") == true)
+	# the shop is a column beside the map, and the map keeps its shape
+	var view_w: float = rt.get_viewport().get_visible_rect().size.x
+	var cam: Camera2D = game.get_node("Camera")
+	rt.check(name, "the turret shop is a column on the right, beside the map (phone)", (bar as Control).get_global_rect().position.x > view_w * 0.6 and cam.zoom.x == cam.zoom.y, "shop at x %.0f of %.0f, zoom %s" % [(bar as Control).get_global_rect().position.x, view_w, cam.zoom])
 	rt.check(name, "the mod system is gone", handler.get_node_or_null("Mods") == null and not ResourceLoader.exists("res://external/duel_defense/CommonScripts/ModManager.gd"))
 
