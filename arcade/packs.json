@@ -1,8 +1,8 @@
 {
- "bend_it_like_einstein/v2": {
-  "file": "bend_it_like_einstein_v2-aa8bcb2e629b.pck",
-  "scene": "res://games/bend_it_like_einstein/v2/game.tscn",
-  "sha256": "aa8bcb2e629b4df11aa9e858e3a33afd903651f632ccd0d1e4b9096c4e57c94a",
+ "bend_it_like_einstein/v1": {
+  "file": "bend_it_like_einstein_v1-fd87c29fa9a5.pck",
+  "scene": "res://games/bend_it_like_einstein/v1/game.tscn",
+  "sha256": "fd87c29fa9a5aa992ed4ae46016d0375e38b146cb8fb5bd7fe79a172a598c769",
   "size": 343976,
   "uids": {}
  },
@@ -385,10 +385,10 @@
    "uid://yiud3vuyatjh": "res://external/duel_defense/default_bus_layout.tres"
   }
  },
- "escape_the_cavity/v2": {
-  "file": "escape_the_cavity_v2-309482aa2d2c.pck",
-  "scene": "res://games/escape_the_cavity/v2/game.tscn",
-  "sha256": "309482aa2d2cf5169fbbb57b5fefa30c6b1a5acfa7b5afb824d2917039f00fdb",
+ "escape_the_cavity/v1": {
+  "file": "escape_the_cavity_v1-ab24453e2ce2.pck",
+  "scene": "res://games/escape_the_cavity/v1/game.tscn",
+  "sha256": "ab24453e2ce2e4da5038169234d383572c12cf4011557a3b401b70f7329434ad",
   "size": 347596,
   "uids": {}
  },
@@ -3398,10 +3398,10 @@
    "uid://yxhqxq6ea7uo": "res://external/tanks_of_freedom/assets/audio/powerup.wav"
   }
  },
- "the_last_knight/v2": {
-  "file": "the_last_knight_v2-1a2c5e3599cb.pck",
-  "scene": "res://games/the_last_knight/v2/game.tscn",
-  "sha256": "1a2c5e3599cbd26e9c85901d0b2d887ca8303265812e3ca02fd05e638ca69e05",
+ "the_last_knight/v1": {
+  "file": "the_last_knight_v1-8559c433c5c4.pck",
+  "scene": "res://games/the_last_knight/v1/game.tscn",
+  "sha256": "8559c433c5c4a3e0da3413a424e2abbde2db06108a58988fbb9651ec622c6544",
   "size": 422292,
   "uids": {}
  },

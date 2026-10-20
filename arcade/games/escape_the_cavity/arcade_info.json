@@ -13,10 +13,10 @@
 	"color": "#cc4d6b",
 	"versions": [
 		{
-			"v": 2,
+			"v": 1,
 			"date": "2026-10-19",
-			"scene": "res://games/escape_the_cavity/v2/game.tscn",
-			"notes": "Godot remake of web v2: difficulty setting, 6 levels with the Lab Cat."
+			"scene": "res://games/escape_the_cavity/v1/game.tscn",
+			"notes": "Godot remake of the Laugh Lab game: difficulty setting, 6 levels with the Lab Cat."
 		}
 	],
 	"web": [

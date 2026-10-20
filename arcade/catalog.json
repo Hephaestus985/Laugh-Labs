@@ -104,10 +104,10 @@
 			"color": "#cc4d6b",
 			"versions": [
 				{
-					"v": 2,
+					"v": 1,
 					"date": "2026-10-19",
-					"scene": "res://games/escape_the_cavity/v2/game.tscn",
-					"notes": "Godot remake of web v2: difficulty setting, 6 levels with the Lab Cat."
+					"scene": "res://games/escape_the_cavity/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab game: difficulty setting, 6 levels with the Lab Cat."
 				}
 			],
 			"web": [
@@ -135,10 +135,10 @@
 			"color": "#404d8c",
 			"versions": [
 				{
-					"v": 2,
+					"v": 1,
 					"date": "2026-10-19",
-					"scene": "res://games/bend_it_like_einstein/v2/game.tscn",
-					"notes": "Godot remake of web v2: difficulty setting, nebula fog level."
+					"scene": "res://games/bend_it_like_einstein/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab game: difficulty setting, nebula fog level."
 				}
 			],
 			"web": [
@@ -287,10 +287,10 @@
 			"color": "#8c2e40",
 			"versions": [
 				{
-					"v": 2,
+					"v": 1,
 					"date": "2026-10-19",
-					"scene": "res://games/the_last_knight/v2/game.tscn",
-					"notes": "Godot remake of web v2: 5 eras, the boss, save and continue at every level and at the boss."
+					"scene": "res://games/the_last_knight/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab game: 5 eras, the boss, save and continue at every level and at the boss."
 				}
 			],
 			"web": [

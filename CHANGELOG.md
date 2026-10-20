@@ -2,6 +2,10 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 2.1 (2026-10-20)
+- Every game starts at version 1.0: The Last Knight, Escape the Cavity and Bend It Like Einstein were numbered v2 (their v1 was the old web version, never in the app) and are now v1.0 like all the others
+- Game versions are shown as v1.0, v1.1... on the game pages and start screens
+
 ## Lab Arcade 2.0 (2026-10-20)
 - Lab Arcade 2.0: 32 games in one app, every one playable by touch: 10 arcade games remade from Laugh Lab, 12 puzzle and board games, and 10 open-source games by others, each security-reviewed
 - What 2.0 is built on: a Steam-style Home and Library with search, filters, ratings and collections; games as downloads that only update when they changed; a start screen per game with difficulty, high scores, saves and achievements; help pages inside 12 games; your profile, save backup, in-app updates, keyboard and controller support

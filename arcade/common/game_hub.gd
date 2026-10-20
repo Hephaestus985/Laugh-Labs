@@ -186,7 +186,7 @@ func build() -> void:
 	if vs.size() > 1 or scene != vs[vs.size() - 1]["scene"]:
 		for v in vs:
 			if v["scene"] == scene:
-				body.add_child(label("You are playing version %d (%s)." % [v["v"], v["date"]], 18, MUTED))
+				body.add_child(label("You are playing version %s (%s)." % [GameData.version_name(v), v["date"]], 18, MUTED))
 	if g.has("credit"):
 		section("Credits")
 		body.add_child(label(g["credit"], 18, MUTED))

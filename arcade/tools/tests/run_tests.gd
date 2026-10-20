@@ -594,6 +594,9 @@ func test_launcher_extras() -> void:
 	var shows_label: bool = m.update_info.get("version", "") == "1.1"
 	m.handle_update_info({"version": "1.29", "label": GameData.app_version(), "build": GameData.app_build()})
 	check("launcher", "updates compare build numbers", shows_label and m.update_info.is_empty())
+	# every game starts at version 1.0 (John, 2026-10-20)
+	var firsts := (Games.LIST + Games.EXTERNAL).filter(func(g): return int(g["versions"][0]["v"]) != 1 or GameData.version_name(g["versions"][0]) != "1.0")
+	check("launcher", "every game starts at v1.0", firsts.is_empty(), str(firsts.map(func(g): return g["id"])))
 	m.queue_free()
 	await frames(2)
 	# first start after an update shows What's new
@@ -1032,7 +1035,7 @@ func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
 
 func test_knight_flows() -> void:
 	var name := "the_last_knight"
-	var scene := "res://games/the_last_knight/v2/game.tscn"
+	var scene := "res://games/the_last_knight/v1/game.tscn"
 	if not ResourceLoader.exists(scene):
 		return
 	var errs := log_counter.errors.size()

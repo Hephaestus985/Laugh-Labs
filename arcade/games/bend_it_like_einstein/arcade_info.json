@@ -13,10 +13,10 @@
 	"color": "#404d8c",
 	"versions": [
 		{
-			"v": 2,
+			"v": 1,
 			"date": "2026-10-19",
-			"scene": "res://games/bend_it_like_einstein/v2/game.tscn",
-			"notes": "Godot remake of web v2: difficulty setting, nebula fog level."
+			"scene": "res://games/bend_it_like_einstein/v1/game.tscn",
+			"notes": "Godot remake of the Laugh Lab game: difficulty setting, nebula fog level."
 		}
 	],
 	"web": [

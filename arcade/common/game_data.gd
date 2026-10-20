@@ -262,6 +262,11 @@ static func compare_versions(a: String, b: String) -> int:
 	return 0
 
 
+## A game version's name as players see it: "1.0" (or the version's own "name").
+static func version_name(v: Dictionary) -> String:
+	return str(v.get("name", "%d.0" % int(v["v"])))
+
+
 static func app_version() -> String:
 	return str(ProjectSettings.get_setting("application/config/version", "0"))
 

@@ -1393,7 +1393,7 @@ func show_info(g: Dictionary) -> void:
 		["Made by", g.get("publisher", "?")],
 		["Genre", g.get("genre", "?")],
 		["First version", first["date"]],
-		["Latest version", "v%d, %s" % [last["v"], last["date"]]],
+		["Latest version", "v%s, %s" % [GameData.version_name(last), last["date"]]],
 		["One run", g.get("length", "?")],
 		["Download", Packs.size_text(Packs.size_of(pk)) + ("" if pst != "ready" or Packs.builtin.has(pk) else " (on this phone)")],
 		["Effort", g.get("effort", "?")],
@@ -1422,7 +1422,7 @@ func show_info(g: Dictionary) -> void:
 		var v: Dictionary = vs[i]
 		var vk := Packs.key_for(g, v["scene"])
 		var get_txt := "" if Packs.status(vk) == "ready" else "  ·  download %s" % Packs.size_text(Packs.size_of(vk))
-		var b := button("Play v%d%s  ·  %s%s\n%s" % [v["v"], "  (newest)" if i == vs.size() - 1 else "", v["date"], get_txt, v["notes"]], Color(0.15, 0.21, 0.29) if i == vs.size() - 1 else Color(0.12, 0.16, 0.22), 19)
+		var b := button("Play v%s%s  ·  %s%s\n%s" % [GameData.version_name(v), "  (newest)" if i == vs.size() - 1 else "", v["date"], get_txt, v["notes"]], Color(0.15, 0.21, 0.29) if i == vs.size() - 1 else Color(0.12, 0.16, 0.22), 19)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		var vscene: String = v["scene"]
