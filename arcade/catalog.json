@@ -301,7 +301,8 @@
 			"shots": [
 				"res://games/the_last_knight/shots/1.jpg",
 				"res://games/the_last_knight/shots/2.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 11,
@@ -329,7 +330,8 @@
 			"cover": "res://games/game_2048/cover.jpg",
 			"shots": [
 				"res://games/game_2048/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 12,
@@ -357,7 +359,8 @@
 			"cover": "res://games/sudoku/cover.jpg",
 			"shots": [
 				"res://games/sudoku/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 13,
@@ -385,7 +388,8 @@
 			"cover": "res://games/minesweeper/cover.jpg",
 			"shots": [
 				"res://games/minesweeper/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 14,
@@ -413,7 +417,8 @@
 			"cover": "res://games/solitaire/cover.jpg",
 			"shots": [
 				"res://games/solitaire/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 15,
@@ -441,7 +446,8 @@
 			"cover": "res://games/nonogram/cover.jpg",
 			"shots": [
 				"res://games/nonogram/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 16,
@@ -469,7 +475,8 @@
 			"cover": "res://games/lights_out/cover.jpg",
 			"shots": [
 				"res://games/lights_out/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 17,
@@ -497,7 +504,8 @@
 			"cover": "res://games/sliding_puzzle/cover.jpg",
 			"shots": [
 				"res://games/sliding_puzzle/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 18,
@@ -525,7 +533,8 @@
 			"cover": "res://games/mahjong/cover.jpg",
 			"shots": [
 				"res://games/mahjong/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 19,
@@ -553,7 +562,8 @@
 			"cover": "res://games/sokoban/cover.jpg",
 			"shots": [
 				"res://games/sokoban/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 20,
@@ -581,7 +591,8 @@
 			"cover": "res://games/flow/cover.jpg",
 			"shots": [
 				"res://games/flow/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 21,
@@ -609,7 +620,8 @@
 			"cover": "res://games/block_stacker/cover.jpg",
 			"shots": [
 				"res://games/block_stacker/shots/1.jpg"
-			]
+			],
+			"wins": true
 		},
 		{
 			"order": 22,
@@ -637,7 +649,8 @@
 			"cover": "res://games/connect_four/cover.jpg",
 			"shots": [
 				"res://games/connect_four/shots/1.jpg"
-			]
+			],
+			"wins": true
 		}
 	],
 	"external": [

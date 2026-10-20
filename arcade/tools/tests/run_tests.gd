@@ -659,6 +659,47 @@ func test_launcher_extras() -> void:
 	vb.emit_signal("pressed")
 	await frames(2)
 	check("launcher", "vibration can be switched off", UiFx.vibration_on() != vwas)
+	# save backup: copy everything out, change something, restore it
+	var bk := Backup.make()
+	check("launcher", "a backup holds settings and scores", bk.contains("settings.cfg") and Backup.check(bk) == "")
+	GameData.set_rating("sudoku", 1)
+	GameData.delete_collection("Brain teasers")
+	m.ask_restore(bk)
+	await frames(2)
+	var cr: Button = m.find_child("ConfirmRestore", true, false)
+	check("launcher", "restoring asks once more first", cr != null and GameData.rating("sudoku") == 1)
+	if cr:
+		cr.emit_signal("pressed")
+		await frames(2)
+	check("launcher", "restoring a backup brings progress back", GameData.rating("sudoku") == 4 and GameData.in_collection("Brain teasers", "sudoku"))
+	var bad := func(files: Dictionary): return Backup.check(JSON.stringify({"app": "Lab Arcade", "files": files})) != ""
+	var b64 := Marshalls.utf8_to_base64("x=1")
+	check("launcher", "backups can't write outside the app's data", bad.call({"../evil.cfg": b64}) and bad.call({"/etc/x.json": b64}) and bad.call({"packs/state.json": b64}))
+	check("launcher", "backups can't carry code or resources", bad.call({"x.gd": b64}) and bad.call({"x.tres": b64}) and bad.call({"dialogic/saves/a/state.txt": b64}) and bad.call({"s.cfg": Marshalls.utf8_to_base64("[a]\nb=Object(GDScript,\"script\":null)")}))
+	check("launcher", "other text is not taken as a backup", Backup.check("hello") != "" and Backup.check("{}") != "")
+	# keyboard / controller: Escape (or B) goes back, shoulder buttons switch tabs
+	m.show_info(sg)
+	await frames(2)
+	var esc := InputEventAction.new()
+	esc.action = "ui_cancel"
+	esc.pressed = true
+	Input.parse_input_event(esc)
+	await frames(2)
+	check("launcher", "Escape or B goes back from a game page", m.page == "list")
+	m.tab = 0
+	m.show_list()
+	await frames(1)
+	var jb := InputEventJoypadButton.new()
+	jb.button_index = JOY_BUTTON_RIGHT_SHOULDER
+	jb.pressed = true
+	Input.parse_input_event(jb)
+	await frames(3)
+	check("launcher", "controller shoulder buttons switch to the Library", m.tab == 1)
+	var fo: Control = m.get_viewport().gui_get_focus_owner()
+	check("launcher", "with a controller a button has focus", fo != null and fo is Control and m.is_ancestor_of(fo), str(fo))
+	if fo:
+		fo.release_focus()
+	UiFx.keys = false
 	GameData.delete_collection("Brain teasers")
 	GameData.set_rating("sudoku", 0)
 	check("launcher", "collections can be deleted", not GameData.collections().has("Brain teasers"))
@@ -669,7 +710,7 @@ func test_launcher_extras() -> void:
 ## Each game's own start screen: play buttons, difficulty, high scores, saved game,
 ## sound, back to the arcade; and that Play really starts the game.
 func test_hubs() -> void:
-	var all_ok := {"opens": true, "play": true, "back": true}
+	var all_ok := {"opens": true, "play": true, "back": true, "ach": true}
 	for g in Games.LIST + Games.EXTERNAL:
 		var id: String = g["id"]
 		var vs: Array = g["versions"]
@@ -678,6 +719,8 @@ func test_hubs() -> void:
 		var h: Control = spawn("res://common/game_hub.tscn")
 		await frames(2)
 		all_ok["opens"] = all_ok["opens"] and h.find_child("BackToArcade", true, false) != null
+		var ach: Node = h.find_child("Achievements", true, false)
+		all_ok["ach"] = all_ok["ach"] and ach != null and ach.get_child_count() >= 3 and ach.get_child_count() <= 5
 		var started := []
 		h.launch_hook = func(gid, _scene, mode): started.append([gid, mode])
 		var p: Button = h.find_child("Play", true, false)
@@ -690,6 +733,7 @@ func test_hubs() -> void:
 		h.queue_free()
 		await frames(1)
 	check("start screens", "every game has its own start screen", all_ok["opens"])
+	check("start screens", "every game has 3 to 5 achievements", all_ok["ach"])
 	check("start screens", "Play on the start screen starts that game", all_ok["play"])
 	check("start screens", "< MENU in a game comes back to its start screen", all_ok["back"])
 	# difficulty, high scores, saved game and sound on one game with all of them
@@ -745,6 +789,36 @@ func test_hubs() -> void:
 	Engine.set_meta("auto_start", false)
 	release_all_keys()
 	check("start screens", "Play skips the game's own title", skip_ok)
+	# achievements: a win on Hard unlocks two, celebrated once on the start screen
+	ArcadeGame.set_difficulty("sudoku", 2)
+	GameData.record_play("sudoku")
+	GameData.add_win("sudoku")
+	ArcadeGame.set_difficulty("sudoku", 1)
+	Engine.set_meta("hub_game", "sudoku")
+	Engine.set_meta("hub_scene", "")
+	h = spawn("res://common/game_hub.tscn")
+	await frames(2)
+	var won := func(k): return (h.find_child("Ach_" + k, true, false) != null) and GameData.get_setting("achieved", "sudoku/" + k, 0) > 0
+	check("start screens", "winning unlocks achievements", won.call("first") and won.call("win") and won.call("hard"))
+	check("start screens", "new achievements get a banner", h.find_child("Unlocked", true, false) != null)
+	h.queue_free()
+	await frames(1)
+	h = spawn("res://common/game_hub.tscn")
+	await frames(2)
+	check("start screens", "the banner shows only once", h.find_child("Unlocked", true, false) == null)
+	# keyboard / controller: the start screen starts on Play
+	UiFx.keys = true
+	h.build()
+	await frames(2)
+	var fo := h.get_viewport().gui_get_focus_owner()
+	check("start screens", "with keys or a controller, Play has focus", fo != null and String(fo.name) in ["Play", "Continue"], str(fo.name if fo else "none"))
+	UiFx.keys = false
+	if fo:
+		fo.release_focus()
+	h.queue_free()
+	Engine.remove_meta("hub_game")
+	Engine.remove_meta("hub_scene")
+	await frames(1)
 
 
 func test_game(g: Dictionary, v: Dictionary) -> void:

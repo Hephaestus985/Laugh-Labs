@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-20T12:19:43
-585 checks, 0 failed
+Lab Arcade test report  2026-10-20T12:25:36
+599 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
@@ -41,6 +41,7 @@ PASS  menu                       portrait layout = 1 column     skipped without 
 PASS  menu                       landscape layout = 3 columns   
 PASS  menu                       no errors                      
 PASS  start screens              every game has its own start screen 
+PASS  start screens              every game has 3 to 5 achievements 
 PASS  start screens              Play on the start screen starts that game 
 PASS  start screens              < MENU in a game comes back to its start screen 
 PASS  start screens              difficulty is set on the start screen 
@@ -49,6 +50,10 @@ PASS  start screens              a saved game shows Continue and New game
 PASS  start screens              the saved game can be deleted  
 PASS  start screens              sound can be switched off per game 
 PASS  start screens              Play skips the game's own title 
+PASS  start screens              winning unlocks achievements   
+PASS  start screens              new achievements get a banner  
+PASS  start screens              the banner shows only once     
+PASS  start screens              with keys or a controller, Play has focus Play
 PASS  launcher                   app versions compare by number (1.9 < 1.22) 
 PASS  launcher                   a newer version shows an Update banner 
 PASS  launcher                   no banner when up to date      
@@ -57,7 +62,7 @@ PASS  launcher                   What's new lists the changes
 PASS  launcher                   a game with a newer version shows UPDATED 
 PASS  launcher                   a game you never saw shows NEW 
 PASS  launcher                   time played is counted per game 
-PASS  launcher                   the profile shows time played and most played ["Your profile", "2 min", "Time played", "1 of 27", "Games tried", "1"]
+PASS  launcher                   the profile shows time played and most played ["Your profile", "2 min", "Time played", "2 of 27", "Games tried", "2"]
 PASS  launcher                   a game page has rating stars   
 PASS  launcher                   tapping a star rates the game  
 PASS  launcher                   a new collection holds the game 
@@ -66,6 +71,15 @@ PASS  launcher                   the Library filters by collection
 PASS  launcher                   sorting by your rating puts rated games first 
 PASS  launcher                   tap sounds can be switched off 
 PASS  launcher                   vibration can be switched off  
+PASS  launcher                   a backup holds settings and scores 
+PASS  launcher                   restoring asks once more first 
+PASS  launcher                   restoring a backup brings progress back 
+PASS  launcher                   backups can't write outside the app's data 
+PASS  launcher                   backups can't carry code or resources 
+PASS  launcher                   other text is not taken as a backup 
+PASS  launcher                   Escape or B goes back from a game page 
+PASS  launcher                   controller shoulder buttons switch to the Library 
+PASS  launcher                   with a controller a button has focus Play:<Button#1426700898389>
 PASS  launcher                   collections can be deleted     
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene
@@ -335,7 +349,7 @@ PASS  lights_out v1 portrait     tap flips a light and its neighbours (phone)
 PASS  lights_out v1              portrait: touch play works (phone) 
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1520
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1600
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -457,7 +471,7 @@ PASS  block_stacker v1 portrait  swipe down drops the piece (phone)
 PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 324
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 330
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    

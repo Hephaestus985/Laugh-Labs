@@ -4,6 +4,7 @@ extends RefCounted
 # vibration on taps, and fades for pages and cover art. Sounds and vibration can be
 # switched off in Settings (stored in settings.cfg, section "ui").
 
+static var keys := false  # true while the player uses a keyboard or controller
 static var _click: AudioStreamWAV = null
 static var _player: AudioStreamPlayer = null
 
@@ -47,6 +48,32 @@ static func tap(node: Node) -> void:
 		_player.play()
 	if vibration_on() and OS.has_feature("mobile"):
 		Input.vibrate_handheld(12)
+
+
+## Follows how the player is steering: keys and controllers show a focus outline
+## and start on a button; touch and mouse don't.
+static func note_input(event: InputEvent) -> void:
+	if event is InputEventKey or event is InputEventJoypadButton or (event is InputEventJoypadMotion and absf(event.axis_value) > 0.5):
+		keys = true
+	elif event is InputEventMouseButton or event is InputEventScreenTouch:
+		keys = false
+
+
+## Puts keyboard / controller focus on the first button under root (or on prefer).
+static func focus_first(root: Node, prefer: Control = null) -> void:
+	if not keys or root == null or not root.is_inside_tree():
+		return
+	var vp := root.get_viewport()
+	var cur := vp.gui_get_focus_owner() if vp else null
+	if cur and cur.is_visible_in_tree() and root.is_ancestor_of(cur):
+		return
+	if prefer and prefer.is_visible_in_tree():
+		prefer.grab_focus()
+		return
+	for c in root.find_children("*", "Control", true, false):
+		if (c is BaseButton or c is LineEdit) and c.is_visible_in_tree() and c.focus_mode == Control.FOCUS_ALL and not (c is BaseButton and c.disabled):
+			c.grab_focus()
+			return
 
 
 ## Fade a control in (pages, cover art).

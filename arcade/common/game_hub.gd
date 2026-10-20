@@ -17,6 +17,7 @@ var portrait := false
 var body: VBoxContainer
 var confirm_reset := false
 var launch_hook := Callable()  # tests replace starting the game with this
+var unlocked: Array = []  # achievements reached in the last session, shown once
 
 
 func _ready() -> void:
@@ -38,6 +39,7 @@ func _ready() -> void:
 	if Engine.has_meta("play_started"):
 		GameData.add_playtime(g["id"], int(Time.get_unix_time_from_system()) - int(Engine.get_meta("play_started")))
 		Engine.remove_meta("play_started")
+	unlocked = GameData.check_achievements(g)
 	for gg in Games.EXTERNAL:  # helpers of games by others sleep outside their game
 		if gg.has("park"):
 			load(gg["park"]).park(get_tree())
@@ -65,6 +67,17 @@ func _process(_delta: float) -> void:
 	if _want_portrait() != portrait:
 		_fit_screen()
 		build()
+
+
+func _input(event: InputEvent) -> void:
+	UiFx.note_input(event)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Escape, or B on a controller
+	if event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
+		back_to_arcade()
 
 
 func _notification(what: int) -> void:
@@ -116,6 +129,8 @@ func build() -> void:
 	for side in ["left", "right", "top", "bottom"]:
 		margin.add_theme_constant_override("margin_" + side, 20)
 	add_child(margin)
+	if not unlocked.is_empty():
+		_unlock_banner()
 	var outer := VBoxContainer.new()
 	outer.add_theme_constant_override("separation", 12)
 	margin.add_child(outer)
@@ -137,6 +152,7 @@ func build() -> void:
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	scroll.scroll_deadzone = 18
+	scroll.follow_focus = true
 	outer.add_child(scroll)
 	body = VBoxContainer.new()
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -158,6 +174,7 @@ func build() -> void:
 	if not g.get("no_difficulty", false):
 		_difficulty(side)
 	_scores()
+	_achievements()
 	_saved_game()
 	_settings()
 	section("How to play")
@@ -172,6 +189,11 @@ func build() -> void:
 	if g.has("credit"):
 		section("Credits")
 		body.add_child(label(g["credit"], 18, MUTED))
+	# keyboard / controller: start on Play (or Continue)
+	var first: Control = find_child("Continue", true, false)
+	if first == null:
+		first = find_child("Play", true, false)
+	UiFx.focus_first.call_deferred(self, first)
 
 
 func _play_buttons(side: Container) -> void:
@@ -246,6 +268,56 @@ func _scores() -> void:
 		grid.add_child(label(str(int(e["score"])), 22 if top else 20, GOLD if top else Color.WHITE))
 		grid.add_child(label(ArcadeGame.DIFF_NAMES[clampi(int(e.get("difficulty", 1)), 0, 2)], 18, MUTED))
 		grid.add_child(label(str(e.get("date", "")), 18, MUTED))
+
+
+func _achievements() -> void:
+	var list := GameData.achievements(g)
+	var got := list.filter(func(a): return a["done"]).size()
+	section("Achievements  %d / %d" % [got, list.size()])
+	var flow := HFlowContainer.new()
+	flow.name = "Achievements"
+	flow.add_theme_constant_override("h_separation", 10)
+	flow.add_theme_constant_override("v_separation", 10)
+	body.add_child(flow)
+	for a in list:
+		var p := PanelContainer.new()
+		p.name = "Ach_" + a["key"]
+		p.custom_minimum_size = Vector2(300 if portrait else 290, 0)
+		p.add_theme_stylebox_override("panel", flat(Color(0.30, 0.24, 0.08) if a["done"] else PANEL, 12, 12))
+		var v := VBoxContainer.new()
+		p.add_child(v)
+		v.add_child(label(a["name"], 21, GOLD if a["done"] else MUTED))
+		v.add_child(label(a["text"], 18, Color.WHITE if a["done"] else MUTED))
+		if a["done"] and a["when"] > 0:
+			v.add_child(label(Time.get_date_string_from_unix_time(a["when"]), 16, MUTED))
+		flow.add_child(p)
+
+
+## "Achievement unlocked" slides down at the top and fades out.
+func _unlock_banner() -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "Unlocked"
+	layer.layer = 5
+	add_child(layer)
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", flat(Color(0.30, 0.24, 0.08, 0.96), 14, 16))
+	p.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	p.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	p.position.y = 16
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.add_child(p)
+	var names: Array = unlocked.map(func(a): return a["name"])
+	var l := label("Achievement unlocked: " + ", ".join(names), 22, GOLD)
+	l.autowrap_mode = TextServer.AUTOWRAP_OFF
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	p.add_child(l)
+	unlocked = []
+	var tw := p.create_tween()
+	p.modulate.a = 0.0
+	tw.tween_property(p, "modulate:a", 1.0, 0.25)
+	tw.tween_interval(3.0)
+	tw.tween_property(p, "modulate:a", 0.0, 0.6)
+	tw.tween_callback(layer.queue_free)
 
 
 func _saved_game() -> void:
@@ -342,7 +414,10 @@ func button(txt: String, c: Color, size := 22, expand := true) -> Button:
 	b.add_theme_stylebox_override("normal", flat(c))
 	b.add_theme_stylebox_override("hover", flat(c.lightened(0.12)))
 	b.add_theme_stylebox_override("pressed", flat(c.darkened(0.2)))
-	b.add_theme_stylebox_override("focus", flat(c.lightened(0.05)))
+	var fo := flat(c.lightened(0.05))
+	fo.border_color = Color(1, 1, 1)
+	fo.set_border_width_all(3)
+	b.add_theme_stylebox_override("focus", fo)
 	if expand:
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	return b

@@ -61,6 +61,12 @@ def load(kind):
         shots_dir = os.path.join(root, name, "shots")
         if os.path.isdir(shots_dir):
             g["shots"] = [res_dir + "/shots/" + f for f in sorted(os.listdir(shots_dir)) if f.endswith(".jpg")]
+        # games that report wins (puzzles, the Knight's ending) get win achievements
+        newest = os.path.dirname(local(vs[-1]["scene"])) if vs and "scene" in vs[-1] else ""
+        if newest and os.path.isdir(newest):
+            src = "".join(open(os.path.join(newest, f), errors="ignore").read() for f in os.listdir(newest) if f.endswith(".gd"))
+            if "PuzzleGame" in src or "add_win(" in src:
+                g["wins"] = True
         out.append(g)
     out.sort(key=lambda g: (g.get("order", 9999), g.get("id", "")))
     return out, errors

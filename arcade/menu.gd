@@ -118,6 +118,14 @@ func row_at(p: Vector2) -> ScrollContainer:
 
 
 func _input(event: InputEvent) -> void:
+	UiFx.note_input(event)
+	if event is InputEventJoypadButton and event.pressed and page == "list" and event.button_index in [JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER]:
+		# controller shoulder buttons switch between Home and Library
+		tab = 0 if event.button_index == JOY_BUTTON_LEFT_SHOULDER else 1
+		set_setting("ui", "tab", tab)
+		show_list()
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		if event.pressed:
 			var sc := current_scroll()
@@ -394,7 +402,20 @@ func clear_body() -> void:
 		body.remove_child(c)
 		c.queue_free()
 	UiFx.fade_in(body, 0.16)
+	_focus_page.call_deferred()
 
+
+## With a keyboard or controller: start on the page's main button.
+func _focus_page() -> void:
+	if not UiFx.keys or body == null:
+		return
+	var prefer: Control = null
+	for n in ["HeroPlay", "WhatsNewDone", "Play"]:
+		prefer = body.find_child(n, true, false)
+		if prefer:
+			break
+	var sc := current_scroll()
+	UiFx.focus_first(sc if sc and prefer == null else body, prefer)
 
 func label(s: String, size: int, color := Color(1, 1, 1), center := false) -> Label:
 	var l := Label.new()
@@ -476,7 +497,11 @@ func picture(tex: Texture2D, on_tap := Callable(), fallback := Color(0.1, 0.12, 
 		b.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 		b.add_theme_stylebox_override("hover", flat(Color(1, 1, 1, 0.06), 0, 0))
 		b.add_theme_stylebox_override("pressed", flat(Color(0, 0, 0, 0.15), 0, 0))
-		b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+		var fo := flat(Color(0, 0, 0, 0), 0, 0)
+		fo.draw_center = false
+		fo.border_color = Color(1, 0.85, 0.35)
+		fo.set_border_width_all(4)
+		b.add_theme_stylebox_override("focus", fo)
 		b.pressed.connect(on_tap)
 		tr.add_child(b)
 	return tr
@@ -497,6 +522,7 @@ func scroll_box() -> VBoxContainer:
 	scroll.name = "Scroll"
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.follow_focus = true  # keyboard / controller focus scrolls into view
 	body.add_child(scroll)
 	var inner := VBoxContainer.new()
 	inner.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -877,6 +903,7 @@ func _row(parent: Control, id: String, title: String, games: Array, empty_text: 
 	sc.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	sc.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_SHOW_NEVER
 	sc.mouse_filter = Control.MOUSE_FILTER_PASS
+	sc.follow_focus = true
 	parent.add_child(sc)
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 12)
@@ -1016,14 +1043,23 @@ func show_profile() -> void:
 	var tried := games.filter(func(g): return plays(g["id"]) > 0)
 	var total_plays := 0
 	var total_wins := 0
+	var ach_got := 0
+	var ach_all := 0
+	var recent := []
 	for g in games:
 		total_plays += plays(g["id"])
 		total_wins += GameData.wins(g["id"])
+		GameData.check_achievements(g)
+		for a in GameData.achievements(g):
+			ach_all += 1
+			if a["done"]:
+				ach_got += 1
+				recent.append([a["when"], a["name"], g["name"]])
 	var tiles := HFlowContainer.new()
 	tiles.add_theme_constant_override("h_separation", 12)
 	tiles.add_theme_constant_override("v_separation", 12)
 	inner.add_child(tiles)
-	for st in [["Time played", GameData.time_text(total)], ["Games tried", "%d of %d" % [tried.size(), games.size()]], ["Times played", str(total_plays)], ["Rounds won", str(total_wins)]]:
+	for st in [["Time played", GameData.time_text(total)], ["Games tried", "%d of %d" % [tried.size(), games.size()]], ["Times played", str(total_plays)], ["Rounds won", str(total_wins)], ["Achievements", "%d of %d" % [ach_got, ach_all]]]:
 		var p := PanelContainer.new()
 		p.custom_minimum_size = Vector2(250, 0)
 		p.add_theme_stylebox_override("panel", flat(Color(0.11, 0.16, 0.22), 14, 16))
@@ -1032,6 +1068,16 @@ func show_profile() -> void:
 		v.add_child(label(st[1], 34, GOLD))
 		v.add_child(label(st[0], 18, MUTED))
 		tiles.add_child(p)
+	if not recent.is_empty():
+		section(inner, "Latest achievements")
+		recent.sort_custom(func(a, b): return a[0] > b[0])
+		var af := HFlowContainer.new()
+		af.name = "LatestAchievements"
+		af.add_theme_constant_override("h_separation", 8)
+		af.add_theme_constant_override("v_separation", 8)
+		inner.add_child(af)
+		for r in recent.slice(0, 6):
+			af.add_child(chip("%s  ·  %s" % [r[1], r[2]], Color(0.30, 0.24, 0.08)))
 	section(inner, "Most played")
 	var by_time := games.filter(func(g): return GameData.playtime(g["id"]) > 0 or plays(g["id"]) > 0)
 	by_time.sort_custom(func(a, b): return GameData.playtime(a["id"]) * 1000 + plays(a["id"]) > GameData.playtime(b["id"]) * 1000 + plays(b["id"]))
@@ -1477,6 +1523,7 @@ func show_settings() -> void:
 				GameData.delete_collection(cname)
 				show_settings())
 			crow.add_child(del)
+	_backup_section(inner)
 	section(inner, "App updates")
 	inner.add_child(label("Lab Arcade %s. %s" % [GameData.app_version(), update_status], 19, MUTED))
 	var urow := HFlowContainer.new()
@@ -1529,10 +1576,103 @@ func show_settings() -> void:
 	inner.add_child(label("Lab Arcade %s  ·  %d + %d games  ·  made with Godot %s\ngithub.com/Hephaestus985/Laugh-Labs" % [ProjectSettings.get_setting("application/config/version", "?"), Games.LIST.size(), Games.EXTERNAL.size(), Engine.get_version_info()["string"]], 19, MUTED))
 
 
+# ---------------------------------------------------------------- save backup
+
+var backup_status := ""
+var confirm_restore := ""  # backup text waiting for a second tap on Restore
+
+
+func _backup_section(inner: Control) -> void:
+	section(inner, "Backup")
+	inner.add_child(label("One file with your saved games, high scores, achievements, ratings, collections and settings. Keep it safe, or move it to a new phone.", 19, MUTED))
+	var row := HFlowContainer.new()
+	row.add_theme_constant_override("h_separation", 8)
+	row.add_theme_constant_override("v_separation", 8)
+	inner.add_child(row)
+	var native := DisplayServer.has_feature(DisplayServer.FEATURE_NATIVE_DIALOG_FILE)
+	if native:
+		var sv := button("Save backup file", PANEL, 20, false)
+		sv.name = "SaveBackup"
+		sv.pressed.connect(func():
+			DisplayServer.file_dialog_show("Save backup", "", Backup.file_name(), false, DisplayServer.FILE_DIALOG_MODE_SAVE_FILE, PackedStringArray(["*.json"]), _backup_saved))
+		row.add_child(sv)
+		var op := button("Restore from file", PANEL, 20, false)
+		op.name = "OpenBackup"
+		op.pressed.connect(func():
+			DisplayServer.file_dialog_show("Restore backup", "", "", false, DisplayServer.FILE_DIALOG_MODE_OPEN_FILE, PackedStringArray(["*.json"]), _backup_opened))
+		row.add_child(op)
+	var cp := button("Copy backup", PANEL, 20, false)
+	cp.name = "CopyBackup"
+	cp.pressed.connect(func():
+		DisplayServer.clipboard_set(Backup.make())
+		backup_status = "Backup copied. Paste it somewhere safe (a note or a message to yourself)."
+		show_settings())
+	row.add_child(cp)
+	var pa := button("Restore copied backup", PANEL, 20, false)
+	pa.name = "PasteBackup"
+	pa.pressed.connect(func(): ask_restore(DisplayServer.clipboard_get()))
+	row.add_child(pa)
+	if confirm_restore != "":
+		var yes := button("Replace my progress with this backup", Color(0.45, 0.18, 0.22), 20, false)
+		yes.name = "ConfirmRestore"
+		yes.pressed.connect(func():
+			var err := Backup.restore(confirm_restore)
+			confirm_restore = ""
+			if err == "":
+				backup_status = "Backup restored."
+				load_filters()
+			else:
+				backup_status = err
+			show_settings())
+		row.add_child(yes)
+	if backup_status != "":
+		var st := label(backup_status, 19, Color(0.55, 0.75, 0.95))
+		st.name = "BackupStatus"
+		inner.add_child(st)
+
+
+## Shows what a backup holds and asks once more before overwriting anything.
+func ask_restore(text: String) -> void:
+	var err := Backup.check(text)
+	if err != "":
+		confirm_restore = ""
+		backup_status = err
+	else:
+		confirm_restore = text
+		backup_status = "Found a backup: %s. Tap the red button to restore it; this replaces your current progress." % Backup.summary(text)
+	show_settings()
+
+
+func _backup_saved(ok: bool, paths: PackedStringArray, _filter: int) -> void:
+	if not ok or paths.is_empty():
+		return
+	var f := FileAccess.open(paths[0], FileAccess.WRITE)
+	if f == null:
+		backup_status = "Could not save there. Try another place, or use Copy backup."
+	else:
+		f.store_string(Backup.make())
+		f.close()
+		backup_status = "Backup saved."
+	show_settings.call_deferred()
+
+
+func _backup_opened(ok: bool, paths: PackedStringArray, _filter: int) -> void:
+	if not ok or paths.is_empty():
+		return
+	var f := FileAccess.open(paths[0], FileAccess.READ)
+	if f == null or f.get_length() > 64 * 1024 * 1024:
+		backup_status = "Could not read that file."
+		show_settings.call_deferred()
+		return
+	ask_restore.call_deferred(f.get_as_text())
+
+
 # ---------------------------------------------------------------- back button
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+	# Escape, or B on a controller
+	if event.is_action_pressed("ui_cancel"):
+		get_viewport().set_input_as_handled()
 		go_back()
 
 

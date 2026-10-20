@@ -163,10 +163,51 @@ static func time_text(seconds: int) -> String:
 ## A round won or a game finished (Puzzle wins, the Knight's ending...).
 static func add_win(id: String) -> void:
 	set_setting("wins", id, wins(id) + 1)
+	if ArcadeGame.get_difficulty(id) == 2:
+		set_setting("wins_hard", id, int(get_setting("wins_hard", id, 0)) + 1)
 
 
 static func wins(id: String) -> int:
 	return int(get_setting("wins", id, 0))
+
+
+# ---------------------------------------------------------------- achievements
+
+## A few goals per game, worked out from what every game already records (plays,
+## time, wins, high scores), so each game has them without code of its own.
+## Games that report wins (catalog "wins") get win goals, others score goals.
+static func achievements(g: Dictionary) -> Array:
+	var id: String = g["id"]
+	var hard_ok: bool = not g.get("no_difficulty", false)
+	var list := [
+		{"key": "first", "name": "First steps", "text": "Play it once", "done": plays(id) >= 1},
+		{"key": "regular", "name": "Regular", "text": "Play it 10 times", "done": plays(id) >= 10},
+		{"key": "hooked", "name": "Hooked", "text": "Play it for an hour in total", "done": playtime(id) >= 3600},
+	]
+	if g.get("wins", false):
+		list.append({"key": "win", "name": "Winner", "text": "Win a game", "done": wins(id) >= 1})
+		if hard_ok:
+			list.append({"key": "hard", "name": "Hard as nails", "text": "Win on Hard", "done": int(get_setting("wins_hard", id, 0)) >= 1})
+	elif not g.get("no_score", false):
+		var sc := scores(id)
+		list.append({"key": "board", "name": "On the board", "text": "Get a high score", "done": not sc.is_empty() or read_best(g) > 0})
+		if hard_ok:
+			list.append({"key": "hard", "name": "Hard as nails", "text": "Finish a run on Hard", "done": sc.any(func(e): return int(e.get("difficulty", 1)) == 2)})
+	for a in list:
+		a["when"] = int(get_setting("achieved", id + "/" + a["key"], 0))
+	return list
+
+
+## Records the date of goals reached since last time and returns those (newest
+## unlocks), so the game's start screen can celebrate them.
+static func check_achievements(g: Dictionary) -> Array:
+	var fresh := []
+	for a in achievements(g):
+		if a["done"] and a["when"] == 0:
+			a["when"] = int(Time.get_unix_time_from_system())
+			set_setting("achieved", g["id"] + "/" + a["key"], a["when"])
+			fresh.append(a)
+	return fresh
 
 
 # ---------------------------------------------------------------- what the player has seen

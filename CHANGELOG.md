@@ -2,6 +2,11 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.25 (2026-10-20)
+- Achievements: 3 to 5 per game (play it, play it often, an hour in total, and a win or a high score, also on Hard), shown on each game's start screen with the date you got them. New ones get a banner; the profile shows your total and the latest ones
+- Save backup (Settings, "Backup"): one file with your saved games, high scores, achievements, ratings, collections and settings. Save it as a file, or copy it as text and paste it back on a new phone. Restoring asks first, only writes plain data (no code), and leaves downloads alone. Open RPG's story saves stay out, because that game reads them in a way a doctored backup could abuse
+- Keyboard and controller: arrows / d-pad move between buttons, Enter / A presses, Escape / B goes back, and the shoulder buttons switch between Home and Library. Start screens begin on Play
+
 ## Lab Arcade 1.24 (2026-10-20)
 - A Steam-style Home: a big banner for the game you played last (Resume) or one to start with, then rows of covers you swipe sideways: your picks, your collections, recently played, new and updated, and one row per genre
 - Rate games (1 to 5 stars on their page) and sort the Library by your rating
