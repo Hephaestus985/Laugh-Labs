@@ -4,6 +4,8 @@ Silly little games, all in one Android app: **Lab Arcade**.
 
 **Install on your phone:** [LabArcade.apk](https://github.com/Hephaestus985/Laugh-Labs/raw/main/apks/LabArcade.apk). Open it and allow installs from your browser if Android asks. Installing a newer version updates the app and keeps your high scores.
 
+Games are downloaded inside the app the first time you play them (from [packs/](packs/), checked against a fingerprint built into the app), then work offline. An app update only downloads a game again if that game changed.
+
 ## Games
 | Game | What it is |
 |---|---|
@@ -54,5 +56,5 @@ Run them without a window or sound (`menu` or `external` for a quick run, `VISUA
 ```bash
 arcade/tools/test.sh
 ```
-`arcade/tools/build_apk.sh` builds the APK and runs the same tests headless (no windows) on an exported build; `VISUAL=1` also checks that screens draw (the way the phone app is built); it stops with an error if any test fails. Your own high scores and saves are backed up and restored around the tests. Latest results: `arcade/tools/tests/last_report.txt`.
+`arcade/tools/build_apk.sh` builds the game packs that changed (`arcade/tools/packs.py`, unchanged packs keep their exact bytes), the launcher-only APK and runs the same tests headless (no windows) on an exported build; `VISUAL=1` also checks that screens draw (the way the phone app is built); it stops with an error if any test fails. Your own high scores and saves are backed up and restored around the tests. Latest results: `arcade/tools/tests/last_report.txt`.
 

@@ -1,0 +1,17 @@
+Lab Arcade pack test
+14 checks, 0 failed
+
+PASS  the app lists every game version as a pack  27 packs
+PASS  sudoku/v1 is not inside the launcher  
+PASS  sudoku/v1: a damaged download is refused  
+PASS  sudoku/v1: the real pack installs  
+PASS  sudoku/v1: its game starts with its code  
+PASS  sudoku/v1: plays without errors  
+PASS  racing/v1 is not inside the launcher  
+PASS  racing/v1: a damaged download is refused  
+PASS  racing/v1: the real pack installs  
+PASS  racing/v1: its game starts with its code  
+PASS  racing/v1: plays without errors  
+PASS  downloads are loaded again on the next start  
+PASS  an app update keeps unchanged games  
+PASS  an app update asks again only for changed games  

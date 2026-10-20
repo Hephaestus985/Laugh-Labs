@@ -508,7 +508,7 @@ const EXTERNAL := [
 		"no_score": true,
 		"aspect": "expand",
 		"main": "res://external/open_rpg/lab_arcade_main.tscn",
-		"park": "res://external/open_rpg/lab_arcade_main.gd",
+		"park": "res://external/open_rpg/lab_arcade_park.gd",
 		"versions": [
 			{"v": 1, "date": "2026-10-19", "scene": "res://external/open_rpg/lab_arcade_main.tscn", "notes": "Godot Open RPG (commit d59f2f7, 2026-10-13) with Dialogic 2, security-reviewed, with tap controls for battles and a back button."},
 		],

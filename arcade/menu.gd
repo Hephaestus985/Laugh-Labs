@@ -19,6 +19,7 @@ var body: VBoxContainer
 var page := "list"
 var page_game: Dictionary = {}
 var confirm_reset := false
+var confirm_delete := false
 var portrait := false
 
 
@@ -35,6 +36,7 @@ const LENGTHS := ["Any length", "Short (under 5 min)", "Medium (5-15 min)", "Lon
 
 func _ready() -> void:
 	get_tree().paused = false  # in case a game was left while paused
+	Packs.setup()  # load the games downloaded earlier
 	for g in Games.EXTERNAL:  # games whose always-loaded helpers must sleep in the launcher
 		if g.has("park"):
 			load(g["park"]).park(get_tree())
@@ -62,6 +64,8 @@ func _process(delta: float) -> void:
 	var ws := DisplayServer.window_get_size()
 	if (ws.y > ws.x) != portrait:
 		_on_resized()
+	if is_instance_valid(dl):
+		_update_download_ui()
 	# keep gliding a little after a swipe
 	if not drag_down and absf(fling) > 20.0 and is_instance_valid(drag_scroll):
 		drag_scroll.scroll_vertical -= int(fling * delta)
@@ -646,7 +650,14 @@ func make_card(g: Dictionary) -> Control:
 	row.add_theme_constant_override("separation", 8)
 	v.add_child(row)
 	var scene: String = newest(g)["scene"]
-	var play := button("Continue" if sv != "" else "Play", Color(0.16, 0.62, 0.38), 24)
+	var pk := Packs.key_for(g, scene)
+	var pst := Packs.status(pk)
+	var ptxt := "Continue" if sv != "" else "Play"
+	if pst == "download":
+		ptxt = "Get  " + Packs.size_text(Packs.size_of(pk))
+	elif pst == "update":
+		ptxt = "Update  " + Packs.size_text(Packs.size_of(pk))
+	var play := button(ptxt, Color(0.16, 0.62, 0.38) if pst == "ready" else Color(0.15, 0.45, 0.75), 24)
 	play.name = "Play"
 	play.pressed.connect(func(): launch(g, scene, "continue" if sv != "" else ""))
 	row.add_child(play)
@@ -676,6 +687,10 @@ func launch(g: Dictionary, scene: String, mode: String) -> void:
 	if launch_hook.is_valid():
 		launch_hook.call(g["id"], scene, mode)
 		return
+	var pk := Packs.key_for(g, scene)
+	if Packs.status(pk) != "ready":
+		download(pk, func(): launch(g, scene, mode))
+		return
 	record_play(g["id"])
 	if g.get("aspect", "") == "expand":
 		# games made by others: full landscape screen, their own layout
@@ -685,6 +700,124 @@ func launch(g: Dictionary, scene: String, mode: String) -> void:
 			DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR_LANDSCAPE)
 	Engine.set_meta("launch_mode", mode)
 	get_tree().change_scene_to_file(scene)
+
+
+# ---------------------------------------------------------------- downloads
+
+var dl: PackDownload = null
+var dl_queue: Array = []  # [key, then (Callable)]
+var dl_layer: CanvasLayer = null
+var dl_label: Label = null
+var dl_bar: ProgressBar = null
+
+
+## Download a game pack (with a progress screen), then run `then`.
+func download(key: String, then := Callable()) -> void:
+	dl_queue.append([key, then])
+	if not is_instance_valid(dl):
+		_next_download()
+
+
+func _next_download() -> void:
+	if dl_queue.is_empty():
+		_close_download_ui()
+		_refresh_page()
+		return
+	var job: Array = dl_queue.pop_front()
+	if Packs.status(job[0]) == "ready":
+		if (job[1] as Callable).is_valid():
+			dl_queue.clear()
+			_close_download_ui()
+			(job[1] as Callable).call()
+		else:
+			_next_download()
+		return
+	_open_download_ui()
+	dl = PackDownload.start(self, job[0])
+	dl.finished.connect(func(err: String):
+		dl = null
+		if err != "":
+			dl_queue.clear()
+			_show_download_error(err)
+		elif (job[1] as Callable).is_valid() and dl_queue.is_empty():
+			_close_download_ui()
+			(job[1] as Callable).call()
+		else:
+			_next_download())
+
+
+func _refresh_page() -> void:
+	if page == "settings":
+		show_settings()
+	elif page == "info":
+		show_info(page_game)
+	else:
+		show_list()
+
+
+func _game_name(key: String) -> String:
+	var id := key.get_slice("/", 0)
+	for g in all_games():
+		if g["id"] == id:
+			return g["name"]
+	return id
+
+
+func _open_download_ui() -> void:
+	if is_instance_valid(dl_layer):
+		return
+	dl_layer = CanvasLayer.new()
+	dl_layer.layer = 10
+	add_child(dl_layer)
+	var shade := ColorRect.new()
+	shade.color = Color(0, 0, 0, 0.75)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dl_layer.add_child(shade)
+	var box := VBoxContainer.new()
+	box.set_anchors_preset(Control.PRESET_CENTER)
+	box.custom_minimum_size = Vector2(560, 0)
+	box.position = get_viewport().get_visible_rect().size / 2 - Vector2(280, 110)
+	box.add_theme_constant_override("separation", 16)
+	dl_layer.add_child(box)
+	dl_label = label("", 26, Color(1, 1, 1), true)
+	dl_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	box.add_child(dl_label)
+	dl_bar = ProgressBar.new()
+	dl_bar.custom_minimum_size = Vector2(0, 34)
+	dl_bar.max_value = 1.0
+	dl_bar.show_percentage = false
+	box.add_child(dl_bar)
+	var cancel := button("Cancel", PANEL, 22)
+	cancel.name = "CancelDownload"
+	cancel.pressed.connect(func():
+		dl_queue.clear()
+		if is_instance_valid(dl):
+			dl.cancel()
+		_close_download_ui())
+	box.add_child(cancel)
+
+
+func _update_download_ui() -> void:
+	if not is_instance_valid(dl_label):
+		return
+	var p := dl.progress()
+	dl_bar.value = p
+	var more := "" if dl_queue.is_empty() else "  (%d more)" % dl_queue.size()
+	dl_label.text = "Downloading %s%s\n%s of %s" % [_game_name(dl.key), more, Packs.size_text(int(p * Packs.size_of(dl.key))), Packs.size_text(Packs.size_of(dl.key))]
+
+
+func _show_download_error(err: String) -> void:
+	_open_download_ui()
+	dl_bar.visible = false
+	dl_label.text = "Download failed: %s." % err
+	var b: Button = dl_layer.find_child("CancelDownload", true, false)
+	b.text = "OK"
+
+
+func _close_download_ui() -> void:
+	if is_instance_valid(dl_layer):
+		dl_layer.queue_free()
+	dl_layer = null
 
 
 # ---------------------------------------------------------------- info page
@@ -763,12 +896,30 @@ func show_info(g: Dictionary) -> void:
 	var vs: Array = g["versions"]
 	for i in range(vs.size() - 1, -1, -1):
 		var v: Dictionary = vs[i]
-		var b := button("Play v%d%s  ·  %s\n%s" % [v["v"], "  (newest)" if i == vs.size() - 1 else "", v["date"], v["notes"]], Color(g["color"]).darkened(0.1 if i == vs.size() - 1 else 0.4), 20)
+		var vk := Packs.key_for(g, v["scene"])
+		var get_txt := "" if Packs.status(vk) == "ready" else "  ·  download %s" % Packs.size_text(Packs.size_of(vk))
+		var b := button("Play v%d%s  ·  %s%s\n%s" % [v["v"], "  (newest)" if i == vs.size() - 1 else "", v["date"], get_txt, v["notes"]], Color(g["color"]).darkened(0.1 if i == vs.size() - 1 else 0.4), 20)
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		var vscene: String = v["scene"]
 		b.pressed.connect(func(): launch(g, vscene, ""))
 		inner.add_child(b)
+	var downloaded := []
+	for v in vs:
+		var vk := Packs.key_for(g, v["scene"])
+		if Packs.state().has(vk):
+			downloaded.append(vk)
+	if not downloaded.is_empty():
+		var total := 0
+		for vk in downloaded:
+			total += Packs.size_of(vk)
+		var del := button("Delete download (frees %s)" % Packs.size_text(total), PANEL, 20)
+		del.name = "DeleteDownload"
+		del.pressed.connect(func():
+			for vk in downloaded:
+				Packs.remove(vk)
+			show_info(g))
+		inner.add_child(del)
 	var web: Array = g.get("web", [])
 	if web.size() > 0:
 		inner.add_child(label("Earlier web versions in Laugh Lab (not playable here):", 19, MUTED))
@@ -821,6 +972,34 @@ func show_settings() -> void:
 			apply_orientation()
 			show_settings())
 		orow.add_child(b)
+	section(inner, "Downloads")
+	var missing := []
+	var missing_size := 0
+	for g in all_games():
+		var k := Packs.key_for(g, newest(g)["scene"])
+		if Packs.status(k) != "ready":
+			missing.append(k)
+			missing_size += Packs.size_of(k)
+	var have := Packs.state().size()
+	inner.add_child(label("Games are downloaded the first time you play them, then work offline. An app update only downloads a game again if that game changed.\nOn this phone: %d downloads, %s." % [have, Packs.size_text(Packs.used_bytes())], 19, MUTED))
+	if not missing.is_empty():
+		var all := button("Download all %d games (%s)" % [missing.size(), Packs.size_text(missing_size)], Color(0.15, 0.45, 0.75), 20)
+		all.name = "DownloadAll"
+		all.pressed.connect(func():
+			for k in missing:
+				download(k))
+		inner.add_child(all)
+	if have > 0:
+		var delall := button("Tap again to delete all downloads" if confirm_delete else "Delete all downloads", Color(0.6, 0.2, 0.25) if confirm_delete else PANEL, 20)
+		delall.pressed.connect(func():
+			if confirm_delete:
+				for k in Packs.state().keys():
+					Packs.remove(k)
+				confirm_delete = false
+			else:
+				confirm_delete = true
+			show_settings())
+		inner.add_child(delall)
 	section(inner, "Data")
 	var reset := button("Tap again to really reset all high scores" if confirm_reset else "Reset all high scores", Color(0.6, 0.2, 0.25) if confirm_reset else PANEL, 20)
 	reset.pressed.connect(func():

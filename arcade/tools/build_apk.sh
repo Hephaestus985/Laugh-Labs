@@ -7,8 +7,13 @@ set -e
 cd "$(dirname "$0")/.."
 GODOT="flatpak run --filesystem=home --filesystem=/tmp org.godotengine.Godot"
 rm -rf .godot/exported
+# Games are downloads: build the packs that changed (packs/ + packs/manifest.json)
+# and set the export presets so the APK holds only the launcher. Put the presets
+# back afterwards, whatever happens.
+trap 'python3 -I tools/packs.py restore' EXIT
+python3 -I tools/packs.py build --linux sudoku/v1,racing/v1
 source <(sed 's/^/K_/' ~/Android/keys/key.txt)
-mkdir -p ../builds/linux
+mkdir -p ../builds/linux ../builds/linuxbase
 flatpak run --filesystem=home --env=GODOT_ANDROID_KEYSTORE_RELEASE_PATH="$K_keystore" --env=GODOT_ANDROID_KEYSTORE_RELEASE_USER="$K_alias" --env=GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD="$K_password" org.godotengine.Godot --headless --path . --export-release "Android" ../builds/LabArcade.apk 2>&1 | grep -iE "error" || true
 rm -f ../builds/*.idsig
 PATH=~/Android/jdk17/bin:$PATH ~/Android/sdk/build-tools/35.0.1/apksigner verify ../builds/LabArcade.apk
@@ -23,6 +28,14 @@ timeout 1200 ../builds/linux/LabArcade.x86_64 $HEADLESS --audio-driver Dummy --f
 grep -E "^FAIL|^TESTS|SCRIPT ERROR" "$OUT/log.txt" || true
 if ! grep -q "^TESTS: .*, 0 failed" "$OUT/log.txt"; then
   echo "TESTS FAILED - see $OUT/report.txt"
+  exit 1
+fi
+# The launcher-only build (like the phone app) must install and play downloaded games.
+$GODOT --headless --path . --export-debug "LinuxBase" ../builds/linuxbase/LabArcade.x86_64 >/dev/null 2>&1
+timeout 600 ../builds/linuxbase/LabArcade.x86_64 --headless --audio-driver Dummy -- "$OUT" "$(realpath ../builds/linuxpacks)" > "$OUT/pack_log.txt" 2>&1 || true
+grep -E "FAIL|PACKTESTS" "$OUT/pack_log.txt" || true
+if ! grep -q "^PACKTESTS: .*, 0 failed" "$OUT/pack_log.txt"; then
+  echo "PACK TESTS FAILED - see $OUT/pack_report.txt"
   exit 1
 fi
 echo "All tests passed. Report: $OUT/report.txt"

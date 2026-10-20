@@ -5,28 +5,19 @@ extends Node
 
 const GAME := preload("res://external/open_rpg/src/main.tscn")
 const THEME := preload("res://external/open_rpg/assets/gui/default.theme")
-const AUTOLOADS := ["Camera", "CombatEvents", "FieldEvents", "Gameboard", "GamepieceRegistry",
-	"Music", "Player", "Transition", "Dialogic"]
+const Park := preload("res://external/open_rpg/lab_arcade_park.gd")
 
 var _saved := {}
 
 
-## Called by the launcher: OpenRPG's helpers do nothing (and draw nothing) while other games run.
+## Called by the launcher: see lab_arcade_park.gd (kept separate so the launcher
+## doesn't need this game's files).
 static func park(tree: SceneTree) -> void:
-	_set_awake(tree, false)
+	Park.park(tree)
 
 
 static func _set_awake(tree: SceneTree, awake: bool) -> void:
-	for n in AUTOLOADS:
-		var node := tree.root.get_node_or_null(n)
-		if node:
-			node.process_mode = Node.PROCESS_MODE_INHERIT if awake else Node.PROCESS_MODE_DISABLED
-	var cam := tree.root.get_node_or_null("Camera") as Camera2D
-	if cam:
-		cam.enabled = awake
-	var cover := tree.root.get_node_or_null("Transition") as CanvasLayer
-	if cover:
-		cover.visible = awake
+	Park.set_awake(tree, awake)
 
 
 func _enter_tree() -> void:
