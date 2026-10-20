@@ -266,6 +266,12 @@ static func app_version() -> String:
 	return str(ProjectSettings.get_setting("application/config/version", "0"))
 
 
+## The build number only goes up (the Android versionCode); updates are compared by it,
+## so a version name can be anything (2.0 came after 1.28).
+static func app_build() -> int:
+	return int(ProjectSettings.get_setting("application/config/build", 0))
+
+
 # ---------------------------------------------------------------- your ratings and collections
 
 static func rating(id: String) -> int:

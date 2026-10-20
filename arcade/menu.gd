@@ -554,6 +554,7 @@ func section(parent: Control, title: String) -> void:
 # ---------------------------------------------------------------- game list
 
 func show_list() -> void:
+	var returning := not list_on_screen  # back from a game's page, Settings...
 	page = "list"
 	clear_body()
 	var top := HBoxContainer.new()
@@ -630,7 +631,8 @@ func show_list() -> void:
 	var inner := scroll_box()
 	list_on_screen = true
 	list_tab = tab
-	_restore_list()
+	if returning:
+		_restore_list()
 	if tab == 0:
 		build_home(inner)
 		return
@@ -676,8 +678,8 @@ func _restore_list() -> void:
 	for i in 3:
 		await get_tree().process_frame
 	var sc := current_scroll()
-	if sc == null or page != "list":
-		return
+	if sc == null or page != "list" or sc.scroll_vertical != 0:
+		return  # gone again, or already scrolled by hand
 	for r in sc.find_children("Row_*", "ScrollContainer", true, false):
 		if saved["rows"].has(String(r.name)):
 			r.scroll_horizontal = saved["rows"][String(r.name)]
@@ -975,6 +977,8 @@ var update_status := ""
 func check_for_update(force := false) -> void:
 	if update_checked and not force:
 		return
+	if Engine.has_meta("no_update_check") and not force:
+		return  # the tests: the launcher must not depend on what's online right now
 	update_checked = true
 	update_status = "Checking..."
 	var req := HTTPRequest.new()
@@ -996,9 +1000,13 @@ func handle_update_info(d) -> void:
 	if typeof(d) != TYPE_DICTIONARY or not d.has("version"):
 		update_status = "Couldn't read the update information"
 		return
-	if GameData.compare_versions(str(d["version"]), GameData.app_version()) > 0:
+	# newer builds win; "label" is the version name to show (the plain "version" field is
+	# for apps from before 2.0, which compare names)
+	var newer: bool = int(d["build"]) > GameData.app_build() if d.has("build") else GameData.compare_versions(str(d["version"]), GameData.app_version()) > 0
+	if newer:
 		update_info = d
-		update_status = "Lab Arcade %s is available" % d["version"]
+		update_info["version"] = str(d.get("label", d["version"]))
+		update_status = "Lab Arcade %s is available" % update_info["version"]
 		if page == "list":
 			show_list()
 	else:
@@ -1030,12 +1038,14 @@ func update_banner(parent: Control) -> void:
 ## First start after an app update: show what changed. Very first start: nothing is new.
 func _after_update_check() -> void:
 	var last: String = get_setting("ui", "app_version", "")
+	var last_build := int(get_setting("ui", "app_build", 0))
 	var now := GameData.app_version()
 	if last == "":
 		GameData.mark_all_seen(all_games())
-	elif GameData.compare_versions(last, now) < 0:
-		show_whats_new(last)
+	elif last_build < GameData.app_build():
+		show_whats_new("" if last_build == 0 else last)
 	set_setting("ui", "app_version", now)
+	set_setting("ui", "app_build", GameData.app_build())
 
 
 func whats_new_list() -> Array:

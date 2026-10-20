@@ -2,6 +2,12 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 2.0 (2026-10-20)
+- Lab Arcade 2.0: 32 games in one app, every one playable by touch: 10 arcade games remade from Laugh Lab, 12 puzzle and board games, and 10 open-source games by others, each security-reviewed
+- What 2.0 is built on: a Steam-style Home and Library with search, filters, ratings and collections; games as downloads that only update when they changed; a start screen per game with difficulty, high scores, saves and achievements; help pages inside 12 games; your profile, save backup, in-app updates, keyboard and controller support
+- Updates now compare build numbers, so version names can move on freely
+- The tests no longer depend on what's online at that moment, and the Library only jumps back to where you were when you come back from another page
+
 ## Lab Arcade 1.28 (2026-10-20)
 - Bug fixing round over all 32 games:
   - a new stress test (`tools/test.sh stress`, optional `diff=0..2` and `only=`) starts every game from its start screen like a player, plays 40 s with taps, swipes, long presses, two fingers and keys, turns the phone halfway, then presses back and tries Continue; run on Normal and on Hard

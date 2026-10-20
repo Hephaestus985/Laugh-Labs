@@ -1,5 +1,15 @@
 [
 	{
+		"version": "2.0",
+		"date": "2026-10-20",
+		"notes": [
+			"Lab Arcade 2.0: 32 games in one app, every one playable by touch: 10 arcade games remade from Laugh Lab, 12 puzzle and board games, and 10 open-source games by others, each security-reviewed",
+			"What 2.0 is built on: a Steam-style Home and Library with search, filters, ratings and collections; games as downloads that only update when they changed; a start screen per game with difficulty, high scores, saves and achievements; help pages inside 12 games; your profile, save backup, in-app updates, keyboard and controller support",
+			"Updates now compare build numbers, so version names can move on freely",
+			"The tests no longer depend on what's online at that moment, and the Library only jumps back to where you were when you come back from another page"
+		]
+	},
+	{
 		"version": "1.28",
 		"date": "2026-10-20",
 		"notes": [
@@ -54,15 +64,6 @@
 			"Rate games (1 to 5 stars on their page) and sort the Library by your rating",
 			"Collections: make your own lists of games on a game's page; each gets a Home row and a Library filter, and can be deleted in Settings",
 			"Smoother feel: a soft tap sound and a short vibration on buttons (both can be switched off in Settings under \"Feel\"), and pages and covers fade in"
-		]
-	},
-	{
-		"version": "1.23",
-		"date": "2026-10-20",
-		"notes": [
-			"Updates inside the app: Lab Arcade checks GitHub for a newer version and shows an Update banner (one tap downloads it). Settings has \"Check for updates\"",
-			"What's new: the first start after an update shows what changed (also in Settings), and games get NEW or UPDATED badges until you open them",
-			"Playtime and a profile page: time played per game (on the cards and start screens), and a profile with total time, games tried, times played, rounds won and your most played games"
 		]
 	}
 ]

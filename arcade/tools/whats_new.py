@@ -51,7 +51,10 @@ def main():
         v = app_version()
         cur = next((s for s in secs if s["version"] == v), {"notes": []})
         apk = os.path.join(ROOT, "builds", "LabArcade.apk")
-        json.dump({"version": v, "apk": APK_URL, "size": os.path.getsize(apk) if os.path.exists(apk) else 0, "notes": cur["notes"]},
+        build = int(re.search(r'config/build=(\d+)', open(os.path.join(ARCADE, "project.godot")).read()).group(1))
+        # apps compare "build" (it only goes up) and show "label"; "version" is for apps
+        # from before 2.0, which compare names
+        json.dump({"version": v, "label": v, "build": build, "apk": APK_URL, "size": os.path.getsize(apk) if os.path.exists(apk) else 0, "notes": cur["notes"]},
                   open(vf, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
     print("whats_new.json: %d versions" % len(secs))
 

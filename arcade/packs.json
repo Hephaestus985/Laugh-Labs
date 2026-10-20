@@ -1,9 +1,9 @@
 {
  "bend_it_like_einstein/v2": {
-  "file": "bend_it_like_einstein_v2-71458354aaad.pck",
+  "file": "bend_it_like_einstein_v2-aa8bcb2e629b.pck",
   "scene": "res://games/bend_it_like_einstein/v2/game.tscn",
-  "sha256": "71458354aaad19b0ff556ff50e742d6ad6dd3bd64b7d55af20357571e89efbb0",
-  "size": 133004,
+  "sha256": "aa8bcb2e629b4df11aa9e858e3a33afd903651f632ccd0d1e4b9096c4e57c94a",
+  "size": 343976,
   "uids": {}
  },
  "block_stacker/v1": {
@@ -386,10 +386,10 @@
   }
  },
  "escape_the_cavity/v2": {
-  "file": "escape_the_cavity_v2-811af853c4c3.pck",
+  "file": "escape_the_cavity_v2-309482aa2d2c.pck",
   "scene": "res://games/escape_the_cavity/v2/game.tscn",
-  "sha256": "811af853c4c31c4ca540a45e880777e33194e369f17493bc6b56bcfb8f7c3dda",
-  "size": 136592,
+  "sha256": "309482aa2d2cf5169fbbb57b5fefa30c6b1a5acfa7b5afb824d2917039f00fdb",
+  "size": 347596,
   "uids": {}
  },
  "escape_velocity/v1": {
@@ -3399,10 +3399,10 @@
   }
  },
  "the_last_knight/v2": {
-  "file": "the_last_knight_v2-5aaffb38fd5a.pck",
+  "file": "the_last_knight_v2-1a2c5e3599cb.pck",
   "scene": "res://games/the_last_knight/v2/game.tscn",
-  "sha256": "5aaffb38fd5a41641ae1f578521a398faefd1fb43cac06a9465fc00e315f28f1",
-  "size": 422244,
+  "sha256": "1a2c5e3599cbd26e9c85901d0b2d887ca8303265812e3ca02fd05e638ca69e05",
+  "size": 422292,
   "uids": {}
  },
  "waveguide_snake/v1": {

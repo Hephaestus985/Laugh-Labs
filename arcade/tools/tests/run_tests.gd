@@ -235,6 +235,7 @@ func spawn(scene_path: String) -> Node:
 # ---------------------------------------------------------------- the tests
 
 func run_all() -> void:
+	Engine.set_meta("no_update_check", true)
 	# help pages open by themselves the first time a game is played; tests open them on purpose
 	var all_ids := (Games.LIST + Games.EXTERNAL).map(func(g): return g["id"])
 	GameData.set_setting("help", "seen", all_ids)
@@ -431,7 +432,7 @@ func test_menu() -> void:
 	await frames(1)
 	mouse(hc, false)
 	await frames(3)
-	check("menu", "- removes a pick from Home", m.favorites().size() == 1 and not m.is_favorite("the_last_knight"))
+	check("menu", "- removes a pick from Home", m.favorites().size() == 1 and not m.is_favorite("the_last_knight"), "favs %s, scroll %d, toggle at %s" % [m.favorites(), m.current_scroll().scroll_vertical, hc])
 	m.search = ""
 	m.set_setting("ui", "favorites", [])
 	# Library: search and filters
@@ -588,10 +589,16 @@ func test_launcher_extras() -> void:
 	m.show_list()
 	await frames(2)
 	check("launcher", "no banner when up to date", m.find_child("UpdateBanner", true, false) == null)
+	# updates compare build numbers (they only go up) and show the label
+	m.handle_update_info({"version": "1.29", "label": "1.1", "build": GameData.app_build() + 1})
+	var shows_label: bool = m.update_info.get("version", "") == "1.1"
+	m.handle_update_info({"version": "1.29", "label": GameData.app_version(), "build": GameData.app_build()})
+	check("launcher", "updates compare build numbers", shows_label and m.update_info.is_empty())
 	m.queue_free()
 	await frames(2)
 	# first start after an update shows What's new
-	GameData.set_setting("ui", "app_version", "1.0")
+	GameData.set_setting("ui", "app_version", "0.9")
+	GameData.set_setting("ui", "app_build", GameData.app_build() - 1)  # an older build was installed
 	m = spawn("res://menu.tscn")
 	await frames(3)
 	check("launcher", "after an update the app shows What's new", m.page == "whatsnew" and m.find_child("WhatsNewDone", true, false) != null)
