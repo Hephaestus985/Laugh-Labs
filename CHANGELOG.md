@@ -2,6 +2,11 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.23 (2026-10-20)
+- Updates inside the app: Lab Arcade checks GitHub for a newer version and shows an Update banner (one tap downloads it). Settings has "Check for updates"
+- What's new: the first start after an update shows what changed (also in Settings), and games get NEW or UPDATED badges until you open them
+- Playtime and a profile page: time played per game (on the cards and start screens), and a profile with total time, games tried, times played, rounds won and your most played games
+
 ## Lab Arcade 1.22 (2026-10-20)
 - Every game has its own start screen (`arcade/common/game_hub.gd`): its cover, Play or Continue / New game, difficulty, a top-10 high score list (score, difficulty, date), the saved game (with Delete), sound on/off and clearing the scores, how to play, about and credits. "< MENU" in a game comes back to it; "< Arcade" goes back to the launcher
 - Play on the start screen skips the game's own title screen

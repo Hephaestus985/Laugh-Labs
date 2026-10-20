@@ -33,6 +33,11 @@ func _ready() -> void:
 		var vs: Array = g["versions"]
 		scene = vs[vs.size() - 1]["scene"]
 	external = Games.EXTERNAL.has(g)
+	GameData.mark_seen(g)
+	# back from a game: count the time played
+	if Engine.has_meta("play_started"):
+		GameData.add_playtime(g["id"], int(Time.get_unix_time_from_system()) - int(Engine.get_meta("play_started")))
+		Engine.remove_meta("play_started")
 	for gg in Games.EXTERNAL:  # helpers of games by others sleep outside their game
 		if gg.has("park"):
 			load(gg["park"]).park(get_tree())
@@ -88,6 +93,7 @@ func play(mode: String) -> void:
 			DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR_LANDSCAPE)
 	Engine.set_meta("launch_mode", mode)
 	Engine.set_meta("auto_start", mode != "continue")
+	Engine.set_meta("play_started", int(Time.get_unix_time_from_system()))
 	get_tree().change_scene_to_file(scene)
 
 
@@ -193,6 +199,8 @@ func _play_buttons(side: Container) -> void:
 		facts.append("Best %d" % best if best > 0 else "No score yet")
 	var n := GameData.plays(g["id"])
 	facts.append("Played %d times" % n if n != 1 else "Played once")
+	if GameData.playtime(g["id"]) > 0:
+		facts.append(GameData.time_text(GameData.playtime(g["id"])))
 	side.add_child(label("  ·  ".join(facts), 20, MUTED))
 
 

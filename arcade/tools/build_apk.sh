@@ -13,6 +13,7 @@ rm -rf .godot/exported
 # back afterwards, whatever happens.
 trap 'python3 -I tools/packs.py restore' EXIT
 python3 -I tools/catalog.py
+python3 -I tools/whats_new.py
 python3 -I tools/packs.py build --linux sudoku/v1,racing/v1
 source <(sed 's/^/K_/' ~/Android/keys/key.txt)
 mkdir -p ../builds/linux ../builds/linuxbase

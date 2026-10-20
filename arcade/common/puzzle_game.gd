@@ -260,6 +260,8 @@ func clear_save() -> void:
 func finish(did_win: bool, final_score: int) -> void:
 	start_anim("finish", 0.45)
 	won = did_win
+	if did_win:
+		GameData.add_win(game_id)
 	score = final_score
 	state = 2
 	clear_save()

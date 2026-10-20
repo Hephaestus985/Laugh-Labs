@@ -14,6 +14,7 @@ python3 -I arcade/tools/packs.py ensure
 python3 -I arcade/tools/packs.py prune  # keeps packs for this app and the previous one
 cp builds/LabArcade.apk "$D/apks/LabArcade.apk"
 cp arcade/packs.json "$D/packs.json"
+python3 -I arcade/tools/whats_new.py --version-file "$D/version.json"  # the app checks this for updates
 N=$(sed -n 2p arcade/tools/tests/last_report.txt | grep -o '^[0-9]*')
 [ -n "$N" ] && sed -i -E "s/\([0-9]+ checks\)/($N checks)/" README.md
 git add -A

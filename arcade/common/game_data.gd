@@ -128,3 +128,89 @@ static func apply_sound(id: String) -> void:
 ## otherwise the launcher.
 static func back_scene() -> String:
 	return HUB if Engine.has_meta("hub_game") else LAUNCHER
+
+
+# ---------------------------------------------------------------- playtime and progress
+
+## Seconds played in a game (counted from Play on its start screen until you come back).
+static func playtime(id: String) -> int:
+	return int(get_setting("time", id, 0))
+
+
+static func add_playtime(id: String, seconds: int) -> void:
+	if seconds <= 0:
+		return
+	# a phone left on a game for hours isn't play: count at most 3 hours per session
+	set_setting("time", id, playtime(id) + mini(seconds, 3 * 3600))
+
+
+static func total_playtime(ids: Array) -> int:
+	var s := 0
+	for id in ids:
+		s += playtime(id)
+	return s
+
+
+static func time_text(seconds: int) -> String:
+	if seconds < 60:
+		return "%d s" % seconds
+	var m := seconds / 60
+	if m < 60:
+		return "%d min" % m
+	return "%d h %02d min" % [m / 60, m % 60]
+
+
+## A round won or a game finished (Puzzle wins, the Knight's ending...).
+static func add_win(id: String) -> void:
+	set_setting("wins", id, wins(id) + 1)
+
+
+static func wins(id: String) -> int:
+	return int(get_setting("wins", id, 0))
+
+
+# ---------------------------------------------------------------- what the player has seen
+
+## The newest version of each game the player has seen in the launcher. A game the
+## player never saw is NEW; a game with a newer version than they saw is UPDATED.
+static func badge(g: Dictionary) -> String:
+	var seen: Dictionary = get_setting("seen", "versions", {})
+	if seen.is_empty():
+		return ""  # first run: everything is new, so nothing is
+	var vs: Array = g["versions"]
+	var newest: int = vs[vs.size() - 1]["v"]
+	if not seen.has(g["id"]):
+		return "NEW"
+	return "UPDATED" if int(seen[g["id"]]) < newest else ""
+
+
+static func mark_seen(g: Dictionary) -> void:
+	var seen: Dictionary = get_setting("seen", "versions", {})
+	var vs: Array = g["versions"]
+	seen[g["id"]] = vs[vs.size() - 1]["v"]
+	set_setting("seen", "versions", seen)
+
+
+static func mark_all_seen(games: Array) -> void:
+	var seen: Dictionary = get_setting("seen", "versions", {})
+	for g in games:
+		if not seen.has(g["id"]):
+			var vs: Array = g["versions"]
+			seen[g["id"]] = vs[vs.size() - 1]["v"]
+	set_setting("seen", "versions", seen)
+
+
+## Compare app versions like "1.9" and "1.22" by their numbers: -1, 0 or 1.
+static func compare_versions(a: String, b: String) -> int:
+	var pa := a.split(".")
+	var pb := b.split(".")
+	for i in maxi(pa.size(), pb.size()):
+		var x := int(pa[i]) if i < pa.size() else 0
+		var y := int(pb[i]) if i < pb.size() else 0
+		if x != y:
+			return -1 if x < y else 1
+	return 0
+
+
+static func app_version() -> String:
+	return str(ProjectSettings.get_setting("application/config/version", "0"))

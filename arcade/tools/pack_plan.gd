@@ -18,7 +18,7 @@ func _init() -> void:
 	for c in ProjectSettings.get_global_class_list():
 		classes[c["class"]] = c["path"]
 	var base := {}
-	for f in ["res://menu.tscn", "res://menu.gd", "res://games.gd", "res://catalog.json", "res://default_bus_layout.tres", "res://icon.png", "res://icon_192.png", "res://icon_bg.png", "res://icon_fg.png", "res://icon_mono.png"]:
+	for f in ["res://menu.tscn", "res://menu.gd", "res://games.gd", "res://catalog.json", "res://whats_new.json", "res://default_bus_layout.tres", "res://icon.png", "res://icon_192.png", "res://icon_bg.png", "res://icon_fg.png", "res://icon_mono.png"]:
 		_add(base, f)
 	for f in _files_in("res://common"):
 		_add(base, f)

@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-20T12:06:52
-564 checks, 0 failed
+Lab Arcade test report  2026-10-20T12:13:40
+573 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
@@ -46,6 +46,15 @@ PASS  start screens              a saved game shows Continue and New game
 PASS  start screens              the saved game can be deleted  
 PASS  start screens              sound can be switched off per game 
 PASS  start screens              Play skips the game's own title 
+PASS  launcher                   app versions compare by number (1.9 < 1.22) 
+PASS  launcher                   a newer version shows an Update banner 
+PASS  launcher                   no banner when up to date      
+PASS  launcher                   after an update the app shows What's new 
+PASS  launcher                   What's new lists the changes   
+PASS  launcher                   a game with a newer version shows UPDATED 
+PASS  launcher                   a game you never saw shows NEW 
+PASS  launcher                   time played is counted per game 
+PASS  launcher                   the profile shows time played and most played ["Your profile", "2 min", "Time played", "1 of 27", "Games tried", "1"]
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene
 PASS  sock_escape v1             uses the landscape game screen 
@@ -314,7 +323,7 @@ PASS  lights_out v1 portrait     tap flips a light and its neighbours (phone)
 PASS  lights_out v1              portrait: touch play works (phone) 
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1520
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1440
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -436,7 +445,7 @@ PASS  block_stacker v1 portrait  swipe down drops the piece (phone)
 PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 324
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 322
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    

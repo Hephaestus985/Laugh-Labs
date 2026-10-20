@@ -1530,6 +1530,7 @@ func game_over() -> void:
 
 
 func ending() -> void:
+	GameData.add_win(game_id)
 	state = S.END
 	t = 0.0
 	score += lives * 500

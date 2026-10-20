@@ -243,6 +243,7 @@ func run_all() -> void:
 		return  # quick run: games by others only
 	await test_menu()
 	await test_hubs()
+	await test_launcher_extras()
 	if "menu" in OS.get_cmdline_user_args():
 		return  # quick run: launcher only
 	for g in Games.LIST:
@@ -506,6 +507,74 @@ func test_menu() -> void:
 	m.queue_free()
 	await frames(2)
 	check("menu", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))
+
+
+## Updates, What's new, NEW / UPDATED badges, playtime and the profile page.
+func test_launcher_extras() -> void:
+	var cv := GameData.compare_versions("1.9", "1.22") < 0 and GameData.compare_versions("1.22", "1.22") == 0 and GameData.compare_versions("2.0", "1.99") > 0
+	check("launcher", "app versions compare by number (1.9 < 1.22)", cv)
+	# a newer app on GitHub shows an Update banner; the same version doesn't
+	GameData.set_setting("ui", "app_version", GameData.app_version())
+	var m := spawn("res://menu.tscn")
+	await frames(3)
+	m.tab = 1
+	m.handle_update_info({"version": "99.0", "apk": "https://example.invalid/x.apk", "size": 30000000})
+	m.show_list()
+	await frames(2)
+	check("launcher", "a newer version shows an Update banner", m.find_child("UpdateBanner", true, false) != null)
+	m.handle_update_info({"version": GameData.app_version()})
+	m.show_list()
+	await frames(2)
+	check("launcher", "no banner when up to date", m.find_child("UpdateBanner", true, false) == null)
+	m.queue_free()
+	await frames(2)
+	# first start after an update shows What's new
+	GameData.set_setting("ui", "app_version", "1.0")
+	m = spawn("res://menu.tscn")
+	await frames(3)
+	check("launcher", "after an update the app shows What's new", m.page == "whatsnew" and m.find_child("WhatsNewDone", true, false) != null)
+	check("launcher", "What's new lists the changes", m.whats_new_list().size() > 0 and m.whats_new_list()[0]["version"] == GameData.app_version())
+	m.queue_free()
+	await frames(2)
+	# NEW and UPDATED badges
+	GameData.set_setting("seen", "versions", {"sudoku": 0})
+	GameData.mark_all_seen([])
+	m = spawn("res://menu.tscn")
+	await frames(3)
+	m.tab = 1
+	m.search = ""
+	m.show_list()
+	await frames(2)
+	var cards: Node = m.find_child("Cards", true, false)
+	var su: Node = cards.find_child("Card_sudoku", false, false)
+	var other: Node = cards.find_child("Card_minesweeper", false, false)
+	var b1: Label = su.find_child("Badge", true, false) if su else null
+	var b2: Label = other.find_child("Badge", true, false) if other else null
+	check("launcher", "a game with a newer version shows UPDATED", b1 != null and b1.text.strip_edges() == "UPDATED")
+	check("launcher", "a game you never saw shows NEW", b2 != null and b2.text.strip_edges() == "NEW")
+	m.queue_free()
+	await frames(2)
+	GameData.set_setting("seen", "versions", {})
+	# playtime: time between Play on a start screen and coming back
+	var before := GameData.playtime("sudoku")
+	Engine.set_meta("hub_game", "sudoku")
+	Engine.set_meta("hub_scene", "")
+	Engine.set_meta("play_started", int(Time.get_unix_time_from_system()) - 125)
+	var h := spawn("res://common/game_hub.tscn")
+	await frames(2)
+	check("launcher", "time played is counted per game", GameData.playtime("sudoku") - before >= 125)
+	h.queue_free()
+	Engine.remove_meta("hub_game")
+	Engine.remove_meta("hub_scene")
+	await frames(1)
+	m = spawn("res://menu.tscn")
+	await frames(3)
+	m.show_profile()
+	await frames(2)
+	var texts := m.find_children("*", "Label", true, false).map(func(l): return l.text)
+	check("launcher", "the profile shows time played and most played", texts.has("Most played") and texts.has("Sudoku"), str(texts.slice(0, 6)))
+	m.queue_free()
+	await frames(2)
 
 
 ## Each game's own start screen: play buttons, difficulty, high scores, saved game,

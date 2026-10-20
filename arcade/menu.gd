@@ -57,6 +57,8 @@ func _ready() -> void:
 	body.add_theme_constant_override("separation", 12)
 	margin.add_child(body)
 	_on_resized()
+	_after_update_check()
+	check_for_update()
 
 
 func _process(delta: float) -> void:
@@ -352,6 +354,10 @@ func refresh() -> void:
 			show_info(page_game)
 		"settings":
 			show_settings()
+		"profile":
+			show_profile()
+		"whatsnew":
+			show_whats_new("")
 		_:
 			show_list()
 
@@ -497,11 +503,17 @@ func show_list() -> void:
 	var title := label("LAB ARCADE", 44 if portrait else 52, GOLD)
 	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	top.add_child(title)
+	var pb := button("Profile", Color(0.28, 0.26, 0.40), 22, false)
+	pb.name = "ProfileButton"
+	pb.custom_minimum_size = Vector2(130 if portrait else 150, 58)
+	pb.pressed.connect(show_profile)
+	top.add_child(pb)
 	var sb := button("Settings", Color(0.28, 0.26, 0.40), 22, false)
-	sb.custom_minimum_size = Vector2(150, 58)
+	sb.custom_minimum_size = Vector2(130 if portrait else 150, 58)
 	sb.pressed.connect(show_settings)
 	top.add_child(sb)
 	body.add_child(top)
+	update_banner(body)
 	var bar := HBoxContainer.new()
 	bar.add_theme_constant_override("separation", 10)
 	for t in 2:
@@ -653,7 +665,20 @@ func make_card(g: Dictionary) -> Control:
 	var outer := VBoxContainer.new()
 	outer.add_theme_constant_override("separation", 8)
 	card.add_child(outer)
-	outer.add_child(cover_art(g, func(): show_info(g)))
+	var art := cover_art(g, func(): show_info(g))
+	outer.add_child(art)
+	var bdg := GameData.badge(g)
+	if bdg != "":
+		var bl := Label.new()
+		bl.name = "Badge"
+		bl.text = " " + bdg + " "
+		bl.add_theme_font_size_override("font_size", 18)
+		bl.add_theme_color_override("font_color", Color.WHITE)
+		var bs := flat(Color(0.85, 0.25, 0.25) if bdg == "NEW" else Color(0.15, 0.45, 0.75), 8, 4)
+		bl.add_theme_stylebox_override("normal", bs)
+		bl.position = Vector2(10, 10)
+		bl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		art.add_child(bl)
 	var pad := MarginContainer.new()
 	for side in ["left", "right"]:
 		pad.add_theme_constant_override("margin_" + side, 12)
@@ -666,7 +691,8 @@ func make_card(g: Dictionary) -> Control:
 	title_l.autowrap_mode = TextServer.AUTOWRAP_OFF
 	title_l.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	v.add_child(title_l)
-	var meta := label("%s  ·  %s" % [g.get("genre", ""), g.get("length", "").get_slice(" (", 0)], 17, MUTED)
+	var pt := GameData.playtime(g["id"])
+	var meta := label("%s  ·  %s%s" % [g.get("genre", ""), g.get("length", "").get_slice(" (", 0), ("  ·  " + GameData.time_text(pt) + " played") if pt > 0 else ""], 17, MUTED)
 	meta.autowrap_mode = TextServer.AUTOWRAP_OFF
 	meta.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	v.add_child(meta)
@@ -724,6 +750,177 @@ func launch(g: Dictionary, scene: String, mode: String = "") -> void:
 	get_tree().change_scene_to_file(GameData.HUB)
 
 
+# ---------------------------------------------------------------- app updates and what's new
+
+const UPDATE_URL := "https://raw.githubusercontent.com/Hephaestus985/Laugh-Labs/downloads/version.json"
+static var update_info := {}  # the newer app on GitHub, if there is one
+static var update_checked := false
+var update_status := ""
+
+
+## Ask GitHub (once per app start) whether a newer Lab Arcade exists.
+func check_for_update(force := false) -> void:
+	if update_checked and not force:
+		return
+	update_checked = true
+	update_status = "Checking..."
+	var req := HTTPRequest.new()
+	req.timeout = 15.0
+	add_child(req)
+	req.request_completed.connect(func(result: int, code: int, _h, data: PackedByteArray):
+		req.queue_free()
+		if result != HTTPRequest.RESULT_SUCCESS or code != 200:
+			update_status = "Couldn't check (no internet?)"
+		else:
+			handle_update_info(JSON.parse_string(data.get_string_from_utf8()))
+		if page == "settings":
+			show_settings())
+	if req.request(UPDATE_URL) != OK:
+		update_status = "Couldn't check"
+
+
+func handle_update_info(d) -> void:
+	if typeof(d) != TYPE_DICTIONARY or not d.has("version"):
+		update_status = "Couldn't read the update information"
+		return
+	if GameData.compare_versions(str(d["version"]), GameData.app_version()) > 0:
+		update_info = d
+		update_status = "Lab Arcade %s is available" % d["version"]
+		if page == "list":
+			show_list()
+	else:
+		update_info = {}
+		update_status = "You have the newest version (%s)" % GameData.app_version()
+
+
+func update_banner(parent: Control) -> void:
+	if update_info.is_empty():
+		return
+	var p := PanelContainer.new()
+	p.name = "UpdateBanner"
+	p.add_theme_stylebox_override("panel", flat(Color(0.15, 0.45, 0.75), 14, 12))
+	parent.add_child(p)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	p.add_child(row)
+	var size_txt := "" if int(update_info.get("size", 0)) <= 0 else " (%s)" % Packs.size_text(int(update_info["size"]))
+	var l := label("Lab Arcade %s is available%s. Your games, saves and scores stay." % [update_info["version"], size_txt], 20)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	row.add_child(l)
+	var b := button("Update", Color(0.33, 0.62, 0.10), 22, false)
+	b.name = "UpdateNow"
+	b.custom_minimum_size = Vector2(150, 54)
+	b.pressed.connect(func(): OS.shell_open(str(update_info.get("apk", ""))))
+	row.add_child(b)
+
+
+## First start after an app update: show what changed. Very first start: nothing is new.
+func _after_update_check() -> void:
+	var last: String = get_setting("ui", "app_version", "")
+	var now := GameData.app_version()
+	if last == "":
+		GameData.mark_all_seen(all_games())
+	elif GameData.compare_versions(last, now) < 0:
+		show_whats_new(last)
+	set_setting("ui", "app_version", now)
+
+
+func whats_new_list() -> Array:
+	if not FileAccess.file_exists("res://whats_new.json"):
+		return []
+	var a = JSON.parse_string(FileAccess.get_file_as_string("res://whats_new.json"))
+	return a if typeof(a) == TYPE_ARRAY else []
+
+
+## What changed since `since` (or the last few versions when it's "").
+func show_whats_new(since := "") -> void:
+	page = "whatsnew"
+	clear_body()
+	back_bar("What's new")
+	var inner := scroll_box()
+	var shown := 0
+	for sec in whats_new_list():
+		if since != "" and GameData.compare_versions(str(sec["version"]), since) <= 0:
+			continue
+		if since == "" and shown >= 4:
+			break
+		shown += 1
+		section(inner, "Lab Arcade %s  ·  %s" % [sec["version"], sec["date"]])
+		for n in sec["notes"]:
+			var sub_item := str(n).begins_with("  - ")
+			inner.add_child(label(("      ◦ " + str(n).substr(4)) if sub_item else ("•  " + str(n)), 19 if sub_item else 20, MUTED if sub_item else Color(1, 1, 1)))
+	if shown == 0:
+		inner.add_child(label("Nothing new to show.", 20, MUTED))
+	var ok := button("Let's play", Color(0.33, 0.62, 0.10), 24, false)
+	ok.name = "WhatsNewDone"
+	ok.custom_minimum_size = Vector2(240, 60)
+	ok.pressed.connect(show_list)
+	inner.add_child(ok)
+
+
+# ---------------------------------------------------------------- profile
+
+func show_profile() -> void:
+	page = "profile"
+	clear_body()
+	back_bar("Your profile")
+	var inner := scroll_box()
+	var games := all_games()
+	var ids := games.map(func(g): return g["id"])
+	var total := GameData.total_playtime(ids)
+	var tried := games.filter(func(g): return plays(g["id"]) > 0)
+	var total_plays := 0
+	var total_wins := 0
+	for g in games:
+		total_plays += plays(g["id"])
+		total_wins += GameData.wins(g["id"])
+	var tiles := HFlowContainer.new()
+	tiles.add_theme_constant_override("h_separation", 12)
+	tiles.add_theme_constant_override("v_separation", 12)
+	inner.add_child(tiles)
+	for st in [["Time played", GameData.time_text(total)], ["Games tried", "%d of %d" % [tried.size(), games.size()]], ["Times played", str(total_plays)], ["Rounds won", str(total_wins)]]:
+		var p := PanelContainer.new()
+		p.custom_minimum_size = Vector2(250, 0)
+		p.add_theme_stylebox_override("panel", flat(Color(0.11, 0.16, 0.22), 14, 16))
+		var v := VBoxContainer.new()
+		p.add_child(v)
+		v.add_child(label(st[1], 34, GOLD))
+		v.add_child(label(st[0], 18, MUTED))
+		tiles.add_child(p)
+	section(inner, "Most played")
+	var by_time := games.filter(func(g): return GameData.playtime(g["id"]) > 0 or plays(g["id"]) > 0)
+	by_time.sort_custom(func(a, b): return GameData.playtime(a["id"]) * 1000 + plays(a["id"]) > GameData.playtime(b["id"]) * 1000 + plays(b["id"]))
+	if by_time.is_empty():
+		inner.add_child(label("Play a game and it shows up here.", 20, MUTED))
+	var top := maxi(1, GameData.playtime(by_time[0]["id"])) if not by_time.is_empty() else 1
+	for g in by_time.slice(0, 8):
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 12)
+		inner.add_child(row)
+		var name_l := label(g["name"], 20)
+		name_l.custom_minimum_size = Vector2(230, 0)
+		name_l.size_flags_horizontal = Control.SIZE_FILL
+		row.add_child(name_l)
+		var barbox := PanelContainer.new()
+		barbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		barbox.add_theme_stylebox_override("panel", flat(Color(0.11, 0.16, 0.22), 8, 0))
+		row.add_child(barbox)
+		var fill := ColorRect.new()
+		fill.color = Color(g["color"])
+		fill.custom_minimum_size = Vector2(0, 26)
+		fill.size_flags_horizontal = Control.SIZE_FILL
+		fill.size_flags_stretch_ratio = float(GameData.playtime(g["id"])) / top
+		var holder := HBoxContainer.new()
+		holder.add_child(fill)
+		var rest := Control.new()
+		rest.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		rest.size_flags_stretch_ratio = maxf(0.001, 1.0 - fill.size_flags_stretch_ratio)
+		fill.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		holder.add_child(rest)
+		barbox.add_child(holder)
+		row.add_child(label("%s  ·  %dx" % [GameData.time_text(GameData.playtime(g["id"])), plays(g["id"])], 18, MUTED))
+
+
 # ---------------------------------------------------------------- downloads
 
 var dl: PackDownload = null
@@ -769,12 +966,7 @@ func _next_download() -> void:
 
 
 func _refresh_page() -> void:
-	if page == "settings":
-		show_settings()
-	elif page == "info":
-		show_info(page_game)
-	else:
-		show_list()
+	refresh()
 
 
 func _game_name(key: String) -> String:
@@ -1056,6 +1248,26 @@ func show_settings() -> void:
 			apply_orientation()
 			show_settings())
 		orow.add_child(b)
+	section(inner, "App updates")
+	inner.add_child(label("Lab Arcade %s. %s" % [GameData.app_version(), update_status], 19, MUTED))
+	var urow := HFlowContainer.new()
+	urow.add_theme_constant_override("h_separation", 8)
+	urow.add_theme_constant_override("v_separation", 8)
+	inner.add_child(urow)
+	var cu := button("Check for updates", PANEL, 20, false)
+	cu.name = "CheckUpdates"
+	cu.pressed.connect(func():
+		check_for_update(true)
+		show_settings())
+	urow.add_child(cu)
+	var wn := button("What's new", PANEL, 20, false)
+	wn.name = "WhatsNew"
+	wn.pressed.connect(func(): show_whats_new(""))
+	urow.add_child(wn)
+	if not update_info.is_empty():
+		var up := button("Update to %s" % update_info["version"], Color(0.33, 0.62, 0.10), 20, false)
+		up.pressed.connect(func(): OS.shell_open(str(update_info.get("apk", ""))))
+		urow.add_child(up)
 	section(inner, "Downloads")
 	var missing := []
 	var missing_size := 0
