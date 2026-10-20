@@ -2,6 +2,13 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.28 (2026-10-20)
+- Bug fixing round over all 32 games:
+  - a new stress test (`tools/test.sh stress`, optional `diff=0..2` and `only=`) starts every game from its start screen like a player, plays 40 s with taps, swipes, long presses, two fingers and keys, turns the phone halfway, then presses back and tries Continue; run on Normal and on Hard
+  - fixed: the phone's back button in Sock Escape and in Outpost Assault (game and its menu) changed scene while the app was still busy, which logged errors and could fail
+  - fixed: 10 title screens still said difficulty is changed "in the menu"; it's on the game's start screen now
+  - the full test suite also ran with real rendering: no shader or drawing errors
+
 ## Lab Arcade 1.27 (2026-10-20)
 - Help pages inside 12 games: a "?" button opens the game's own page with its goal, controls, rules and tips (the game pauses while it's open; "Got it" or the back button closes it). It also opens by itself the first time you play the game
   - Puzzles: Minesweeper, Nonogram, Sudoku, Mahjong, Solitaire, Sokoban

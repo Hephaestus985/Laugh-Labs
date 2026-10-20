@@ -17,7 +17,7 @@ func _on_quit_pressed() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:  # [Lab Arcade] Android back button
-		_on_quit_pressed()
+		_on_quit_pressed.call_deferred()  # not while the tree is busy delivering the notification
 
 
 func _on_how_to_play_pressed() -> void:

@@ -2254,7 +2254,7 @@ func draw_title() -> void:
 		"Chase the inventor through five eras and settle this in his tower.",
 		"Move: arrows / stick.  Jump: SPACE or up / JUMP.  Sword: X or J / SWORD.",
 		"Swing at bolts and axes to parry them back. Stomp geese from above.",
-		"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFS[diff]["lab"],
+		"Difficulty: %s   (change it on the start screen, or with left / right here)" % DIFS[diff]["lab"],
 	]
 	var prompt := "Tap or press SPACE to start"
 	if saved != null:

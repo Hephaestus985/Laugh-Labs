@@ -191,7 +191,7 @@ func back_to_menu() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST:  # Android back button
-		back_to_menu()
+		back_to_menu.call_deferred()  # not while the tree is busy delivering the notification
 
 
 func try_jump() -> void:
@@ -594,7 +594,7 @@ func draw_hud() -> void:
 				text(Vector2(0, 340), "SPACE / UP / click  =  jump   (press again in the air to double jump)", 24, white, true)
 				text(Vector2(0, 378), "DOWN / S  =  duck under bubbles, or slam back to the floor", 24, white, true)
 			text(Vector2(0, 416), "Grab the yellow lost socks for bonus points. ESC = menu.", 24, white, true)
-			text(Vector2(0, 454), "Difficulty: %s (change it in the menu)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty("sock_escape")], 22, white, true)
+			text(Vector2(0, 454), "Difficulty: %s (change it on the start screen)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty("sock_escape")], 22, white, true)
 			if int(t * 2.0) % 2 == 0:
 				text(Vector2(0, 500), "Tap to run!" if is_mobile else "Press SPACE to run!", 40, Color(0.6, 1.0, 0.6), true)
 			if best > 0:

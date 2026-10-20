@@ -784,7 +784,7 @@ func _draw() -> void:
 			"Bounce from a Twente rooftop to the Moon, dodging honking geese,",
 			"space junk and meteoroids. Stroopwafels give a syrup boost.",
 			"Stomp geese from above. Hold the left or right side of the screen to steer.",
-			"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it on the start screen, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap or press SPACE to launch")
 	elif state == State.OVER:
 		draw_hud()

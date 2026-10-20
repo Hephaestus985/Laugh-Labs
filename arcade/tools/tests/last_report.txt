@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-20T18:16:52
-710 checks, 0 failed
+Lab Arcade test report  2026-10-20T18:29:07
+712 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
@@ -80,7 +80,7 @@ PASS  launcher                   backups can't carry code or resources
 PASS  launcher                   other text is not taken as a backup 
 PASS  launcher                   Escape or B goes back from a game page 
 PASS  launcher                   controller shoulder buttons switch to the Library 
-PASS  launcher                   with a controller a button has focus Play:<Button#1813298286925>
+PASS  launcher                   with a controller a button has focus Play:<Button#1813549946149>
 PASS  launcher                   collections can be deleted     
 PASS  help                       the_last_knight has a readable help page 
 PASS  help                       sudoku has a readable help page 
@@ -312,10 +312,12 @@ PASS  solitaire v1               has a way back to the menu
 PASS  solitaire v1               no errors                      0: 
 PASS  solitaire v1               tap starts a round             
 PASS  solitaire v1               tap the deck draws a card (phone) 
+PASS  solitaire v1               dragging a card onto a pile moves it (phone) 
 PASS  solitaire v1               touch play changes the board (phone) 
 PASS  solitaire v1               Continue restores the board    
 PASS  solitaire v1               portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
 PASS  solitaire v1 portrait      tap the deck draws a card (phone) 
+PASS  solitaire v1 portrait      dragging a card onto a pile moves it (phone) 
 PASS  solitaire v1               portrait: touch play works (phone) 
 PASS  solitaire v1               new Easy round starts          
 PASS  solitaire v1               new Normal round starts        
@@ -369,7 +371,7 @@ PASS  lights_out v1 portrait     tap flips a light and its neighbours (phone)
 PASS  lights_out v1              portrait: touch play works (phone) 
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1360
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1440
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -417,7 +419,7 @@ PASS  mahjong v1 portrait        tap two matching free tiles removes them (phone
 PASS  mahjong v1                 portrait: touch play works (phone) 
 PASS  mahjong v1                 new Easy round starts          
 PASS  mahjong v1                 new Normal round starts        
-PASS  mahjong v1                 solving it wins and saves the best score state 2 won true best 2350
+PASS  mahjong v1                 solving it wins and saves the best score state 2 won true best 2200
 PASS  mahjong v1                 new Hard round starts          
 PASS  mahjong v1                 no errors while solving        0: 
 PASS  sokoban v1                 scene loads                    
@@ -491,7 +493,7 @@ PASS  block_stacker v1 portrait  swipe down drops the piece (phone)
 PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 312
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 324
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    
@@ -647,9 +649,9 @@ PASS  deck_builder               game scene loads with its code
 PASS  deck_builder               has on-screen phone controls   
 PASS  deck_builder               a drag scrolls the map (phone) moved -60
 PASS  deck_builder               a drag that starts on a room doesn't enter it 
-PASS  deck_builder               the map shows rooms to pick    58 rooms, type 0, map 15
+PASS  deck_builder               the map shows rooms to pick    60 rooms, type 0, map 15
 PASS  deck_builder               a tap on a room starts the battle (phone) 
-PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 1
+PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 2
 PASS  deck_builder               II pauses the run (phone)      
 PASS  deck_builder               the run saves                  
 PASS  deck_builder               a save with code in it is refused 

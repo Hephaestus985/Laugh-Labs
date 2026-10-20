@@ -81,7 +81,7 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not HelpPage.is_open():
 		get_tree().paused = false
 		Global.is_gameover = false
-		Scenes.change_scene(Scenes.MAIN_MENU)
+		Scenes.change_scene.call_deferred(Scenes.MAIN_MENU)  # not while the tree is busy
 
 
 func _unhandled_input(event: InputEvent) -> void:

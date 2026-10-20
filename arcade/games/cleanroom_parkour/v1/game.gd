@@ -258,7 +258,7 @@ func _draw() -> void:
 		text(Vector2(0, 280), "You're late for your cleanroom slot. Every level is a new room.", 28, Color(1, 1, 1), true)
 		text(Vector2(0, 325), "Pits, flying deadlines, falling reviews. Grab wafers for bonus metres.", 26, Color(1, 1, 1), true)
 		text(Vector2(0, 380), "Tap / SPACE to jump, again in the air for a double jump.", 26, Color(0.85, 0.85, 1), true)
-		text(Vector2(0, 425), "Difficulty: %s (change it in the menu)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(game_id)], 22, Color(0.85, 0.85, 1), true)
+		text(Vector2(0, 425), "Difficulty: %s (change it on the start screen)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(game_id)], 22, Color(0.85, 0.85, 1), true)
 		if int(t * 2.0) % 2 == 0:
 			text(Vector2(0, 490), "Tap or press SPACE to run", 36, Color(0.6, 1, 0.6), true)
 	elif state == State.DEAD:

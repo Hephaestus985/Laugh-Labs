@@ -212,7 +212,7 @@ func _draw() -> void:
 		text(Vector2(0, 290), "You are a light pulse. Collect photons and grow.", 30, Color(1, 1, 1), true)
 		text(Vector2(0, 340), "Don't hit the walls, your tail, or scattering defects. It speeds up.", 26, Color(1, 1, 1), true)
 		text(Vector2(0, 400), "Swipe to steer on a phone, arrows / WASD on a PC.", 26, Color(0.85, 0.85, 1), true)
-		text(Vector2(0, 445), "Difficulty: %s (change it in the menu)" % DIFF_NAMES[difficulty()], 22, Color(0.85, 0.85, 1), true)
+		text(Vector2(0, 445), "Difficulty: %s (change it on the start screen)" % DIFF_NAMES[difficulty()], 22, Color(0.85, 0.85, 1), true)
 		if int(t * 2.0) % 2 == 0:
 			text(Vector2(0, 500), "Tap or press SPACE to start", 36, Color(0.6, 1, 0.6), true)
 	elif state == State.DEAD:

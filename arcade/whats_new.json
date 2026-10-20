@@ -1,5 +1,16 @@
 [
 	{
+		"version": "1.28",
+		"date": "2026-10-20",
+		"notes": [
+			"Bug fixing round over all 32 games:",
+			"  - a new stress test (tools/test.sh stress, optional diff=0..2 and only=) starts every game from its start screen like a player, plays 40 s with taps, swipes, long presses, two fingers and keys, turns the phone halfway, then presses back and tries Continue; run on Normal and on Hard",
+			"  - fixed: the phone's back button in Sock Escape and in Outpost Assault (game and its menu) changed scene while the app was still busy, which logged errors and could fail",
+			"  - fixed: 10 title screens still said difficulty is changed \"in the menu\"; it's on the game's start screen now",
+			"  - the full test suite also ran with real rendering: no shader or drawing errors"
+		]
+	},
+	{
 		"version": "1.27",
 		"date": "2026-10-20",
 		"notes": [
@@ -52,15 +63,6 @@
 			"Updates inside the app: Lab Arcade checks GitHub for a newer version and shows an Update banner (one tap downloads it). Settings has \"Check for updates\"",
 			"What's new: the first start after an update shows what changed (also in Settings), and games get NEW or UPDATED badges until you open them",
 			"Playtime and a profile page: time played per game (on the cards and start screens), and a profile with total time, games tried, times played, rounds won and your most played games"
-		]
-	},
-	{
-		"version": "1.22",
-		"date": "2026-10-20",
-		"notes": [
-			"Every game has its own start screen (arcade/common/game_hub.gd): its cover, Play or Continue / New game, difficulty, a top-10 high score list (score, difficulty, date), the saved game (with Delete), sound on/off and clearing the scores, how to play, about and credits. \"< MENU\" in a game comes back to it; \"< Arcade\" goes back to the launcher",
-			"Play on the start screen skips the game's own title screen",
-			"The launcher is now just the library: covers, game pages and downloads. Difficulty, saves and scores moved to the games' start screens"
 		]
 	}
 ]

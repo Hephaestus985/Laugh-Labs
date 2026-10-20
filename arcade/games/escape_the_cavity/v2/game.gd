@@ -442,7 +442,7 @@ func _draw() -> void:
 			"You are a photon stuck in a VCSEL. Lasing needs gain, gain needs carriers,",
 			"and carriers need YOU to jump. Survive 6 increasingly hostile levels for 72 s.",
 			"Move: arrows / stick.  Jump: SPACE / up / A button.",
-			"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it on the start screen, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap A or press SPACE to start")
 	elif state == State.OVER:
 		overlay_card("LASING!" if survived else "DECOHERENCE", [

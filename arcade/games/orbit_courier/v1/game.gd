@@ -278,7 +278,7 @@ func _draw() -> void:
 			"between moving planets. Let go of your orbit at the right moment",
 			"to fly to the next planet. Watch out for black holes.",
 			"Tap anywhere / SPACE to let go.",
-			"Difficulty: %s   (change it in the menu, or with left / right here)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it on the start screen, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap or press SPACE to start")
 	elif state == State.OVER and t > 0.6:
 		card(why.to_upper(), [

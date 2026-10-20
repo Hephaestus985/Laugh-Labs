@@ -241,6 +241,16 @@ func run_all() -> void:
 	if "help" in OS.get_cmdline_user_args():
 		await test_help()
 		return
+	if "stress" in OS.get_cmdline_user_args():
+		# bug hunt: every game started from its start screen, long random play
+		var pick := ""
+		for arg in OS.get_cmdline_user_args():
+			if arg.begins_with("only="):
+				pick = arg.substr(5)
+		for g in Games.LIST + Games.EXTERNAL:
+			if pick == "" or g["id"] in pick.split(","):
+				await test_stress(g)
+		return
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("only="):  # quick run of some games: only=sudoku,minesweeper
 			if "menu" in OS.get_cmdline_user_args():
@@ -1128,6 +1138,120 @@ func test_external(g: Dictionary) -> void:
 	await back_via_menu_button(name)
 	var e := new_errors(errs)
 	check(name, "no errors", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
+
+
+## Stress test: start the game the way a player does (start screen, Play), play for
+## 40 s with every kind of input (taps, swipes, long presses, two fingers, keys, the
+## phone turned), then the back button, Continue, and back again. Any error counts.
+func test_stress(g: Dictionary) -> void:
+	var name: String = g["id"]
+	var errs := log_counter.errors.size()
+	var lab: bool = Games.LIST.has(g)
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("diff="):  # stress at a set difficulty: diff=0 (Easy) .. diff=2 (Hard)
+			ArcadeGame.set_difficulty(name, int(arg.substr(5)))
+	Engine.set_meta("hub_game", name)
+	Engine.set_meta("hub_scene", "")
+	var hub: Node = spawn_current(GameData.HUB)
+	await frames(6)
+	hub.call("play", "new" if g.has("save_file") else "")
+	var game: Node = null
+	for i in 90:
+		await frames(2)
+		var cur := get_tree().current_scene
+		if is_instance_valid(cur) and cur != self and cur.scene_file_path != GameData.HUB:
+			game = cur
+			break
+	if not check(name, "stress: Play on the start screen starts the game", game != null):
+		await end_current()
+		return
+	await frames(40)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(name)
+	var keys := [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN, KEY_SPACE, KEY_W, KEY_A, KEY_S, KEY_D, KEY_X, KEY_Z, KEY_J, KEY_ENTER]
+	var rotated := false
+	for f in 2400:
+		if HelpPage.is_open():
+			HelpPage.close_current()
+		var size: Vector2 = get_viewport().get_visible_rect().size
+		var p := Vector2(rng.randf_range(0.05, 0.95) * size.x, rng.randf_range(0.12, 0.95) * size.y)
+		if p.x < size.x * 0.18 and p.y < size.y * 0.22:
+			p.x += size.x * 0.3  # keep away from "< MENU" (tested elsewhere)
+		match f % 120:
+			10, 50, 90:
+				await tap(p)
+			30:
+				await touch_swipe(p, Vector2(rng.randf_range(-260, 260), rng.randf_range(-260, 260)))
+			70:
+				var e := InputEventScreenTouch.new()
+				e.position = to_window(p)
+				e.pressed = true
+				Input.parse_input_event(e)
+				await frames(40)
+				var r := InputEventScreenTouch.new()
+				r.position = e.position
+				Input.parse_input_event(r)
+			100:
+				for idx in [0, 1]:
+					var e2 := InputEventScreenTouch.new()
+					e2.index = idx
+					e2.position = to_window(p + Vector2(60 * idx, 0))
+					e2.pressed = true
+					Input.parse_input_event(e2)
+				for s in 6:
+					var d := InputEventScreenDrag.new()
+					d.index = 1
+					d.position = to_window(p + Vector2(60 + 15 * s, 10 * s))
+					d.relative = Vector2(15, 10)
+					Input.parse_input_event(d)
+					await frames(1)
+				for idx in [0, 1]:
+					var e3 := InputEventScreenTouch.new()
+					e3.index = idx
+					e3.position = to_window(p)
+					Input.parse_input_event(e3)
+		if f % 16 == 5:
+			key(keys[rng.randi() % keys.size()], rng.randf() < 0.6)
+		if lab and f == 1000:
+			get_window().size = Vector2i(1080, 1920)  # the phone turned upright
+			rotated = true
+		if lab and f == 1700:
+			get_window().size = Vector2i(1920, 1080)
+			rotated = false
+		await get_tree().process_frame
+	release_all_keys()
+	for k in [KEY_W, KEY_A, KEY_S, KEY_D, KEY_J, KEY_ENTER]:
+		key(k, false)
+	if rotated:
+		get_window().size = Vector2i(1920, 1080)
+	HelpPage.close_current()
+	get_tree().paused = false
+	var alive := get_tree().current_scene
+	check(name, "stress: survives 40 s of mixed touch and keys", is_instance_valid(alive) and alive != self, str(alive.scene_file_path if is_instance_valid(alive) else "none"))
+	# the back button leaves the game (to its start screen, or its own menu first)
+	for tries in 3:
+		var before := get_tree().current_scene
+		if not is_instance_valid(before) or before.scene_file_path in [GameData.HUB, GameData.LAUNCHER]:
+			break
+		get_tree().root.propagate_notification(NOTIFICATION_WM_GO_BACK_REQUEST)
+		await frames(40)
+	var now := get_tree().current_scene
+	check(name, "stress: the back button leads out of the game", is_instance_valid(now) and now.scene_file_path in [GameData.HUB, GameData.LAUNCHER], str(now.scene_file_path if is_instance_valid(now) else "none"))
+	# Continue from the start screen, when the game saved
+	if is_instance_valid(now) and now.scene_file_path == GameData.HUB and now.find_child("Continue", true, false):
+		now.call("play", "continue")
+		await frames(80)
+		var cont := get_tree().current_scene
+		check(name, "stress: Continue loads the saved game", is_instance_valid(cont) and cont.scene_file_path != GameData.HUB)
+	await end_current()
+	get_tree().paused = false
+	Engine.remove_meta("hub_game")
+	Engine.remove_meta("hub_scene")
+	if g.has("park"):
+		load(g["park"]).park(get_tree())
+	GameData.reset_window(get_window())
+	var e := new_errors(errs)
+	check(name, "stress: no errors", e.is_empty(), "%d: %s" % [e.size(), " | ".join(e.slice(0, 4))])
 
 
 ## Games by others with a help page: "?" opens it (game paused), "Got it" closes it.
