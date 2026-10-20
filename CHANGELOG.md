@@ -2,6 +2,16 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.26 (2026-10-20)
+- Five bigger games by others, each security-reviewed first (see SECURITY_REVIEW.md in each folder) and made playable by touch:
+  - City Builder (Kenney): tap to build roads, parks and houses; drag, pinch and twist the view; your town saves itself
+  - Deck Crawler (Adam Gulacsi): a Slay-the-Spire-style deckbuilder; drag cards onto enemies, drag the map
+  - Open RTS (Lampe Games): real-time strategy against the computer; tap to select and give orders, drag and pinch the camera, BOX / ALL / NONE
+  - Duel Defense (d10sfan): tower defense with three maps; its online mod downloads and start-up command files are removed
+  - Tanks of Freedom II (P1X): turn-based tank battles with campaigns, skirmish and a map editor; online and network play switched off, pinch to zoom
+- Bread Adventure was left out: its open-source version has none of its texts
+- Games by others that save Godot resources now have their saves checked before loading (`common/safe_resource.gd`)
+
 ## Lab Arcade 1.25 (2026-10-20)
 - Achievements: 3 to 5 per game (play it, play it often, an hour in total, and a win or a high score, also on Hard), shown on each game's start screen with the date you got them. New ones get a banner; the profile shows your total and the latest ones
 - Save backup (Settings, "Backup"): one file with your saved games, high scores, achievements, ratings, collections and settings. Save it as a file, or copy it as text and paste it back on a new phone. Restoring asks first, only writes plain data (no code), and leaves downloads alone. Open RPG's story saves stay out, because that game reads them in a way a doctored backup could abuse

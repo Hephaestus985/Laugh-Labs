@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://h4d1gfy8ha8m"
+path="res://.godot/imported/bridge_plate.obj-29649b86a4e1aec1a591499d46f2d7fa.mesh"
+
+[deps]
+
+files=["res://.godot/imported/bridge_plate.obj-29649b86a4e1aec1a591499d46f2d7fa.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/variety/bridge_plate.obj"
+dest_files=["res://.godot/imported/bridge_plate.obj-29649b86a4e1aec1a591499d46f2d7fa.mesh", "res://.godot/imported/bridge_plate.obj-29649b86a4e1aec1a591499d46f2d7fa.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

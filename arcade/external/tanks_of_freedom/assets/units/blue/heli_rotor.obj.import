@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://ub4lad5fhelh"
+path="res://.godot/imported/heli_rotor.obj-de9046ceb7d6455a36fc5d67ccbbd149.mesh"
+
+[deps]
+
+files=["res://.godot/imported/heli_rotor.obj-de9046ceb7d6455a36fc5d67ccbbd149.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/units/blue/heli_rotor.obj"
+dest_files=["res://.godot/imported/heli_rotor.obj-de9046ceb7d6455a36fc5d67ccbbd149.mesh", "res://.godot/imported/heli_rotor.obj-de9046ceb7d6455a36fc5d67ccbbd149.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

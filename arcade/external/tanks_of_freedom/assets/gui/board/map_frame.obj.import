@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cw6doarcq783m"
+path="res://.godot/imported/map_frame.obj-16ad184733d8c81216db4f46b6f90911.mesh"
+
+[deps]
+
+files=["res://.godot/imported/map_frame.obj-16ad184733d8c81216db4f46b6f90911.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/gui/board/map_frame.obj"
+dest_files=["res://.godot/imported/map_frame.obj-16ad184733d8c81216db4f46b6f90911.mesh", "res://.godot/imported/map_frame.obj-16ad184733d8c81216db4f46b6f90911.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

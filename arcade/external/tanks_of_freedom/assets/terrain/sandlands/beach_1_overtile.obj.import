@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b0b56i6re6hi6"
+path="res://.godot/imported/beach_1_overtile.obj-44eb566c09b34f08af6b8bda034c6c4f.mesh"
+
+[deps]
+
+files=["res://.godot/imported/beach_1_overtile.obj-44eb566c09b34f08af6b8bda034c6c4f.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/sandlands/beach_1_overtile.obj"
+dest_files=["res://.godot/imported/beach_1_overtile.obj-44eb566c09b34f08af6b8bda034c6c4f.mesh", "res://.godot/imported/beach_1_overtile.obj-44eb566c09b34f08af6b8bda034c6c4f.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

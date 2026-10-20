@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://46gpqiydpfdr"
+path="res://.godot/imported/bush_2.obj-b3c01ef9d53541a5123cfa8b5fa9e164.mesh"
+
+[deps]
+
+files=["res://.godot/imported/bush_2.obj-b3c01ef9d53541a5123cfa8b5fa9e164.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/grasslands/plants/bush_2.obj"
+dest_files=["res://.godot/imported/bush_2.obj-b3c01ef9d53541a5123cfa8b5fa9e164.mesh", "res://.godot/imported/bush_2.obj-b3c01ef9d53541a5123cfa8b5fa9e164.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

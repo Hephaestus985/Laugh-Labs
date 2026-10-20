@@ -43,7 +43,7 @@ func _ready() -> void:
 			load(g["park"]).park(get_tree())
 	tab = int(get_setting("ui", "tab", 0 if favorites().size() > 0 else 1))
 	load_filters()
-	get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+	GameData.reset_window(get_window())
 	apply_orientation()
 	var bg := ColorRect.new()
 	bg.color = BG

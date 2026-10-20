@@ -1,0 +1,80 @@
+{
+	"NormalTank": {
+		"speed": 110,
+		"hp": 200,
+		"damage": 21,
+		"sprite_path": "res://external/duel_defense/Assets/Enemies/tank_normal.png",
+		"cost": 100,
+		"move_sound": "average",
+		"fire_damage": 0.1
+	},
+	"FastTank": {
+		"speed": 150,
+		"hp": 50,
+		"damage": 5,
+		"sprite_path": "res://external/duel_defense/Assets/Enemies/tank_medium.png",
+		"cost": 50,
+		"move_sound": "fast",
+		"fire_damage": 0.05
+	},
+	"LongTank": {
+		"speed": 100,
+		"hp": 250,
+		"damage": 25,
+		"sprite_path": "res://external/duel_defense/Assets/Enemies/Hull_03.png",
+		"turret_sprite_path": "res://external/duel_defense/Assets/Enemies/Gun_03.png",
+		"cost": 300,
+		"move_sound": "slow",
+		"engine_trail_x": -60,
+		"engine_trail_width": 3,
+		"engine_trail_max_points": 10,
+		"fire_damage": 0.25
+	},
+	"FromBaseTank": {
+		"speed": 100,
+		"hp": 250,
+		"damage": 25,
+		"sprite_path": "res://external/duel_defense/Assets/Enemies/Red_Hull_04.png",
+		"turret_sprite_path": "res://external/duel_defense/Assets/Enemies/Red_Gun_03.png",
+		"cost": 150,
+		"move_sound": "slow",
+		"engine_trail_x": -40,
+		"engine_trail_width": 3,
+		"engine_trail_max_points": 10,
+		"fire_damage": 0.25
+	},
+	"EnergyTank": {
+		"speed": 110,
+		"hp": 75,
+		"damage": 8,
+		"sprite_path": "res://external/duel_defense/Assets/Enemies/Hull_04.png",
+		"turret_sprite_path": "res://external/duel_defense/Assets/Enemies/Gun_08.png",
+		"cost": 100,
+		"move_sound": "fast",
+		"engine_trail_x": -40,
+		"engine_trail_width": 3,
+		"engine_trail_max_points": 8,
+		"fire_damage": 0.5
+	},
+	"BossTank": {
+		"speed": 70,
+		"hp": 500,
+		"damage": 41,
+		"sprite_path": "res://external/duel_defense/Assets/Enemies/tank_huge.png",
+		"turret_sprite_path": "res://external/duel_defense/Assets/Enemies/big_gun.png",
+		"cost": 300,
+		"move_sound": "slow",
+		"engine_trail_x": -60,
+		"engine_trail_width": 3,
+		"engine_trail_max_points": 10,
+		"fire_damage": 0.75
+	},
+	"NormalMech": {
+		"speed": 80,
+		"hp": 400,
+		"damage": 30,
+		"cost": 600,
+		"move_sound": "slow",
+		"disable_fire": true
+	}
+}

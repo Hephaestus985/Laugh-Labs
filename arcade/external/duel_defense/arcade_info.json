@@ -1,0 +1,29 @@
+{
+	"order": 31,
+	"id": "duel_defense",
+	"name": "Duel Defense",
+	"publisher": "d10sfan",
+	"genre": "Strategy",
+	"tagline": "Tower defense: build and upgrade turrets to stop waves of tanks and mechs.",
+	"about": "Enemy tanks and mechs roll along the road towards your base in waves. Spend money on gun, missile and laser turrets beside the road, upgrade them, and earn more for every enemy destroyed. Three maps, rising difficulty, stars for how well you defend, and achievements.",
+	"controls": "Tap a turret at the bottom, then tap a free spot beside the road to place it (drag to move it first). Tap a turret to upgrade or sell it. Play starts the next wave, >> speeds the game up. The menu button pauses. PC: the mouse, Space, F and Esc; also works with a controller.",
+	"length": "10-20 min per map",
+	"effort": "Open-source game by d10sfan",
+	"credit": "Duel Defense by d10sfan, github.com/duel-defense/duel-defense (d10sfan.itch.io/duel-defense). Code: MIT license. Art and music by Kenney (CC0), craftpix.net, engvee, Matthew Pablo, Zander Noriega, nosoapradio and Alexander Nakarada (CC BY 4.0) and others: see Assets/AssetLicenses. Added to Lab Arcade without the online mod system, with a back button.",
+	"godot_time": "~2 hours to review and adapt",
+	"color": "#2f7a5a",
+	"no_difficulty": true,
+	"no_score": true,
+	"aspect": "expand",
+	"park": "res://external/duel_defense/lab_arcade.gd",
+	"main": "res://external/duel_defense/Scenes/MainScenes/SceneHandler.tscn",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-20",
+			"scene": "res://external/duel_defense/Scenes/MainScenes/SceneHandler.tscn",
+			"notes": "Duel Defense by d10sfan (commit b4e5922, 2026-03-16), security-reviewed; the online mod system and start-up command files removed."
+		}
+	],
+	"web": []
+}

@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://b4uinqad3sgil"
+path="res://.godot/imported/arne32.png-37280838af709dc6b9e6364b804f743c.image"
+
+[deps]
+
+source_file="res://external/tanks_of_freedom/assets/materials/arne32.png"
+dest_files=["res://.godot/imported/arne32.png-37280838af709dc6b9e6364b804f743c.image"]
+
+[params]
+

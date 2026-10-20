@@ -1,0 +1,111 @@
+[gd_scene load_steps=4 format=3 uid="uid://hxdgd1oagsk4"]
+
+[ext_resource type="FontFile" uid="uid://yj0t3tghbpke" path="res://external/duel_defense/Assets/UI/OperationNapalm-Regular.ttf" id="1_uciau"]
+[ext_resource type="Script" path="res://external/duel_defense/addons/scrolllistcontainer/ScrollListContainer.gd" id="2_uae1j"]
+[ext_resource type="AudioStream" uid="uid://cxm4kgrlawq70" path="res://external/duel_defense/Assets/Audio/Music/alexander-nakarada-superepic.mp3" id="6"]
+
+[node name="MainMenu" type="CanvasLayer"]
+process_mode = 3
+
+[node name="Container" type="MarginContainer" parent="."]
+z_index = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="TitleContainer" type="VBoxContainer" parent="Container"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Title" type="Label" parent="Container/TitleContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(0.886275, 0.941176, 0.25098, 1)
+theme_override_colors/font_outline_color = Color(0.913725, 0.921569, 0.909804, 1)
+theme_override_fonts/font = ExtResource("1_uciau")
+theme_override_font_sizes/font_size = 60
+text = "Duel Defense
+"
+horizontal_alignment = 1
+uppercase = true
+
+[node name="VBoxContainer" type="Container" parent="Container"]
+clip_contents = true
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+script = ExtResource("2_uae1j")
+spacing = 30.0
+initial_spacing = 80.0
+
+[node name="ResumeGame" type="Button" parent="Container/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Resume Game"
+
+[node name="MainMenu" type="Button" parent="Container/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Main Menu
+"
+
+[node name="NewGame" type="Button" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Level Select"
+
+[node name="Settings" type="Button" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Settings"
+
+[node name="Achivements" type="Button" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Achivements"
+
+[node name="Editor" type="Button" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Editor"
+
+[node name="Mods" type="Button" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Mods"
+
+[node name="About" type="Button" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "About"
+
+[node name="Sep" type="Control" parent="Container/VBoxContainer"]
+layout_mode = 2
+
+[node name="Quit" type="Button" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(350, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Quit"
+
+[node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6")
+autoplay = true
+bus = &"BackgroundMusic"

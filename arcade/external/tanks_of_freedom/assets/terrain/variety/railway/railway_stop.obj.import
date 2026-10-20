@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cl267t3ovm6lt"
+path="res://.godot/imported/railway_stop.obj-42cdf00a93bc0ef78a0229d993b9315a.mesh"
+
+[deps]
+
+files=["res://.godot/imported/railway_stop.obj-42cdf00a93bc0ef78a0229d993b9315a.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/variety/railway/railway_stop.obj"
+dest_files=["res://.godot/imported/railway_stop.obj-42cdf00a93bc0ef78a0229d993b9315a.mesh", "res://.godot/imported/railway_stop.obj-42cdf00a93bc0ef78a0229d993b9315a.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,29 @@
+{
+	"order": 32,
+	"id": "tanks_of_freedom",
+	"name": "Tanks of Freedom II",
+	"publisher": "P1X",
+	"genre": "Strategy",
+	"tagline": "Turn-based tank battles on voxel maps: capture buildings, build an army, outsmart the AI.",
+	"about": "A turn-based strategy game with voxel art. Move tanks, infantry and helicopters across the map, capture factories and towers for income, build new units and destroy the enemy headquarters. Play the campaigns (with a tutorial), skirmish maps against the computer, or make your own maps in the editor. Online and network play are switched off in Lab Arcade.",
+	"controls": "Tap a unit to select it, then tap where it should move or what it should attack. Tap a building you own to build units. Drag to move the map, pinch to zoom. X cancels a selection. END TURN is on screen. PC: the mouse, right click cancels, wheel zooms.",
+	"length": "20-60 min per map, long campaigns",
+	"effort": "Open-source game by P1X",
+	"credit": "Tanks of Freedom II by P1X (Kamil 'czlowiekimadlo' Marciniak, Krzysztof 'w84death' Jankowski and contributors), github.com/P1X-in/tanks-of-freedom-ii. Code and art: MIT license; music and sounds by QmYaan (CC BY-SA 4.0) and reduz (CC BY 4.0); see LICENSE.md and CREDITS.md. Added to Lab Arcade without online and network play, with touch zoom and a back button.",
+	"godot_time": "~3 hours to review and adapt",
+	"color": "#7a8a3a",
+	"no_difficulty": true,
+	"no_score": true,
+	"aspect": "expand",
+	"park": "res://external/tanks_of_freedom/lab_arcade.gd",
+	"main": "res://external/tanks_of_freedom/scenes/main_menu/main_menu.tscn",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-20",
+			"scene": "res://external/tanks_of_freedom/scenes/main_menu/main_menu.tscn",
+			"notes": "Tanks of Freedom II by P1X (commit dbe629e, 2025-10-02), security-reviewed; online and network play switched off, trimmed, with pinch zoom."
+		}
+	],
+	"web": []
+}

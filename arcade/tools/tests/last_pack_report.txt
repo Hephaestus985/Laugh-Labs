@@ -1,7 +1,7 @@
 Lab Arcade pack test
 14 checks, 0 failed
 
-PASS  the app lists every game version as a pack  27 packs
+PASS  the app lists every game version as a pack  32 packs
 PASS  sudoku/v1 is not inside the launcher  
 PASS  sudoku/v1: a damaged download is refused  
 PASS  sudoku/v1: the real pack installs  

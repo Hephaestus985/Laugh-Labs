@@ -126,6 +126,15 @@ static func apply_sound(id: String) -> void:
 
 ## Where "< MENU" in a game goes: its own start screen (if it was opened from one),
 ## otherwise the launcher.
+## Games by others may change the window's scaling (pixel-art games use a tiny
+## canvas and sharp pixels); the launcher and start screens put it back.
+static func reset_window(win: Window) -> void:
+	win.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+	win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+	win.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_LINEAR
+	win.theme = null
+
+
 static func back_scene() -> String:
 	return HUB if Engine.has_meta("hub_game") else LAUNCHER
 

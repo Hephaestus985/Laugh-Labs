@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://k60r865d04mi"
+path="res://.godot/imported/railway_straight2.obj-8d29046df69caa33daa1d6b9b9aa6d98.mesh"
+
+[deps]
+
+files=["res://.godot/imported/railway_straight2.obj-8d29046df69caa33daa1d6b9b9aa6d98.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/variety/railway/railway_straight2.obj"
+dest_files=["res://.godot/imported/railway_straight2.obj-8d29046df69caa33daa1d6b9b9aa6d98.mesh", "res://.godot/imported/railway_straight2.obj-8d29046df69caa33daa1d6b9b9aa6d98.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -62,7 +62,8 @@ func setup(cfg: Dictionary) -> void:
 ## Sizes follow the game's design height (720 for the arcade, bigger for games made at 1080).
 func layout(size: Vector2) -> void:
 	laid_out_for = size
-	k = maxf(1.0, get_tree().root.content_scale_size.y / 720.0) if is_inside_tree() else 1.0
+	# (tiny pixel-art canvases get proportionally smaller numbers, same size on screen)
+	k = get_tree().root.content_scale_size.y / 720.0 if is_inside_tree() and get_tree().root.content_scale_size.y > 0 else 1.0
 	buttons.clear()
 	var x := size.x - 40.0 * k
 	var big: Array = config.get("buttons", [])
@@ -85,7 +86,8 @@ func layout(size: Vector2) -> void:
 		var h := Vector2(42, 42) * k
 		for d in [[Vector2(-80, 0), dpad[0], "<"], [Vector2(80, 0), dpad[1], ">"], [Vector2(0, -80), dpad[2], "^"], [Vector2(0, 80), dpad[3], "v"]]:
 			buttons.append([Rect2(c + d[0] * k - h, h * 2), d[1], d[2], true])
-	buttons.append([Rect2(Vector2(12, 12) * k, Vector2(150, 64) * k), "__menu", "< MENU", true])
+	if not config.get("no_menu", false):  # games whose own menu leads back can drop it
+		buttons.append([Rect2(Vector2(12, 12) * k, Vector2(150, 64) * k), "__menu", "< MENU", true])
 
 
 func _ready() -> void:
@@ -164,6 +166,8 @@ func _axis(neg: String, pos: String, v: float) -> void:
 
 
 func back_to_launcher() -> void:
+	if config.get("on_exit") is Callable:
+		(config["on_exit"] as Callable).call()
 	for idx in held:
 		Input.action_release(held[idx])
 	held.clear()

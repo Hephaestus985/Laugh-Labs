@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://csh7at07erl6x"
+path="res://.godot/imported/arne32_green_desat.png-7aa0a31c42c30fd1071776e15dc434e2.image"
+
+[deps]
+
+source_file="res://external/tanks_of_freedom/assets/materials/arne32_green_desat.png"
+dest_files=["res://.godot/imported/arne32_green_desat.png-7aa0a31c42c30fd1071776e15dc434e2.image"]
+
+[params]
+

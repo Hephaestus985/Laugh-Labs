@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cpftkr61op4uq"
+path="res://.godot/imported/wall2_gate.obj-c9f58bdd4279588bd3959d101b787615.mesh"
+
+[deps]
+
+files=["res://.godot/imported/wall2_gate.obj-c9f58bdd4279588bd3959d101b787615.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/variety/walls/wall2_gate.obj"
+dest_files=["res://.godot/imported/wall2_gate.obj-c9f58bdd4279588bd3959d101b787615.mesh", "res://.godot/imported/wall2_gate.obj-c9f58bdd4279588bd3959d101b787615.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

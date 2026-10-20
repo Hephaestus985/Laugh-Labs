@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dn601dt2j1ufm"
+path="res://.godot/imported/path_marker.obj-504fde608efecefcfced8cddaf4116aa.mesh"
+
+[deps]
+
+files=["res://.godot/imported/path_marker.obj-504fde608efecefcfced8cddaf4116aa.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/gui/markers/path_marker.obj"
+dest_files=["res://.godot/imported/path_marker.obj-504fde608efecefcfced8cddaf4116aa.mesh", "res://.godot/imported/path_marker.obj-504fde608efecefcfced8cddaf4116aa.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://dfoi5boj0xuel"
+path="res://.godot/imported/arne32_black_desat.png-9520df71a89200769898c9ff8e6b7e60.image"
+
+[deps]
+
+source_file="res://external/tanks_of_freedom/assets/materials/arne32_black_desat.png"
+dest_files=["res://.godot/imported/arne32_black_desat.png-9520df71a89200769898c9ff8e6b7e60.image"]
+
+[params]
+

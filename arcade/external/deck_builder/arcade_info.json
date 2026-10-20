@@ -1,0 +1,29 @@
+{
+	"order": 29,
+	"id": "deck_builder",
+	"name": "Deck Crawler",
+	"publisher": "Adam Gulacsi",
+	"genre": "Strategy",
+	"tagline": "A Slay-the-Spire-style roguelike: build a deck and fight up a map of battles.",
+	"about": "Pick the Warrior or the Assassin and climb a branching map of battles, shops, campfires and treasure rooms. Each turn you draw a hand of cards and spend mana to attack, block and apply statuses; enemies show what they're about to do. Win battles to add cards and relics to your deck and beat the boss at the top. The run saves as you go.",
+	"controls": "Drag a card up onto the battlefield to play it; attacks that need a target show an arrow, drop it on an enemy. Drag a card back down to cancel. Tap END TURN when you're done. Drag the map up and down, tap a lit room to go there. II pauses. PC: the mouse, Esc pauses.",
+	"length": "30-45 min per run",
+	"effort": "Open-source game made as a Godot tutorial series",
+	"credit": "Roguelike Deckbuilder by Adam Gulacsi (guladam), github.com/guladam/deck_builder_tutorial. Code and art: MIT license. Added to Lab Arcade with touch controls, a safe save loader and a back button.",
+	"godot_time": "~2 hours to review and adapt",
+	"color": "#8a4fa3",
+	"no_difficulty": true,
+	"no_score": true,
+	"wins": true,
+	"aspect": "keep",
+	"main": "res://external/deck_builder/scenes/run/run.tscn",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-20",
+			"scene": "res://external/deck_builder/scenes/ui/main_menu.tscn",
+			"notes": "guladam's Roguelike Deckbuilder (commit 91b408b, 2024-10-16), security-reviewed, with touch map scrolling, a pause button, a back button and a safe save loader."
+		}
+	],
+	"web": []
+}

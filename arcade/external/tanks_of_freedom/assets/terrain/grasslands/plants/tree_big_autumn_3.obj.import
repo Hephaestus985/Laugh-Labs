@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b4coflc7ss5pa"
+path="res://.godot/imported/tree_big_autumn_3.obj-8c76ac1b9abac2ae7dfcc6c8f045eacc.mesh"
+
+[deps]
+
+files=["res://.godot/imported/tree_big_autumn_3.obj-8c76ac1b9abac2ae7dfcc6c8f045eacc.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/grasslands/plants/tree_big_autumn_3.obj"
+dest_files=["res://.godot/imported/tree_big_autumn_3.obj-8c76ac1b9abac2ae7dfcc6c8f045eacc.mesh", "res://.godot/imported/tree_big_autumn_3.obj-8c76ac1b9abac2ae7dfcc6c8f045eacc.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

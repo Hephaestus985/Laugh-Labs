@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://b0tpx08bbve4a"
+path="res://.godot/imported/building_small_2_overtile.obj-f124a0f33100465bab18dd0295630826.mesh"
+
+[deps]
+
+files=["res://.godot/imported/building_small_2_overtile.obj-f124a0f33100465bab18dd0295630826.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/grasslands/building_small_2_overtile.obj"
+dest_files=["res://.godot/imported/building_small_2_overtile.obj-f124a0f33100465bab18dd0295630826.mesh", "res://.godot/imported/building_small_2_overtile.obj-f124a0f33100465bab18dd0295630826.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

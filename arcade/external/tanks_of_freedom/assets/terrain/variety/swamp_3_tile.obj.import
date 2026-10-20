@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://d11713brj2txm"
+path="res://.godot/imported/swamp_3_tile.obj-4c16640a91a673724cc425358f2b6501.mesh"
+
+[deps]
+
+files=["res://.godot/imported/swamp_3_tile.obj-4c16640a91a673724cc425358f2b6501.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/variety/swamp_3_tile.obj"
+dest_files=["res://.godot/imported/swamp_3_tile.obj-4c16640a91a673724cc425358f2b6501.mesh", "res://.godot/imported/swamp_3_tile.obj-4c16640a91a673724cc425358f2b6501.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

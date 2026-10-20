@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dljmla2ek7i26"
+path="res://.godot/imported/flower_g_6.obj-fb1187c29787e335a5e96664b4e0da8a.mesh"
+
+[deps]
+
+files=["res://.godot/imported/flower_g_6.obj-fb1187c29787e335a5e96664b4e0da8a.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/grasslands/plants_small/flower_g_6.obj"
+dest_files=["res://.godot/imported/flower_g_6.obj-fb1187c29787e335a5e96664b4e0da8a.mesh", "res://.godot/imported/flower_g_6.obj-fb1187c29787e335a5e96664b4e0da8a.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

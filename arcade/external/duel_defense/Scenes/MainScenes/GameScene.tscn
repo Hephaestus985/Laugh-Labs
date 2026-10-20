@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://qbeqdmnh41d0"]
+
+[ext_resource type="PackedScene" uid="uid://bhq5x6d4u6pf" path="res://external/duel_defense/Scenes/MainScenes/UI.tscn" id="2_w2a1q"]
+[ext_resource type="Script" path="res://external/duel_defense/Scenes/MainScenes/GameScene.gd" id="5"]
+[ext_resource type="Script" path="res://external/duel_defense/Scenes/MainScenes/Camera.gd" id="12_3nie2"]
+
+[node name="GameScene" type="Node2D"]
+script = ExtResource("5")
+
+[node name="UI" parent="." instance=ExtResource("2_w2a1q")]
+
+[node name="Camera" type="Camera2D" parent="."]
+anchor_mode = 0
+script = ExtResource("12_3nie2")

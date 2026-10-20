@@ -59,6 +59,7 @@ func _want_portrait() -> bool:
 func _fit_screen() -> void:
 	portrait = _want_portrait()
 	var win := get_window()
+	GameData.reset_window(win)
 	win.content_scale_size = Vector2i(720, 1280) if portrait else Vector2i(1280, 720)
 	win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 

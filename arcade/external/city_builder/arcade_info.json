@@ -1,0 +1,29 @@
+{
+	"order": 28,
+	"id": "city_builder",
+	"name": "City Builder",
+	"publisher": "Kenney",
+	"genre": "Simulation",
+	"tagline": "Lay roads, parks and houses square by square and build a little 3D town.",
+	"about": "A calm city-building sandbox by Kenney: pick roads, pavements, parks and buildings, turn them the way you like and place them on the grid. Every piece costs money, there's no rush and no game over; your town saves itself so you can keep building later.",
+	"controls": "Tap a square to build the piece shown top right. < and > pick the piece, TURN rotates it, DEL switches to removing (tap a square to clear it), NEW starts over. Drag to move around, pinch to zoom, twist two fingers to turn the view. PC: click, WASD, Q / E, R, Delete, mouse wheel.",
+	"length": "Free play (no end)",
+	"effort": "Open-source starter kit by Kenney",
+	"credit": "Starter Kit City Builder by Kenney (kenney.nl), github.com/KenneyNL/Starter-Kit-City-Builder. Code and art: MIT license. Added to Lab Arcade with touch controls, autosave and a back button.",
+	"godot_time": "~1 hour to review and adapt",
+	"color": "#5f9e4f",
+	"no_difficulty": true,
+	"no_score": true,
+	"aspect": "expand",
+	"save_file": "user://city_builder.json",
+	"main": "res://external/city_builder/scenes/main.tscn",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-20",
+			"scene": "res://external/city_builder/scenes/main.tscn",
+			"notes": "Kenney's Starter Kit City Builder (commit 4535092, 2026-03-12), security-reviewed, with touch building, pan / pinch / twist camera and autosave."
+		}
+	],
+	"web": []
+}

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dwvevu5pcgrsx"
+path="res://.godot/imported/building_small_1_destroyed.obj-ab99358b7ec897079a1c71002be9388c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/building_small_1_destroyed.obj-ab99358b7ec897079a1c71002be9388c.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/grasslands/building_small_1_destroyed.obj"
+dest_files=["res://.godot/imported/building_small_1_destroyed.obj-ab99358b7ec897079a1c71002be9388c.mesh", "res://.godot/imported/building_small_1_destroyed.obj-ab99358b7ec897079a1c71002be9388c.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

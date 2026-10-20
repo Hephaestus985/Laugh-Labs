@@ -819,6 +819,174 @@
 				"res://external/open_rpg/shots/1.jpg",
 				"res://external/open_rpg/shots/2.jpg"
 			]
+		},
+		{
+			"order": 28,
+			"id": "city_builder",
+			"name": "City Builder",
+			"publisher": "Kenney",
+			"genre": "Simulation",
+			"tagline": "Lay roads, parks and houses square by square and build a little 3D town.",
+			"about": "A calm city-building sandbox by Kenney: pick roads, pavements, parks and buildings, turn them the way you like and place them on the grid. Every piece costs money, there's no rush and no game over; your town saves itself so you can keep building later.",
+			"controls": "Tap a square to build the piece shown top right. < and > pick the piece, TURN rotates it, DEL switches to removing (tap a square to clear it), NEW starts over. Drag to move around, pinch to zoom, twist two fingers to turn the view. PC: click, WASD, Q / E, R, Delete, mouse wheel.",
+			"length": "Free play (no end)",
+			"effort": "Open-source starter kit by Kenney",
+			"credit": "Starter Kit City Builder by Kenney (kenney.nl), github.com/KenneyNL/Starter-Kit-City-Builder. Code and art: MIT license. Added to Lab Arcade with touch controls, autosave and a back button.",
+			"godot_time": "~1 hour to review and adapt",
+			"color": "#5f9e4f",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"save_file": "user://city_builder.json",
+			"main": "res://external/city_builder/scenes/main.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-20",
+					"scene": "res://external/city_builder/scenes/main.tscn",
+					"notes": "Kenney's Starter Kit City Builder (commit 4535092, 2026-03-12), security-reviewed, with touch building, pan / pinch / twist camera and autosave."
+				}
+			],
+			"web": [],
+			"cover": "res://external/city_builder/cover.jpg",
+			"shots": [
+				"res://external/city_builder/shots/1.jpg"
+			]
+		},
+		{
+			"order": 29,
+			"id": "deck_builder",
+			"name": "Deck Crawler",
+			"publisher": "Adam Gulacsi",
+			"genre": "Strategy",
+			"tagline": "A Slay-the-Spire-style roguelike: build a deck and fight up a map of battles.",
+			"about": "Pick the Warrior or the Assassin and climb a branching map of battles, shops, campfires and treasure rooms. Each turn you draw a hand of cards and spend mana to attack, block and apply statuses; enemies show what they're about to do. Win battles to add cards and relics to your deck and beat the boss at the top. The run saves as you go.",
+			"controls": "Drag a card up onto the battlefield to play it; attacks that need a target show an arrow, drop it on an enemy. Drag a card back down to cancel. Tap END TURN when you're done. Drag the map up and down, tap a lit room to go there. II pauses. PC: the mouse, Esc pauses.",
+			"length": "30-45 min per run",
+			"effort": "Open-source game made as a Godot tutorial series",
+			"credit": "Roguelike Deckbuilder by Adam Gulacsi (guladam), github.com/guladam/deck_builder_tutorial. Code and art: MIT license. Added to Lab Arcade with touch controls, a safe save loader and a back button.",
+			"godot_time": "~2 hours to review and adapt",
+			"color": "#8a4fa3",
+			"no_difficulty": true,
+			"no_score": true,
+			"wins": true,
+			"aspect": "keep",
+			"main": "res://external/deck_builder/scenes/run/run.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-20",
+					"scene": "res://external/deck_builder/scenes/ui/main_menu.tscn",
+					"notes": "guladam's Roguelike Deckbuilder (commit 91b408b, 2024-10-16), security-reviewed, with touch map scrolling, a pause button, a back button and a safe save loader."
+				}
+			],
+			"web": [],
+			"cover": "res://external/deck_builder/cover.jpg",
+			"shots": [
+				"res://external/deck_builder/shots/1.jpg",
+				"res://external/deck_builder/shots/2.jpg"
+			]
+		},
+		{
+			"order": 30,
+			"id": "open_rts",
+			"name": "Open RTS",
+			"publisher": "Lampe Games",
+			"genre": "Strategy",
+			"tagline": "Real-time strategy: mine, build a base, train tanks and drones, defeat the AI.",
+			"about": "A small real-time strategy game in 3D. Your workers mine crystals and build structures; command centers, vehicle factories and aircraft factories train workers, tanks and drones. Fog of war hides the map until your units see it, and a computer opponent builds up at the same time. Destroy everything it owns to win. Maps for 2 to 4 players.",
+			"controls": "Tap one of your units to select it (tap it again quickly for all of its kind). Then tap the ground to move, or an enemy or crystal to attack or mine. Drag to move the view, pinch to zoom. BOX then drag: select a group. ALL / NONE select the army or nothing. Build and train with the buttons at the bottom; when placing a building, tap where it goes (drag to turn it), STOP to cancel it. II: menu. PC: the original mouse and keyboard controls.",
+			"length": "15-30 min per match",
+			"effort": "Open-source game by Lampe Games",
+			"credit": "Open RTS by Lampe Games, github.com/lampe-games/godot-open-rts. Code: MIT license; 3D models from the Space Kit by Kenney (CC0). The Lampe Games logo is left out, as its license asks. Added to Lab Arcade with touch controls and a back button.",
+			"godot_time": "~2 hours to review and adapt",
+			"color": "#3f7cbf",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"main": "res://external/open_rts/source/main-menu/Play.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-20",
+					"scene": "res://external/open_rts/source/main-menu/Main.tscn",
+					"notes": "Open RTS by Lampe Games (commit a628ad3, 2025-01-07), security-reviewed, with touch selection, orders and camera."
+				}
+			],
+			"web": [],
+			"cover": "res://external/open_rts/cover.jpg",
+			"shots": [
+				"res://external/open_rts/shots/1.jpg",
+				"res://external/open_rts/shots/2.jpg"
+			]
+		},
+		{
+			"order": 31,
+			"id": "duel_defense",
+			"name": "Duel Defense",
+			"publisher": "d10sfan",
+			"genre": "Strategy",
+			"tagline": "Tower defense: build and upgrade turrets to stop waves of tanks and mechs.",
+			"about": "Enemy tanks and mechs roll along the road towards your base in waves. Spend money on gun, missile and laser turrets beside the road, upgrade them, and earn more for every enemy destroyed. Three maps, rising difficulty, stars for how well you defend, and achievements.",
+			"controls": "Tap a turret at the bottom, then tap a free spot beside the road to place it (drag to move it first). Tap a turret to upgrade or sell it. Play starts the next wave, >> speeds the game up. The menu button pauses. PC: the mouse, Space, F and Esc; also works with a controller.",
+			"length": "10-20 min per map",
+			"effort": "Open-source game by d10sfan",
+			"credit": "Duel Defense by d10sfan, github.com/duel-defense/duel-defense (d10sfan.itch.io/duel-defense). Code: MIT license. Art and music by Kenney (CC0), craftpix.net, engvee, Matthew Pablo, Zander Noriega, nosoapradio and Alexander Nakarada (CC BY 4.0) and others: see Assets/AssetLicenses. Added to Lab Arcade without the online mod system, with a back button.",
+			"godot_time": "~2 hours to review and adapt",
+			"color": "#2f7a5a",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"park": "res://external/duel_defense/lab_arcade.gd",
+			"main": "res://external/duel_defense/Scenes/MainScenes/SceneHandler.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-20",
+					"scene": "res://external/duel_defense/Scenes/MainScenes/SceneHandler.tscn",
+					"notes": "Duel Defense by d10sfan (commit b4e5922, 2026-03-16), security-reviewed; the online mod system and start-up command files removed."
+				}
+			],
+			"web": [],
+			"cover": "res://external/duel_defense/cover.jpg",
+			"shots": [
+				"res://external/duel_defense/shots/1.jpg",
+				"res://external/duel_defense/shots/2.jpg"
+			]
+		},
+		{
+			"order": 32,
+			"id": "tanks_of_freedom",
+			"name": "Tanks of Freedom II",
+			"publisher": "P1X",
+			"genre": "Strategy",
+			"tagline": "Turn-based tank battles on voxel maps: capture buildings, build an army, outsmart the AI.",
+			"about": "A turn-based strategy game with voxel art. Move tanks, infantry and helicopters across the map, capture factories and towers for income, build new units and destroy the enemy headquarters. Play the campaigns (with a tutorial), skirmish maps against the computer, or make your own maps in the editor. Online and network play are switched off in Lab Arcade.",
+			"controls": "Tap a unit to select it, then tap where it should move or what it should attack. Tap a building you own to build units. Drag to move the map, pinch to zoom. X cancels a selection. END TURN is on screen. PC: the mouse, right click cancels, wheel zooms.",
+			"length": "20-60 min per map, long campaigns",
+			"effort": "Open-source game by P1X",
+			"credit": "Tanks of Freedom II by P1X (Kamil 'czlowiekimadlo' Marciniak, Krzysztof 'w84death' Jankowski and contributors), github.com/P1X-in/tanks-of-freedom-ii. Code and art: MIT license; music and sounds by QmYaan (CC BY-SA 4.0) and reduz (CC BY 4.0); see LICENSE.md and CREDITS.md. Added to Lab Arcade without online and network play, with touch zoom and a back button.",
+			"godot_time": "~3 hours to review and adapt",
+			"color": "#7a8a3a",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"park": "res://external/tanks_of_freedom/lab_arcade.gd",
+			"main": "res://external/tanks_of_freedom/scenes/main_menu/main_menu.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-20",
+					"scene": "res://external/tanks_of_freedom/scenes/main_menu/main_menu.tscn",
+					"notes": "Tanks of Freedom II by P1X (commit dbe629e, 2025-10-02), security-reviewed; online and network play switched off, trimmed, with pinch zoom."
+				}
+			],
+			"web": [],
+			"cover": "res://external/tanks_of_freedom/cover.jpg",
+			"shots": [
+				"res://external/tanks_of_freedom/shots/1.jpg",
+				"res://external/tanks_of_freedom/shots/2.jpg"
+			]
 		}
 	]
 }

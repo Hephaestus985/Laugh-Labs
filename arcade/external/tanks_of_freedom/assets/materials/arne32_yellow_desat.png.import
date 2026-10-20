@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://dsgf38v1qmnx0"
+path="res://.godot/imported/arne32_yellow_desat.png-cc62914866f2fbd443e384343f8a86ee.image"
+
+[deps]
+
+source_file="res://external/tanks_of_freedom/assets/materials/arne32_yellow_desat.png"
+dest_files=["res://.godot/imported/arne32_yellow_desat.png-cc62914866f2fbd443e384343f8a86ee.image"]
+
+[params]
+

@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://iscx3kjkgcl2"
+path="res://.godot/imported/n-Dimensions (Main Theme).mp3-2c8ea05b9ca89baf125ffe665f566b95.mp3str"
+
+[deps]
+
+source_file="res://external/duel_defense/Assets/Audio/Music/n-Dimensions (Main Theme).mp3"
+dest_files=["res://.godot/imported/n-Dimensions (Main Theme).mp3-2c8ea05b9ca89baf125ffe665f566b95.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

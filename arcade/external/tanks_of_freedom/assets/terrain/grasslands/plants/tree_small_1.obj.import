@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dryxdt1j6d2ta"
+path="res://.godot/imported/tree_small_1.obj-0228482d6d14740b60a2434214b7f61d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/tree_small_1.obj-0228482d6d14740b60a2434214b7f61d.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/grasslands/plants/tree_small_1.obj"
+dest_files=["res://.godot/imported/tree_small_1.obj-0228482d6d14740b60a2434214b7f61d.mesh", "res://.godot/imported/tree_small_1.obj-0228482d6d14740b60a2434214b7f61d.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

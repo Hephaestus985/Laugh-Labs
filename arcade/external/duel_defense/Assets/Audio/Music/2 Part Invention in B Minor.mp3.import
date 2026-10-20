@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://b80ay3f50p8he"
+path="res://.godot/imported/2 Part Invention in B Minor.mp3-7752c39ae6dc40a9b3721c4e43791097.mp3str"
+
+[deps]
+
+source_file="res://external/duel_defense/Assets/Audio/Music/2 Part Invention in B Minor.mp3"
+dest_files=["res://.godot/imported/2 Part Invention in B Minor.mp3-7752c39ae6dc40a9b3721c4e43791097.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

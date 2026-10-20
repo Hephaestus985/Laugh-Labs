@@ -1,0 +1,28 @@
+{
+	"order": 30,
+	"id": "open_rts",
+	"name": "Open RTS",
+	"publisher": "Lampe Games",
+	"genre": "Strategy",
+	"tagline": "Real-time strategy: mine, build a base, train tanks and drones, defeat the AI.",
+	"about": "A small real-time strategy game in 3D. Your workers mine crystals and build structures; command centers, vehicle factories and aircraft factories train workers, tanks and drones. Fog of war hides the map until your units see it, and a computer opponent builds up at the same time. Destroy everything it owns to win. Maps for 2 to 4 players.",
+	"controls": "Tap one of your units to select it (tap it again quickly for all of its kind). Then tap the ground to move, or an enemy or crystal to attack or mine. Drag to move the view, pinch to zoom. BOX then drag: select a group. ALL / NONE select the army or nothing. Build and train with the buttons at the bottom; when placing a building, tap where it goes (drag to turn it), STOP to cancel it. II: menu. PC: the original mouse and keyboard controls.",
+	"length": "15-30 min per match",
+	"effort": "Open-source game by Lampe Games",
+	"credit": "Open RTS by Lampe Games, github.com/lampe-games/godot-open-rts. Code: MIT license; 3D models from the Space Kit by Kenney (CC0). The Lampe Games logo is left out, as its license asks. Added to Lab Arcade with touch controls and a back button.",
+	"godot_time": "~2 hours to review and adapt",
+	"color": "#3f7cbf",
+	"no_difficulty": true,
+	"no_score": true,
+	"aspect": "expand",
+	"main": "res://external/open_rts/source/main-menu/Play.tscn",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-20",
+			"scene": "res://external/open_rts/source/main-menu/Main.tscn",
+			"notes": "Open RTS by Lampe Games (commit a628ad3, 2025-01-07), security-reviewed, with touch selection, orders and camera."
+		}
+	],
+	"web": []
+}

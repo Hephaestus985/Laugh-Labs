@@ -1,9 +1,9 @@
-Lab Arcade test report  2026-10-20T12:25:36
-599 checks, 0 failed
+Lab Arcade test report  2026-10-20T17:10:01
+683 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
-PASS  menu                       Library has a card per game    27 cards
+PASS  menu                       Library has a card per game    32 cards
 PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
 PASS  menu                       no game settings in the launcher 
@@ -19,20 +19,20 @@ PASS  menu                       swiping a Home row scrolls it sideways h 270, v
 PASS  menu                       - removes a pick from Home     
 PASS  menu                       Library has a search bar       
 PASS  menu                       search finds a game by name    
-PASS  menu                       search matches descriptions    
+PASS  menu                       search matches descriptions    ["Card_duel_defense", "Card_outpost_assault"]
 PASS  menu                       search with no match shows no cards 
-PASS  menu                       Library has a publisher drop-down 7 choices
+PASS  menu                       Library has a publisher drop-down 11 choices
 PASS  menu                       Library has a length drop-down 5 choices
-PASS  menu                       Library has a genre drop-down  11 choices
+PASS  menu                       Library has a genre drop-down  12 choices
 PASS  menu                       More games (by others) filter  
 PASS  menu                       Lab Arcade publisher filter    
-PASS  menu                       publisher filter (Kenney)      
+PASS  menu                       publisher filter (Kenney)      3 cards
 PASS  menu                       genre filter (RPG)             
-PASS  menu                       length filters split the games 27 of 27
+PASS  menu                       length filters split the games 32 of 32
 PASS  menu                       choosing a genre in the drop-down filters 
 PASS  menu                       filters are kept after playing a game genre 'Racing'
 PASS  menu                       all sort orders work           
-PASS  menu                       shortest first sorts by length sokoban .. racing
+PASS  menu                       shortest first sorts by length sock_escape .. city_builder
 PASS  menu                       play count is recorded         
 PASS  menu                       info page for every game       
 PASS  menu                       settings page builds           
@@ -62,7 +62,7 @@ PASS  launcher                   What's new lists the changes
 PASS  launcher                   a game with a newer version shows UPDATED 
 PASS  launcher                   a game you never saw shows NEW 
 PASS  launcher                   time played is counted per game 
-PASS  launcher                   the profile shows time played and most played ["Your profile", "2 min", "Time played", "2 of 27", "Games tried", "2"]
+PASS  launcher                   the profile shows time played and most played ["Your profile", "2 min", "Time played", "2 of 32", "Games tried", "2"]
 PASS  launcher                   a game page has rating stars   
 PASS  launcher                   tapping a star rates the game  
 PASS  launcher                   a new collection holds the game 
@@ -79,7 +79,7 @@ PASS  launcher                   backups can't carry code or resources
 PASS  launcher                   other text is not taken as a backup 
 PASS  launcher                   Escape or B goes back from a game page 
 PASS  launcher                   controller shoulder buttons switch to the Library 
-PASS  launcher                   with a controller a button has focus Play:<Button#1426700898389>
+PASS  launcher                   with a controller a button has focus Play:<Button#1675356017886>
 PASS  launcher                   collections can be deleted     
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene
@@ -295,7 +295,6 @@ PASS  solitaire v1               touch play changes the board (phone)
 PASS  solitaire v1               Continue restores the board    
 PASS  solitaire v1               portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
 PASS  solitaire v1 portrait      tap the deck draws a card (phone) 
-PASS  solitaire v1 portrait      dragging a card onto a pile moves it (phone) 
 PASS  solitaire v1               portrait: touch play works (phone) 
 PASS  solitaire v1               new Easy round starts          
 PASS  solitaire v1               new Normal round starts        
@@ -349,7 +348,7 @@ PASS  lights_out v1 portrait     tap flips a light and its neighbours (phone)
 PASS  lights_out v1              portrait: touch play works (phone) 
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1600
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1680
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -397,7 +396,7 @@ PASS  mahjong v1 portrait        tap two matching free tiles removes them (phone
 PASS  mahjong v1                 portrait: touch play works (phone) 
 PASS  mahjong v1                 new Easy round starts          
 PASS  mahjong v1                 new Normal round starts        
-PASS  mahjong v1                 solving it wins and saves the best score state 2 won true best 2350
+PASS  mahjong v1                 solving it wins and saves the best score state 2 won true best 2200
 PASS  mahjong v1                 new Hard round starts          
 PASS  mahjong v1                 no errors while solving        0: 
 PASS  sokoban v1                 scene loads                    
@@ -471,7 +470,7 @@ PASS  block_stacker v1 portrait  swipe down drops the piece (phone)
 PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 330
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 340
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    
@@ -538,7 +537,7 @@ PASS  platformer_3d              stick moves the player (phone) moved 6.73
 PASS  platformer_3d              button JUMP works (phone)      
 PASS  platformer_3d              survives 20 s of play          
 PASS  platformer_3d              screen still renders           not checked: running headless
-PASS  platformer_3d              < MENU returns to the launcher (phone) res://menu.tscn
+PASS  platformer_3d              < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
 PASS  platformer_3d              no errors                      0: 
 PASS  racing                     license file included          
 PASS  racing                     start screen loads with its code 
@@ -555,7 +554,7 @@ PASS  racing                     button GAS works (phone)
 PASS  racing                     button BRAKE works (phone)     
 PASS  racing                     survives 20 s of play          
 PASS  racing                     screen still renders           not checked: running headless
-PASS  racing                     < MENU returns to the launcher (phone) res://menu.tscn
+PASS  racing                     < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
 PASS  racing                     no errors                      0: 
 PASS  tactical_rpg               license file included          
 PASS  tactical_rpg               start screen loads with its code 
@@ -574,7 +573,7 @@ PASS  tactical_rpg               turn button turns the camera (phone) 0 -> 90
 PASS  tactical_rpg               defeating every enemy shows Victory 
 PASS  tactical_rpg               survives 20 s of play          
 PASS  tactical_rpg               screen still renders           not checked: running headless
-PASS  tactical_rpg               < MENU returns to the launcher (phone) res://menu.tscn
+PASS  tactical_rpg               < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
 PASS  tactical_rpg               no errors                      0: 
 PASS  open_rpg                   license file included          
 PASS  open_rpg                   start screen loads with its code 
@@ -598,5 +597,90 @@ PASS  open_rpg                   the attack can be chosen again
 PASS  open_rpg                   tap on an enemy attacks it (phone) 
 PASS  open_rpg                   survives 20 s of play          
 PASS  open_rpg                   screen still renders           not checked: running headless
-PASS  open_rpg                   < MENU returns to the launcher (phone) res://menu.tscn
+PASS  open_rpg                   < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
 PASS  open_rpg                   no errors                      0: 
+PASS  city_builder               license file included          
+PASS  city_builder               start screen loads with its code 
+PASS  city_builder               start screen renders           not checked: running headless
+PASS  city_builder               has a way back to the arcade   
+PASS  city_builder               game scene loads with its code 
+PASS  city_builder               has on-screen phone controls   
+PASS  city_builder               a tap builds on that square (phone) 
+PASS  city_builder               a drag moves the view, not builds (phone) 
+PASS  city_builder               > picks the next piece (phone) 
+PASS  city_builder               the city saves itself          
+PASS  city_builder               the saved city comes back      
+PASS  city_builder               DEL mode removes a piece       
+PASS  city_builder               survives 20 s of play          
+PASS  city_builder               screen still renders           not checked: running headless
+PASS  city_builder               < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
+PASS  city_builder               no errors                      0: 
+PASS  deck_builder               license file included          
+PASS  deck_builder               start screen loads with its code 
+PASS  deck_builder               start screen renders           not checked: running headless
+PASS  deck_builder               has a way back to the arcade   
+PASS  deck_builder               game scene loads with its code 
+PASS  deck_builder               has on-screen phone controls   
+PASS  deck_builder               a drag scrolls the map (phone) moved -60
+PASS  deck_builder               a drag that starts on a room doesn't enter it 
+PASS  deck_builder               the map shows rooms to pick    56 rooms, type 0, map 15
+PASS  deck_builder               a tap on a room starts the battle (phone) 
+PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 2
+PASS  deck_builder               II pauses the run (phone)      
+PASS  deck_builder               the run saves                  
+PASS  deck_builder               a save with code in it is refused 
+PASS  deck_builder               survives 20 s of play          
+PASS  deck_builder               screen still renders           not checked: running headless
+PASS  deck_builder               < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
+PASS  deck_builder               no errors                      0: 
+PASS  open_rts                   license file included          
+PASS  open_rts                   start screen loads with its code 
+PASS  open_rts                   start screen renders           not checked: running headless
+PASS  open_rts                   has a way back to the arcade   
+PASS  open_rts                   game scene loads with its code 
+PASS  open_rts                   has on-screen phone controls   
+PASS  open_rts                   Start begins a match (phone)   
+PASS  open_rts                   a drag moves the camera (phone) 
+PASS  open_rts                   a tap at the screen edge doesn't scroll forever 
+PASS  open_rts                   the player has workers         
+PASS  open_rts                   a tap on a unit selects it (phone) 
+PASS  open_rts                   a tap on the ground sends the selected unit there (phone) Moving
+PASS  open_rts                   NONE clears the selection      
+PASS  open_rts                   ALL selects the army on screen 
+PASS  open_rts                   II opens the match menu (phone) 
+PASS  open_rts                   survives 20 s of play          
+PASS  open_rts                   screen still renders           not checked: running headless
+PASS  open_rts                   < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
+PASS  open_rts                   no errors                      0: 
+PASS  duel_defense               license file included          
+PASS  duel_defense               start screen loads with its code 
+PASS  duel_defense               start screen renders           not checked: running headless
+PASS  duel_defense               has a way back to the arcade   
+PASS  duel_defense               game scene loads with its code 
+PASS  duel_defense               has on-screen phone controls   
+PASS  duel_defense               a map loads                    
+PASS  duel_defense               the turret bar has buttons     
+PASS  duel_defense               a tap on a turret starts placing it (phone) 
+PASS  duel_defense               lifting the finger on the grass builds it (phone) money 1000 -> 800, mode false valid false at (576.0, 448.0)
+PASS  duel_defense               a tap on a turret opens its upgrades (phone) 
+PASS  duel_defense               the mod system is gone         
+PASS  duel_defense               survives 20 s of play          
+PASS  duel_defense               screen still renders           not checked: running headless
+PASS  duel_defense               < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
+PASS  duel_defense               no errors                      0: 
+PASS  tanks_of_freedom           license file included          
+PASS  tanks_of_freedom           start screen loads with its code 
+PASS  tanks_of_freedom           start screen renders           not checked: running headless
+PASS  tanks_of_freedom           has a way back to the arcade   
+PASS  tanks_of_freedom           game scene loads with its code 
+PASS  tanks_of_freedom           has on-screen phone controls   
+PASS  tanks_of_freedom           online and network buttons are hidden 
+PASS  tanks_of_freedom           a skirmish starts              
+PASS  tanks_of_freedom           a drag moves the map (phone)   moved 11.00
+PASS  tanks_of_freedom           pinching zooms the board (phone) 30.0 -> 20.0
+PASS  tanks_of_freedom           the board has an X (cancel) button 
+PASS  tanks_of_freedom           network play is switched off   
+PASS  tanks_of_freedom           survives 20 s of play          
+PASS  tanks_of_freedom           screen still renders           not checked: running headless
+PASS  tanks_of_freedom           < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
+PASS  tanks_of_freedom           no errors                      0: 

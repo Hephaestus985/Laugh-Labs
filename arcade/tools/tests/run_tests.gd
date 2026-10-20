@@ -7,7 +7,8 @@ extends Node
 # Player high scores, saves and settings are backed up first and restored after.
 
 const Games := preload("res://games.gd")
-const USER_FILES := ["settings.cfg", "the_last_knight_save.json", "sock_escape_best.dat", "open_rpg_inventory.tres", "sokoban_level.dat"]
+const USER_FILES := ["settings.cfg", "the_last_knight_save.json", "sock_escape_best.dat", "open_rpg_inventory.tres", "sokoban_level.dat",
+	"city_builder.json", "deck_builder_save.tres", "open_rts_options.tres"]
 
 class ErrorCounter extends Logger:
 	var errors: Array[String] = []
@@ -15,6 +16,10 @@ class ErrorCounter extends Logger:
 		# Jolt (the 3D physics engine) warns when its job queue is briefly full under heavy load,
 		# then waits and carries on. It's inside the engine, not a game bug, so it doesn't count.
 		if file.contains("jolt_job_system"):
+			return
+		# Open RTS bakes its navigation from the map's meshes while loading; the engine notes
+		# that this is slow. A performance note, not a game bug.
+		if (rationale + code).contains("Source geometry parsing for navigation mesh baking"):
 			return
 		errors.append("%s (%s:%d %s)" % [rationale if rationale != "" else code, file, line, function])
 
@@ -424,7 +429,8 @@ func test_menu() -> void:
 	check("menu", "search finds a game by name", cards.get_child_count() == 1 and String(cards.get_child(0).name) == "Card_the_last_knight")
 	m.search = "tower defense"
 	m.fill_cards()
-	check("menu", "search matches descriptions", cards.get_child_count() == 1 and String(cards.get_child(0).name) == "Card_outpost_assault")
+	var found := cards.get_children().map(func(c): return String(c.name))
+	check("menu", "search matches descriptions", found.has("Card_outpost_assault") and found.has("Card_duel_defense") and found.size() == 2, str(found))
 	m.search = "zzzz"
 	m.fill_cards()
 	check("menu", "search with no match shows no cards", cards.get_child_count() == 0)
@@ -443,7 +449,7 @@ func test_menu() -> void:
 	check("menu", "Lab Arcade publisher filter", cards.get_child_count() == Games.LIST.size())
 	m.f_publisher = "Kenney"
 	m.fill_cards()
-	check("menu", "publisher filter (Kenney)", cards.get_child_count() == 2)
+	check("menu", "publisher filter (Kenney)", cards.get_child_count() == Games.EXTERNAL.filter(func(g): return g["publisher"] == "Kenney").size(), "%d cards" % cards.get_child_count())
 	m.f_publisher = ""
 	m.f_genre = "RPG"
 	m.fill_cards()
@@ -1100,17 +1106,22 @@ func test_external(g: Dictionary) -> void:
 
 ## Taps "< MENU" like a player would and checks the launcher comes back cleanly.
 func back_via_menu_button(name: String) -> void:
+	await frames(90)  # let a scene change started by the random taps finish first
 	var cur := get_tree().current_scene
 	var ovs := cur.find_children("*", "TouchOverlay", true, false) if is_instance_valid(cur) and cur != self else []
 	if ovs.is_empty():
 		await end_current()
 		return
 	var ov: TouchOverlay = ovs[0]
-	var menu_rect: Rect2 = ov.buttons.filter(func(b): return b[1] is String and b[1] == "__menu")[0][0]
-	await tap(menu_rect.get_center())
+	var menus: Array = ov.buttons.filter(func(b): return b[1] is String and b[1] == "__menu")
+	if menus.is_empty():
+		# screens without "< MENU" (their own menu leads back): the phone's back button
+		get_tree().root.propagate_notification(NOTIFICATION_WM_GO_BACK_REQUEST)
+	else:
+		await tap((menus[0][0] as Rect2).get_center())
 	await frames(20)
 	var now := get_tree().current_scene
-	check(name, "< MENU returns to the launcher (phone)", is_instance_valid(now) and now.scene_file_path == "res://menu.tscn", str(now.scene_file_path if is_instance_valid(now) else "none"))
+	check(name, "< MENU (or the back button) returns to the launcher (phone)", is_instance_valid(now) and now.scene_file_path == "res://menu.tscn", str(now.scene_file_path if is_instance_valid(now) else "none"))
 	await end_current()
 
 
@@ -1396,6 +1407,12 @@ func tactics_checks(name: String, main: Node) -> void:
 
 ## Plays the tower defense map the way a phone does: taps, drags, buttons.
 func phone_checks(name: String, map: Node) -> void:
+	# games by others can carry their own phone tests (external/<id>/arcade_tests.gd)
+	var hook_path := "res://external/%s/arcade_tests.gd" % name
+	if ResourceLoader.exists(hook_path):
+		await overlay_checks(name, map)
+		await load(hook_path).phone(self, map, name)
+		return
 	if map.has_method("_press"):
 		await overlay_checks(name, map)
 		await rpg_checks(name, map)

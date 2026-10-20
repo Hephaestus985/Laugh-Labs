@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://daoygawgr10g6"]
+
+[ext_resource type="Script" uid="uid://b1mm2yuapawtc" path="res://external/tanks_of_freedom/scenes/abilities/hero/hero.gd" id="1"]
+[ext_resource type="PackedScene" path="res://external/tanks_of_freedom/scenes/abilities/ability.tscn" id="2"]
+
+[node name="hero" instance=ExtResource("2")]
+script = ExtResource("1")

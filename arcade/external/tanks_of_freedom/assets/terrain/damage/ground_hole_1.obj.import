@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dpy0kpts732i"
+path="res://.godot/imported/ground_hole_1.obj-f6e07f6e34a5f4d2ed4fa1efa554d268.mesh"
+
+[deps]
+
+files=["res://.godot/imported/ground_hole_1.obj-f6e07f6e34a5f4d2ed4fa1efa554d268.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/damage/ground_hole_1.obj"
+dest_files=["res://.godot/imported/ground_hole_1.obj-f6e07f6e34a5f4d2ed4fa1efa554d268.mesh", "res://.godot/imported/ground_hole_1.obj-f6e07f6e34a5f4d2ed4fa1efa554d268.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

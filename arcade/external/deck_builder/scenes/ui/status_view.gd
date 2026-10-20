@@ -1,0 +1,41 @@
+class_name DkStatusView
+extends Control
+
+const STATUS_TOOLTIP = preload("res://external/deck_builder/scenes/ui/status_tooltip.tscn")
+
+@onready var status_tooltips: VBoxContainer = %StatusTooltips
+
+
+func _ready() -> void:
+	for tooltip: DkStatusTooltip in status_tooltips.get_children():
+		tooltip.queue_free()
+		
+	DkEvents.status_tooltip_requested.connect(show_view)
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") and visible:
+		hide_view()
+
+
+func show_view(statuses: Array[DkStatus]) -> void:
+	for status: DkStatus in statuses:
+		var new_status_tooltip := STATUS_TOOLTIP.instantiate() as DkStatusTooltip
+		status_tooltips.add_child(new_status_tooltip)
+		new_status_tooltip.status = status
+	show()
+
+
+func hide_view() -> void:
+	for tooltip: DkStatusTooltip in status_tooltips.get_children():
+		tooltip.queue_free()
+	hide()
+
+
+func _on_gui_input(event: InputEvent) -> void:
+	if event.is_action_pressed("deck_left_mouse") and visible:
+		hide_view()
+
+
+func _on_back_button_pressed() -> void:
+	hide_view()

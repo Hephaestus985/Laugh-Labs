@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://c20k2lultync0"
+path="res://.godot/imported/river_plants_5_overtile.obj-860fb0de7ec7e95b1f72f5417dd2ce0d.mesh"
+
+[deps]
+
+files=["res://.godot/imported/river_plants_5_overtile.obj-860fb0de7ec7e95b1f72f5417dd2ce0d.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/grasslands/river_plants_5_overtile.obj"
+dest_files=["res://.godot/imported/river_plants_5_overtile.obj-860fb0de7ec7e95b1f72f5417dd2ce0d.mesh", "res://.godot/imported/river_plants_5_overtile.obj-860fb0de7ec7e95b1f72f5417dd2ce0d.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

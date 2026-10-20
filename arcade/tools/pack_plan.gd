@@ -78,6 +78,8 @@ func _pack_files(dir: String, base: Dictionary) -> Array:
 
 
 func _is_resource(f: String) -> bool:
+	if f.contains("/AssetLicenses/"):
+		return true  # license texts a game shows itself (Duel Defense's About page)
 	return not (f.ends_with(".import") or f.ends_with(".uid") or f.ends_with(".md") or f.get_file().begins_with("LICENSE") or f.ends_with(".txt") or f.get_file() in ["arcade_info.json", "arcade_tests.gd"])
 
 

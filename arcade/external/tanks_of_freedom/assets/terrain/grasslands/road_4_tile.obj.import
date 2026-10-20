@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://dko2j6y1cxkyn"
+path="res://.godot/imported/road_4_tile.obj-c5243535664b42afa2df08db3a96abda.mesh"
+
+[deps]
+
+files=["res://.godot/imported/road_4_tile.obj-c5243535664b42afa2df08db3a96abda.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/grasslands/road_4_tile.obj"
+dest_files=["res://.godot/imported/road_4_tile.obj-c5243535664b42afa2df08db3a96abda.mesh", "res://.godot/imported/road_4_tile.obj-c5243535664b42afa2df08db3a96abda.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

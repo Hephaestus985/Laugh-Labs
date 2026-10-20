@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bhhk45eyniqat"
+path="res://.godot/imported/sand_road_1_tile.obj-a3ee543f30c1972c3ad8528b6967e9af.mesh"
+
+[deps]
+
+files=["res://.godot/imported/sand_road_1_tile.obj-a3ee543f30c1972c3ad8528b6967e9af.mesh"]
+
+source_file="res://external/tanks_of_freedom/assets/terrain/sandlands/sand_road_1_tile.obj"
+dest_files=["res://.godot/imported/sand_road_1_tile.obj-a3ee543f30c1972c3ad8528b6967e9af.mesh", "res://.godot/imported/sand_road_1_tile.obj-a3ee543f30c1972c3ad8528b6967e9af.mesh"]
+
+[params]
+
+generate_tangents=false
+generate_lods=false
+generate_shadow_mesh=false
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false
