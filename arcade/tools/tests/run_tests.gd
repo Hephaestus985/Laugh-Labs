@@ -224,6 +224,8 @@ func spawn(scene_path: String) -> Node:
 func run_all() -> void:
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("only="):  # quick run of some games: only=sudoku,minesweeper
+			if "menu" in OS.get_cmdline_user_args():
+				await test_menu()
 			var ids: PackedStringArray = arg.substr(5).split(",")
 			for g in Games.LIST + Games.EXTERNAL:
 				if g["id"] in ids:
@@ -232,7 +234,7 @@ func run_all() -> void:
 					else:
 						for v in g["versions"]:
 							await test_game(g, v)
-							await puzzle_checks(g, v)
+							await _guarded_puzzle_checks(g, v)
 			return
 	if "external" in OS.get_cmdline_user_args():
 		for g in Games.EXTERNAL:
@@ -244,7 +246,7 @@ func run_all() -> void:
 	for g in Games.LIST:
 		for v in g["versions"]:
 			await test_game(g, v)
-			await puzzle_checks(g, v)
+			await _guarded_puzzle_checks(g, v)
 	await test_knight_flows()
 	for g in Games.EXTERNAL:
 		await test_external(g)
@@ -579,12 +581,26 @@ func test_game(g: Dictionary, v: Dictionary) -> void:
 	check(name, "no errors", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
 
 
+var _puzzle_done := false
+
+
+## A script error inside the checks stops them without failing anything: catch that.
+func _guarded_puzzle_checks(g: Dictionary, v: Dictionary) -> void:
+	_puzzle_done = false
+	var errs := log_counter.errors.size()
+	await puzzle_checks(g, v)
+	if not _puzzle_done:
+		var e := new_errors(errs)
+		check("%s v%d" % [g["id"], v["v"]], "board game checks ran to the end", false, ", ".join(e.slice(0, 2)))
+
+
 ## The calm board games (PuzzleGame): touch play, save and Continue, winning.
 func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
 	var probe: Node = load(v["scene"]).instantiate()
 	var is_puzzle := probe is PuzzleGame
 	probe.free()
 	if not is_puzzle:
+		_puzzle_done = true
 		return
 	var name := "%s v%d" % [g["id"], v["v"]]
 	var errs := log_counter.errors.size()
@@ -598,7 +614,8 @@ func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
 		n.queue_free()
 		return
 	var before := JSON.stringify(n.to_save())
-	await call("play_" + g["id"], n, name)
+	var hooks = load(v["scene"].get_base_dir().get_base_dir() + "/arcade_tests.gd")
+	await hooks.play(self, n, name)
 	await frames(3)
 	var after := JSON.stringify(n.to_save())
 	if n.state == 1:
@@ -628,7 +645,7 @@ func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
 		fits = fits and Rect2(0, 0, 720, 1280).encloses(b[0]) and not (b[0] as Rect2).intersects(np.board_rect)
 	check(name, "portrait: turns with the phone, buttons fit (phone)", fits, "portrait %s, %d buttons" % [np.portrait, np.buttons.size()])
 	var pb := JSON.stringify(np.to_save())
-	await call("play_" + g["id"], np, name + " portrait")
+	await hooks.play(self, np, name + " portrait")
 	await frames(3)
 	check(name, "portrait: touch play works (phone)", np.state != 1 or JSON.stringify(np.to_save()) != pb)
 	np.queue_free()
@@ -644,7 +661,7 @@ func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
 		await frames(2)
 		check(name, "new %s round starts" % ArcadeGame.DIFF_NAMES[d], nd.state == 1 and nd.diff == d)
 		if d == 1:
-			await call("win_" + g["id"], nd)
+			await hooks.win(self, nd)
 			await frames(2)
 			check(name, "solving it wins and saves the best score", nd.state == 2 and nd.won and nd.best > 0 and nd.best == nd.score and not FileAccess.file_exists(nd.save_path()), "state %d won %s best %d" % [nd.state, nd.won, nd.best])
 		nd.queue_free()
@@ -654,332 +671,7 @@ func puzzle_checks(g: Dictionary, v: Dictionary) -> void:
 	DirAccess.remove_absolute("user://%s_save.json" % g["id"])
 	var e := new_errors(errs)
 	check(name, "no errors while solving", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
-
-
-# ---- per-game touch play and a way to win (used by puzzle_checks)
-
-func play_game_2048(n: PuzzleGame, name: String) -> void:
-	var moved_anim := false
-	for d in [Vector2(-300, 0), Vector2(0, 300), Vector2(300, 0), Vector2(0, -300)]:
-		var before := JSON.stringify(n.get("cells"))
-		await touch_swipe(n.get("borigin") + Vector2(n.get("bsize"), n.get("bsize")) * 0.5 - d * 0.5, d)
-		if JSON.stringify(n.get("cells")) != before and not n.get("slides").is_empty():
-			moved_anim = true
-	check(name, "tiles slide with an animation", moved_anim)
-
-
-func win_game_2048(n: PuzzleGame) -> void:
-	var c: Array = n.get("cells")
-	c.fill(0)
-	c[0] = 1024
-	c[1] = 1024
-	n.set("cells", c)
-	n.call("move", Vector2i.LEFT)  # makes 2048; the round goes on
-	await frames(1)
-	# fill the board so no move is left, which ends the round with the 2048 reached
-	var k := 0
-	for i in c.size():
-		c[i] = 2 << (k % 10) if i != 0 else 2048
-		k += 3 if (i % n.get("n")) == 0 else 1
-	var vals := [2, 4, 8, 16, 32, 64, 128, 256, 512]
-	for i in c.size():
-		var x: int = i % int(n.get("n"))
-		var y: int = i / int(n.get("n"))
-		c[i] = vals[(x + 2 * y) % vals.size()] if i != 0 else 2048
-	c[c.size() - 1] = 0
-	n.set("cells", c)
-	n.call("move", Vector2i.RIGHT)
-
-
-func play_sudoku(n: PuzzleGame, name: String) -> void:
-	var grid: Array = n.get("grid")
-	var empty := grid.find(0)
-	var cell_pos: Vector2 = n.ORIGIN + Vector2(empty % 9 + 0.5, empty / 9 + 0.5) * n.CELL
-	await tap(cell_pos)
-	await frames(2)
-	var want: int = n.get("solution")[empty]
-	var pad: Vector2 = n.call("pad_rect", want).get_center()
-	await tap(pad)
-	await frames(2)
-	check(name, "tap a cell, then a number, fills it (phone)", n.get("grid")[empty] == want)
-	var copy: Array = n.get("solution").duplicate()
-	var given: Array = n.get("given")
-	var puzzle := []
-	for i in 81:
-		puzzle.append(copy[i] if given[i] else 0)
-	check(name, "the puzzle has exactly one solution", n._solve(puzzle, 2, false) == 1)
-
-
-func win_sudoku(n: PuzzleGame) -> void:
-	var sol: Array = n.get("solution")
-	var g: Array = sol.duplicate()
-	var last := 0
-	for i in 81:
-		if not n.get("given")[i]:
-			last = i
-	g[last] = 0
-	n.set("grid", g)
-	n.set("sel", last)
-	n.call("put", sol[last])
-
-
-func play_minesweeper(n: PuzzleGame, name: String) -> void:
-	var c: float = n.get("cell")
-	var start_cell: int = 3 * int(n.get("cols")) + 3
-	await tap(n.call("cell_pos", start_cell) + Vector2(c, c) * 0.5)
-	await frames(2)
-	check(name, "first tap opens safe cells (phone)", n.get("open").count(true) > 1 and n.state == 1)
-	# long-press a closed cell to flag it
-	var closed: int = n.get("open").find(false)
-	var p: Vector2 = n.call("cell_pos", closed) + Vector2(c, c) * 0.5
-	var e := InputEventScreenTouch.new()
-	e.position = to_window(p)
-	e.pressed = true
-	Input.parse_input_event(e)
-	await frames(45)
-	var r := InputEventScreenTouch.new()
-	r.position = e.position
-	Input.parse_input_event(r)
-	await frames(3)
-	check(name, "long-press places a flag (phone)", n.get("flag")[closed])
-
-
-func win_minesweeper(n: PuzzleGame) -> void:
-	n.call("reveal", 0)  # places the mines
-	var mine: Array = n.get("mine")
-	var open: Array = n.get("open")
-	for i in mine.size():
-		if not mine[i] and not open[i]:
-			n.call("reveal", i)
-			if n.state != 1:
-				return
-
-
-func play_solitaire(n: PuzzleGame, name: String) -> void:
-	var before: int = n.get("waste").size()
-	await tap(n.call("stock_rect").get_center())
-	await frames(2)
-	check(name, "tap the deck draws a card (phone)", n.get("waste").size() == before + 1)
-	# drag: find a pile top that fits on another pile, or at least drag one and see it come back
-	var moved := false
-	for p in 7:
-		var pile: Array = n.get("piles")[p]
-		var c: int = pile.back()
-		for q in 7:
-			if q != p and n.call("fits_pile", c, q):
-				var from: Vector2 = n.call("card_pos", p, pile.size() - 1) + Vector2(50, 40)
-				var to: Vector2 = n.call("card_pos", q, n.get("piles")[q].size() - 1) + Vector2(50, 90)
-				await touch_swipe(from, to - from)
-				moved = n.get("piles")[q].has(c)
-				break
-		if moved:
-			break
-	if moved:
-		check(name, "dragging a card onto a pile moves it (phone)", true)
-
-
-func win_solitaire(n: PuzzleGame) -> void:
-	var found := [range(0, 13), range(13, 26), range(26, 39), range(39, 51)]
-	n.set("found", found)
-	n.set("piles", [[51], [], [], [], [], [], []])
-	n.set("stock", [])
-	n.set("waste", [])
-	n.call("auto_move", "p0", 0)
-
-
-func play_nonogram(n: PuzzleGame, name: String) -> void:
-	var o: Vector2 = n.get("origin")
-	var c: float = n.get("cell")
-	await tap(o + Vector2(0.5, 0.5) * c)
-	await frames(2)
-	check(name, "tap fills a cell (phone)", n.get("cells")[0] == 1)
-	# drag along the second row paints it
-	await touch_swipe(o + Vector2(0.5, 1.5) * c, Vector2(c * 3, 0))
-	await frames(2)
-	var nn: int = n.get("n")
-	check(name, "drag paints a row (phone)", n.get("cells")[nn] == 1 and n.get("cells")[nn + 3] == 1)
-
-
-func win_nonogram(n: PuzzleGame) -> void:
-	var tgt: Array = n.get("target")
-	var cells: Array = tgt.map(func(v): return 1 if v else 0)
-	var last := tgt.rfind(true)
-	cells[last] = 0
-	n.set("cells", cells)
-	n.call("_hint")
-
-
-func play_lights_out(n: PuzzleGame, name: String) -> void:
-	var o: Vector2 = n.get("origin")
-	var c: float = n.get("cell")
-	var before: Array = n.get("lit").duplicate()
-	await tap(o + Vector2(1.5, 1.5) * c)
-	await frames(2)
-	var nn: int = n.get("n")
-	var i := nn + 1
-	var after: Array = n.get("lit")
-	check(name, "tap flips a light and its neighbours (phone)", after[i] != before[i] and after[i - 1] != before[i - 1] and after[i + nn] != before[i + nn] and after[i + 1] != before[i + 1] and after[i - nn] != before[i - nn])
-
-
-func win_lights_out(n: PuzzleGame) -> void:
-	var need: Array = n.get("need")
-	for i in need.size():
-		if need[i] and n.state == 1:
-			n.call("tap_cell", i)
-
-
-func play_sliding_puzzle(n: PuzzleGame, name: String) -> void:
-	var tiles: Array = n.get("tiles")
-	var nn: int = n.get("n")
-	var g := tiles.find(0)
-	var pick := g - 1 if g % nn > 0 else g + 1
-	var o: Vector2 = n.get("origin")
-	var c: float = n.get("cell")
-	await tap(o + Vector2(pick % nn + 0.5, pick / nn + 0.5) * c)
-	await frames(2)
-	check(name, "tap a tile next to the gap slides it (phone)", n.get("tiles")[pick] == 0)
-
-
-func win_sliding_puzzle(n: PuzzleGame) -> void:
-	var nn: int = n.get("n")
-	var tiles := []
-	for i in nn * nn - 1:
-		tiles.append(i + 1)
-	tiles.append(0)
-	# one step away from solved: the gap one to the left
-	tiles[nn * nn - 1] = nn * nn - 1
-	tiles[nn * nn - 2] = 0
-	n.set("tiles", tiles)
-	n.call("slide", nn * nn - 1)
-
-
-func play_mahjong(n: PuzzleGame, name: String) -> void:
-	var pair: Array = n.call("_pairs")
-	if pair.is_empty():
-		n.call("_shuffle")
-		pair = n.call("_pairs")
-	var left: int = n.call("_alive").size()
-	for i in pair:
-		await tap(n.call("tile_rect", i).get_center())
-		await frames(2)
-	check(name, "tap two matching free tiles removes them (phone)", n.call("_alive").size() == left - 2)
-
-
-func win_mahjong(n: PuzzleGame) -> void:
-	# the deal is built to be clearable: keep taking pairs (shuffle if stuck)
-	var guard := 0
-	while n.state == 1 and guard < 300:
-		guard += 1
-		var pair: Array = n.call("_pairs")
-		if pair.is_empty():
-			n.call("_shuffle")
-			continue
-		n.call("pick", pair[0])
-		n.call("pick", pair[1])
-
-
-func play_sokoban(n: PuzzleGame, name: String) -> void:
-	var p0: int = n.get("player")
-	var w: int = n.get("w")
-	var o: Vector2 = n.get("origin")
-	var c: float = n.get("cell")
-	# swipe in every direction until one step works
-	for d in [Vector2(200, 0), Vector2(-200, 0), Vector2(0, 200), Vector2(0, -200)]:
-		await touch_swipe(Vector2(500, 380), d)
-		await frames(2)
-		if n.get("player") != p0:
-			break
-	check(name, "swipe walks the worker (phone)", n.get("player") != p0)
-
-
-func win_sokoban(n: PuzzleGame) -> void:
-	n.set("boxes", n.get("goals").duplicate())
-	n.call("_check")
-
-
-func play_flow(n: PuzzleGame, name: String) -> void:
-	# drag along the first solution pipe
-	var sol: Array = n.get("solution")[0]
-	var nn: int = n.get("n")
-	var o: Vector2 = n.get("origin")
-	var c: float = n.get("cell")
-	var pts := sol.map(func(i): return o + Vector2(i % nn + 0.5, i / nn + 0.5) * c)
-	var e := InputEventScreenTouch.new()
-	e.position = to_window(pts[0])
-	e.pressed = true
-	Input.parse_input_event(e)
-	await frames(2)
-	for k in range(1, pts.size()):
-		var d := InputEventScreenDrag.new()
-		d.position = to_window(pts[k])
-		Input.parse_input_event(d)
-		await frames(2)
-	var r := InputEventScreenTouch.new()
-	r.position = to_window(pts.back())
-	Input.parse_input_event(r)
-	await frames(3)
-	check(name, "dragging from a dot to its partner connects them (phone)", n.call("pipe_done", 0))
-
-
-func win_flow(n: PuzzleGame) -> void:
-	var sol: Array = n.get("solution")
-	var paths := []
-	for k in sol.size():
-		paths.append(sol[k].duplicate() if k > 0 else [])
-	n.set("paths", paths)
-	n.call("_hint")
-
-
-func play_block_stacker(n: PuzzleGame, name: String) -> void:
-	var p0: Vector2i = n.get("pos")
-	await touch_swipe(Vector2(500, 300), Vector2(-130, 0))
-	await frames(2)
-	check(name, "dragging sideways slides the piece (phone)", n.get("pos").x < p0.x)
-	await touch_swipe(Vector2(500, 200), Vector2(0, 260))
-	await frames(3)
-	check(name, "swipe down drops the piece (phone)", n.get("grid").filter(func(v): return v != "").size() == 4)
-
-
-func win_block_stacker(n: PuzzleGame) -> void:
-	var g: Array = n.get("grid")
-	g.fill("")
-	for x in 9:
-		g[19 * 10 + x] = "T"
-	n.set("grid", g)
-	n.set("lines", int(n.get("target")) - 1)
-	n.set("cells", [Vector2i(0, 0), Vector2i(0, 1), Vector2i(0, 2), Vector2i(0, 3)])
-	n.set("piece", "I")
-	n.set("pos", Vector2i(9, 0))
-	n.call("hard_drop")
-	# the target is reached; the round goes on until the stack tops out
-	for k in 300:
-		if n.state != 1:
-			break
-		n.call("hard_drop")
-
-
-func play_connect_four(n: PuzzleGame, name: String) -> void:
-	var o: Vector2 = n.ORIGIN
-	await tap(o + Vector2(3.5 * n.CELL, 3 * n.CELL))
-	await frames(2)
-	check(name, "tap a column drops a disc (phone)", n.get("board")[5 * 7 + 3] == 1)
-	for k in 120:
-		if n.get("turn") == 1:
-			break
-		await frames(1)
-	check(name, "the computer answers", n.get("board").filter(func(v): return v == 2).size() == 1)
-
-
-func win_connect_four(n: PuzzleGame) -> void:
-	var b: Array = n.get("board")
-	b.fill(0)
-	for c in 3:
-		b[5 * 7 + c] = 1
-	b[4 * 7 + 0] = 2
-	b[4 * 7 + 1] = 2
-	n.set("board", b)
-	n.set("turn", 1)
-	n.call("play", 3, 1)
+	_puzzle_done = true
 
 
 func test_knight_flows() -> void:

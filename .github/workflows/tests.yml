@@ -1,0 +1,39 @@
+# Runs the Lab Arcade tests (no window, no sound) on every push to main and on
+# pull requests. The APK itself is built and signed on John's PC (the signing key
+# stays there); this only checks that every game still works.
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # tags, so only the changed games are tested
+      - name: Get Godot 4.7.2
+        run: |
+          curl -sSL -o godot.zip https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip
+          unzip -q godot.zip
+          mv Godot_v4.7.2-stable_linux.x86_64 godot
+          chmod +x godot
+      - name: Check the game catalog
+        run: python3 -I arcade/tools/catalog.py --check
+      - name: Import assets
+        run: ./godot --headless --path arcade --import || true
+      - name: Run tests
+        run: |
+          export GODOT="$PWD/godot"
+          OUT="$PWD/test-report" arcade/tools/test.sh $(python3 -I arcade/tools/changed.py)
+      - name: Keep the report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-report/

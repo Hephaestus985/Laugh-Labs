@@ -2,9 +2,9 @@
 
 Silly little games, all in one Android app: **Lab Arcade**.
 
-**Install on your phone:** [LabArcade.apk](https://github.com/Hephaestus985/Laugh-Labs/raw/main/apks/LabArcade.apk). Open it and allow installs from your browser if Android asks. Installing a newer version updates the app and keeps your high scores.
+**Install on your phone:** [LabArcade.apk](https://github.com/Hephaestus985/Laugh-Labs/raw/downloads/apks/LabArcade.apk). Open it and allow installs from your browser if Android asks. Installing a newer version updates the app and keeps your high scores.
 
-Games are downloaded inside the app the first time you play them (from [packs/](packs/), checked against a fingerprint built into the app), then work offline. An app update only downloads a game again if that game changed.
+Games are downloaded inside the app the first time you play them (from the [downloads branch](https://github.com/Hephaestus985/Laugh-Labs/tree/downloads), checked against a fingerprint built into the app), then work offline. An app update only downloads a game again if that game changed.
 
 ## Games
 | Game | What it is |
@@ -50,11 +50,28 @@ They live in `arcade/external/<game>/` with their licenses and a `SECURITY_REVIE
 Every game must be fully playable with touch only: no keyboard, no mouse wheel, no hover, no right-click. Lab games use the on-screen stick and buttons from `arcade/common/arcade_game.gd`; games by others get on-screen buttons and touch fixes (marked `[Lab Arcade]`). The tests check this by playing with simulated phone touches on a scaled, phone-sized screen.
 
 ## Tests
-`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (556 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
+`arcade/tools/tests/run_tests.tscn` checks the menu and every version of every game (555 checks): the scene loads with its code, the title screen draws, a tap starts the game, 20 seconds of random play without a single error, the screen still draws, high scores save, the menu's difficulty reaches the game, and there's a way back to the menu. The Last Knight also gets all 5 levels, the 3 boss phases, the ending, game over, Continue and New game.
 
 Run them without a window or sound (`menu` or `external` for a quick run, `VISUAL=1` to also check drawing in an off-screen window):
 ```bash
 arcade/tools/test.sh
 ```
 `arcade/tools/build_apk.sh` builds the game packs that changed (`arcade/tools/packs.py`, unchanged packs keep their exact bytes), the launcher-only APK and runs the same tests headless (no windows) on an exported build; `VISUAL=1` also checks that screens draw (the way the phone app is built); it stops with an error if any test fails. Your own high scores and saves are backed up and restored around the tests. Latest results: `arcade/tools/tests/last_report.txt`.
+
+## Repository layout
+- `main` (this branch): source code, version history and tags. No build files, so it stays small as games are added.
+- `downloads`: the APK and one download pack per game version. It is a single commit that is rewritten on every release, so old builds don't pile up.
+- `arcade/games/<id>/`: a game made for the arcade: `arcade_info.json` (name, description, versions...), `arcade_tests.gd` (its phone tests, for board games) and one folder per version (`v1/`, `v2/`...).
+- `arcade/external/<id>/`: a game by others, the same way, plus its license and `SECURITY_REVIEW.md`.
+- `arcade/catalog.json`: all `arcade_info.json` files joined (made by `arcade/tools/catalog.py`, which also checks them). The app reads this.
+
+## Adding a game
+1. Make `arcade/games/<id>/v1/` with `game.tscn` (extend `common/arcade_game.gd`, or `common/puzzle_game.gd` for board and puzzle games: saves, Continue, difficulty, portrait and buttons come for free).
+2. Copy an `arcade_info.json` from another game, change it, and give it the next `order` number.
+3. For a puzzle game, add `arcade_tests.gd` with `play()` (touch play) and `win()` (see `games/sudoku/`).
+4. `arcade/tools/test.sh only=<id>` to try it (no window, no sound), then `arcade/tools/build_apk.sh` and `arcade/tools/publish.sh "<message>" <id>-v1`.
+
+A game by others: clone it somewhere isolated, review it (`SECURITY_REVIEW.md`), import with `python3 -I arcade/tools/import_external.py <checkout> <id>`, merge its project settings by hand and add `arcade_info.json`.
+
+The build only rebuilds the downloads of games that changed and only tests what changed since the last release (plus the launcher and a few other games as a spot check); `FULL=1 arcade/tools/build_apk.sh` tests everything.
 

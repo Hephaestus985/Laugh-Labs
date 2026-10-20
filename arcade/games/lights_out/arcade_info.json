@@ -1,0 +1,24 @@
+{
+	"order": 16,
+	"id": "lights_out",
+	"about": "Every tap flips a light and the four next to it. Turn the whole board dark in as few moves as you can. Puzzles always have a solution. Easy 4x4, Normal 5x5, Hard 6x6.",
+	"controls": "Tap a light. Undo, Hint and Restart buttons on the right.",
+	"save_file": "user://lights_out_save.json",
+	"length": "1-5 min per board (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Lights Out",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Tap a light to flip it and its neighbours. Turn them all off.",
+	"color": "#d9cc59",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/lights_out/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

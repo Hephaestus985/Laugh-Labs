@@ -1,0 +1,26 @@
+{
+	"order": 5,
+	"id": "bend_it_like_einstein",
+	"about": "Photons refuse to turn, so you summon a pocket black hole to bend them into the fiber. Don't let them fall in, and watch out for the goose, the monolith and the nebula.",
+	"controls": "Phone: touch and hold where the black hole should be. PC: hold the mouse, or move with arrows and hold SPACE.",
+	"length": "60 s round, 5 levels",
+	"effort": "Web effort 4 of 8: Polished",
+	"godot_time": "~4 min",
+	"name": "Bend It Like Einstein",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Hold to summon a pocket black hole and bend photons into the fiber.",
+	"color": "#404d8c",
+	"versions": [
+		{
+			"v": 2,
+			"date": "2026-10-19",
+			"scene": "res://games/bend_it_like_einstein/v2/game.tscn",
+			"notes": "Godot remake of web v2: difficulty setting, nebula fog level."
+		}
+	],
+	"web": [
+		"v1 (2026-10-18): original",
+		"v2 (2026-10-19): difficulty setting, real fog level, broader jokes"
+	]
+}

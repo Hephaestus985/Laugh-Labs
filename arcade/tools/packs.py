@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 """Split Lab Arcade into a small launcher APK and one download pack per game version.
 
-Usage (from anywhere): python3 -I arcade/tools/packs.py plan|presets|build|restore [--linux key,key]
+Usage (from anywhere): python3 -I arcade/tools/packs.py plan|build|prune|ensure|restore [--linux key,key]
 
   plan     ask Godot which files the launcher needs (tools/pack_plan.gd) -> builds/pack_plan.json
   build    export every pack that changed (Android), write packs/manifest.json and
            arcade/packs.json (the copy the app trusts), then set up the export presets
            so the APK only holds the launcher
+  prune    keep only the packs the newest app and the app before it use
+  ensure   make sure builds/downloads holds the "downloads" branch (APK + packs)
   restore  put export_presets.cfg back the way it is in git
+
+Downloads (the APK and the packs) live on the "downloads" branch, checked out at
+builds/downloads. That branch is one commit that tools/publish.sh rewrites on every
+release, so old builds don't pile up in the repository's history.
 
 A pack is only rebuilt when its source changed: the "src" fingerprint covers the
 game's files (and their .import settings) plus the Godot version. An unchanged
@@ -18,7 +24,8 @@ import hashlib, json, os, re, shutil, subprocess, sys
 
 ARCADE = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 ROOT = os.path.dirname(ARCADE)
-PACKS = os.path.join(ROOT, "packs")
+DOWNLOADS = os.path.join(ROOT, "builds", "downloads")
+PACKS = os.path.join(DOWNLOADS, "packs")
 BUILDS = os.path.join(ROOT, "builds")
 PLAN = os.path.join(BUILDS, "pack_plan.json")
 PRESETS = os.path.join(ARCADE, "export_presets.cfg")
@@ -148,8 +155,41 @@ def export_pack(preset, out_path, base_files, files, linux_files=None):
         sys.exit("pack export failed for %s:\n%s%s" % (out_path, r.stdout[-2000:], r.stderr[-2000:]))
 
 
+def ensure():
+    """Check out the downloads branch at builds/downloads (it caches the built packs)."""
+    if os.path.exists(os.path.join(DOWNLOADS, ".git")):
+        return
+    os.makedirs(os.path.dirname(DOWNLOADS), exist_ok=True)
+    git = ["git", "-C", ROOT]
+    subprocess.run(git + ["fetch", "origin", "downloads"], capture_output=True)
+    have_local = subprocess.run(git + ["rev-parse", "--verify", "downloads"], capture_output=True).returncode == 0
+    have_remote = subprocess.run(git + ["rev-parse", "--verify", "origin/downloads"], capture_output=True).returncode == 0
+    if have_local:
+        subprocess.run(git + ["worktree", "add", DOWNLOADS, "downloads"], check=True)
+    elif have_remote:
+        subprocess.run(git + ["worktree", "add", "-b", "downloads", DOWNLOADS, "origin/downloads"], check=True)
+    else:
+        subprocess.run(git + ["worktree", "add", "--orphan", "-b", "downloads", DOWNLOADS], check=True)
+    os.makedirs(PACKS, exist_ok=True)
+    os.makedirs(os.path.join(DOWNLOADS, "apks"), exist_ok=True)
+
+
+def prune():
+    """Keep the packs of the new app (arcade/packs.json) and of the previous one
+    (builds/downloads/packs.json, still the old list until publish copies the new one)."""
+    keep = set()
+    for path in (os.path.join(ARCADE, "packs.json"), os.path.join(DOWNLOADS, "packs.json")):
+        if os.path.exists(path):
+            keep |= {m["file"] for m in json.load(open(path)).values()}
+    for f in os.listdir(PACKS):
+        if f.endswith(".pck") and f not in keep:
+            os.remove(os.path.join(PACKS, f))
+            print("removed old pack", f)
+
+
 def build(linux_keys):
     restore()  # a crashed earlier run may have left generated presets behind
+    ensure()
     p = plan()
     version = godot_version()
     os.makedirs(PACKS, exist_ok=True)
@@ -172,11 +212,6 @@ def build(linux_keys):
         shutil.move(tmp, os.path.join(PACKS, name))
         manifest[key] = {"file": name, "sha256": sha, "size": os.path.getsize(os.path.join(PACKS, name)), "src": src, "scene": info["scene"], "uids": uids_of(files)}
         print("built      %-28s %s (%.1f MB)" % (key, name, manifest[key]["size"] / 1e6))
-    # drop pack files no longer in the manifest
-    keep = {m["file"] for m in manifest.values()}
-    for f in os.listdir(PACKS):
-        if f.endswith(".pck") and f not in keep:
-            os.remove(os.path.join(PACKS, f))
     json.dump(manifest, open(mpath, "w"), indent=1, sort_keys=True)
     app = {k: {"file": v["file"], "sha256": v["sha256"], "size": v["size"], "scene": v["scene"], "uids": v.get("uids", {})} for k, v in manifest.items()}
     json.dump(app, open(os.path.join(ARCADE, "packs.json"), "w"), indent=1, sort_keys=True)
@@ -203,5 +238,9 @@ if __name__ == "__main__":
         build(linux)
     elif cmd == "restore":
         restore()
+    elif cmd == "prune":
+        prune()
+    elif cmd == "ensure":
+        ensure()
     else:
         sys.exit(__doc__)

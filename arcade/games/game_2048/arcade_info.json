@@ -1,0 +1,24 @@
+{
+	"order": 11,
+	"id": "game_2048",
+	"about": "The classic sliding-number puzzle: every swipe slides all tiles, equal tiles merge into their sum and a new tile appears. Make a 2048 tile, then keep going for a high score. Easy has a 5x5 board and unlimited undo, Normal 4x4 with 3 undos, Hard 4x4 with no undo and more 4s.",
+	"controls": "Swipe anywhere on the board. Undo and New game buttons on the right. PC: arrow keys or WASD, U to undo.",
+	"save_file": "user://game_2048_save.json",
+	"length": "5-20 min per game (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "2048",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Swipe to slide numbered tiles; equal tiles merge. Reach 2048.",
+	"color": "#d9a640",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/game_2048/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

@@ -11,7 +11,7 @@ extends RefCounted
 # changed. Unchanged packs are rebuilt byte for byte the same (tools/packs.py
 # skips them), so their fingerprint matches and the copy on the phone is kept.
 
-const URL := "https://raw.githubusercontent.com/Hephaestus985/Laugh-Labs/main/packs/"
+const URL := "https://raw.githubusercontent.com/Hephaestus985/Laugh-Labs/downloads/packs/"
 const DIR := "user://packs"
 const STATE := "user://packs/state.json"
 

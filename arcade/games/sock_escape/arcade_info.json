@@ -1,0 +1,24 @@
+{
+	"order": 1,
+	"id": "sock_escape",
+	"about": "A runaway sock flees the washing machine through the laundry room: rubber ducks, soap bars, cats, bubbles and a hairdryer. It speeds up every second.",
+	"controls": "Phone: tap the right side to jump (again for a double jump), hold the left side to duck. PC: SPACE / up to jump, down to duck.",
+	"length": "1-3 min per run (endless, gets faster)",
+	"effort": "Original for the arcade",
+	"godot_time": "~10 min",
+	"name": "Sock Escape",
+	"publisher": "Lab Arcade",
+	"genre": "Runner",
+	"tagline": "A sock flees the washing machine. Jump, duck, survive the Dryer of Doom.",
+	"color": "#4d8cd9",
+	"best_file": "user://sock_escape_best.dat",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/sock_escape/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

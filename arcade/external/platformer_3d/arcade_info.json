@@ -1,0 +1,28 @@
+{
+	"order": 24,
+	"id": "platformer_3d",
+	"name": "3D Platformer",
+	"publisher": "Kenney",
+	"genre": "Platformer",
+	"tagline": "Run, double-jump and collect coins across floating 3D platforms.",
+	"about": "A small, polished 3D platformer by Kenney: run across floating islands, double-jump between platforms, break bricks from below, ride falling platforms and collect every coin. Fall off and you start again.",
+	"controls": "Drag on the left half to walk, JUMP (tap again in the air for a double jump), < and > turn the camera, + and - zoom. PC: WASD, space, arrow keys.",
+	"length": "5-10 min: one level",
+	"effort": "Open-source starter kit by Kenney",
+	"credit": "Starter Kit 3D Platformer by Kenney (kenney.nl), github.com/KenneyNL/Starter-Kit-3D-Platformer. Code and art: MIT license. Added to Lab Arcade with touch controls and a back button.",
+	"godot_time": "~15 min to review and add",
+	"color": "#4d8cbf",
+	"no_difficulty": true,
+	"no_score": true,
+	"aspect": "expand",
+	"main": "res://external/platformer_3d/scenes/main.tscn",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://external/platformer_3d/scenes/main.tscn",
+			"notes": "Kenney's Starter Kit 3D Platformer (commit 3fa8a04, 2026-03-12), security-reviewed, with an on-screen stick and buttons."
+		}
+	],
+	"web": []
+}

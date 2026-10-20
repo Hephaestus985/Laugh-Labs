@@ -1,0 +1,24 @@
+{
+	"order": 19,
+	"id": "sokoban",
+	"about": "The warehouse puzzle: walk around and push crates onto the marked spots. Crates can only be pushed, one at a time. Every level is built backwards from the solved warehouse, so it can always be solved, and each solved level unlocks a bigger one. Easy has 2 crates, Normal 3, Hard 4.",
+	"controls": "Swipe to take one step (and push), or tap a square to walk there. Undo, Restart and Skip level buttons on the right. PC: arrow keys, U to undo, R to restart.",
+	"save_file": "user://sokoban_save.json",
+	"length": "1-10 min per level, endless levels (saves progress)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Sokoban",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Push every crate onto a target. You can push, never pull.",
+	"color": "#99734d",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/sokoban/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

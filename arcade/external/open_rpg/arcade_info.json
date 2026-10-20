@@ -1,0 +1,29 @@
+{
+	"order": 27,
+	"id": "open_rpg",
+	"name": "Open RPG",
+	"publisher": "GDQuest",
+	"genre": "RPG",
+	"tagline": "A little pixel-art RPG: explore a town, solve a puzzle, fight in turn-based battles.",
+	"about": "A short JRPG-style adventure by GDQuest: a small robot wakes up in a town, helps a ghost in the woods, talks to the townsfolk, collects tokens for an adoring fan, opens chests and doors, solves a wand puzzle and fights turn-based battles with a party of animals.",
+	"controls": "Tap where to walk, tap people and objects to talk or use them, tap to continue a conversation. In battle tap an action, then tap the enemy (or friend) to use it on. BACK undoes a choice. PC: arrow keys / WASD, space, mouse, Esc.",
+	"length": "20-30 min: one short story",
+	"effort": "Open-source demo by GDQuest and contributors",
+	"credit": "Godot Open RPG by GDQuest and contributors, github.com/gdquest-demos/godot-open-rpg. Code MIT, art and music by the authors listed in CREDITS.md. Uses Dialogic 2 (MIT). Added to Lab Arcade with tap-to-pick targets, a BACK button and a back-to-arcade button.",
+	"godot_time": "~1.5 h to review and add",
+	"color": "#599966",
+	"no_difficulty": true,
+	"no_score": true,
+	"aspect": "expand",
+	"main": "res://external/open_rpg/lab_arcade_main.tscn",
+	"park": "res://external/open_rpg/lab_arcade_park.gd",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://external/open_rpg/lab_arcade_main.tscn",
+			"notes": "Godot Open RPG (commit d59f2f7, 2026-10-13) with Dialogic 2, security-reviewed, with tap controls for battles and a back button."
+		}
+	],
+	"web": []
+}

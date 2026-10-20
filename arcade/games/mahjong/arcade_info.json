@@ -1,0 +1,24 @@
+{
+	"order": 18,
+	"id": "mahjong",
+	"about": "Remove matching pairs of tiles. A tile is free when nothing lies on top of it and its left or right side is open. Easy has fewer tiles and layers. Every deal is built so it can be solved.",
+	"controls": "Tap two matching free tiles. Hint, Shuffle and Undo buttons on the right.",
+	"save_file": "user://mahjong_save.json",
+	"length": "5-15 min per stack (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Mahjong Solitaire",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Match pairs of free tiles until the stack is gone.",
+	"color": "#bf4d40",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/mahjong/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

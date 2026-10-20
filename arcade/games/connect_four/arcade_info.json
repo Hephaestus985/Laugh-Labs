@@ -1,0 +1,24 @@
+{
+	"order": 22,
+	"id": "connect_four",
+	"about": "Drop your discs into the 7 columns and line up four in a row, across, down or diagonally, before the computer does. Easy plays loosely, Normal thinks a few moves ahead, Hard looks deep.",
+	"controls": "Tap a column to drop a disc. Undo and New game buttons on the right.",
+	"save_file": "user://connect_four_save.json",
+	"length": "2-5 min per game (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Connect Four",
+	"publisher": "Lab Arcade",
+	"genre": "Board",
+	"tagline": "Drop discs and get four in a row before the computer does.",
+	"color": "#d94d4d",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/connect_four/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

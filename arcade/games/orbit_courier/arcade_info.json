@@ -1,0 +1,25 @@
+{
+	"order": 6,
+	"id": "orbit_courier",
+	"about": "Deliver party invitations across the galaxy by slingshotting between moving planets. Let go of your orbit at the right moment. You have to planet ahead.",
+	"controls": "Tap anywhere or press SPACE to let go of the orbit.",
+	"length": "2-4 min per run (endless)",
+	"effort": "Web effort 7 of 8: Studio (built and playtested)",
+	"godot_time": "~3 min",
+	"name": "Orbit Courier",
+	"publisher": "Lab Arcade",
+	"genre": "Arcade",
+	"tagline": "Slingshot between moving planets to deliver party invitations.",
+	"color": "#594099",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/orbit_courier/v1/game.tscn",
+			"notes": "Godot remake of the Laugh Lab game, with a difficulty setting."
+		}
+	],
+	"web": [
+		"v1 (2026-10-18): original"
+	]
+}

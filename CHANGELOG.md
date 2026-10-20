@@ -2,6 +2,16 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.20 (2026-10-20)
+- Set up to scale (still one repository):
+  - each game describes itself in its own folder (`arcade_info.json`); `tools/catalog.py` joins and checks them into `catalog.json`, which the app reads. Adding a game = adding its folder (see "Adding a game" in the README)
+  - board games keep their phone tests in their own folder (`arcade_tests.gd`)
+  - the APK and the game downloads moved to the `downloads` branch, one commit rewritten per release, so the main history stops growing with builds. New install link: https://github.com/Hephaestus985/Laugh-Labs/raw/downloads/apks/LabArcade.apk
+  - builds only rebuild changed game downloads and only test what changed since the last release (plus the launcher and a rotating spot check of 3 games); `FULL=1` tests everything
+  - the tests run on GitHub on every push (`.github/workflows/tests.yml`)
+  - `tools/publish.sh` publishes a release in one step
+- A crashed set of board-game checks now fails the build instead of passing quietly
+
 ## Lab Arcade 1.19 (2026-10-20)
 - Games are now downloads: the app itself is small (the launcher), and each game is fetched from github.com/Hephaestus985/Laugh-Labs (packs/) the first time you play it, then works offline. Cards show "Get" with the size; Settings has "Download all" and "Delete all downloads"; a game's Info page can delete its download
 - Safe: the app only installs a download whose SHA-256 fingerprint matches the list built into that app version

@@ -1,0 +1,24 @@
+{
+	"order": 15,
+	"id": "nonogram",
+	"about": "Picross: the numbers next to each row and column tell how many filled cells there are, in order. Fill the right cells to reveal a picture. Easy 5x5, Normal 8x8, Hard 10x10.",
+	"controls": "Tap a cell to fill it, long-press or Cross mode to mark it empty. Drag to fill a line. Hint and Undo buttons on the right.",
+	"save_file": "user://nonogram_save.json",
+	"length": "3-15 min per picture (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Nonogram",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Fill the grid from the number clues to reveal a hidden picture.",
+	"color": "#b3668c",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/nonogram/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

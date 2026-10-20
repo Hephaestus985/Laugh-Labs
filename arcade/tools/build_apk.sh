@@ -7,10 +7,12 @@ set -e
 cd "$(dirname "$0")/.."
 GODOT="flatpak run --filesystem=home --filesystem=/tmp org.godotengine.Godot"
 rm -rf .godot/exported
-# Games are downloads: build the packs that changed (packs/ + packs/manifest.json)
+# Games are downloads: build the packs that changed (into builds/downloads, the
+# "downloads" branch)
 # and set the export presets so the APK holds only the launcher. Put the presets
 # back afterwards, whatever happens.
 trap 'python3 -I tools/packs.py restore' EXIT
+python3 -I tools/catalog.py
 python3 -I tools/packs.py build --linux sudoku/v1,racing/v1
 source <(sed 's/^/K_/' ~/Android/keys/key.txt)
 mkdir -p ../builds/linux ../builds/linuxbase
@@ -24,7 +26,10 @@ OUT=${1:-/tmp/labarcade-tests}
 mkdir -p "$OUT"
 # Headless by default so no game windows pop up; VISUAL=1 also checks drawing.
 HEADLESS="--headless"; [ "${VISUAL:-0}" = "1" ] && HEADLESS=""
-timeout 1200 ../builds/linux/LabArcade.x86_64 $HEADLESS --audio-driver Dummy --fixed-fps 60 -- "$OUT" > "$OUT/log.txt" 2>&1 || true
+# Only test what changed since the last release (FULL=1 tests everything).
+TEST_ARGS=$(python3 -I tools/changed.py)
+echo "Tests: ${TEST_ARGS:-everything}"
+timeout 1200 ../builds/linux/LabArcade.x86_64 $HEADLESS --audio-driver Dummy --fixed-fps 60 -- "$OUT" $TEST_ARGS > "$OUT/log.txt" 2>&1 || true
 grep -E "^FAIL|^TESTS|SCRIPT ERROR" "$OUT/log.txt" || true
 if ! grep -q "^TESTS: .*, 0 failed" "$OUT/log.txt"; then
   echo "TESTS FAILED - see $OUT/report.txt"
@@ -38,4 +43,6 @@ if ! grep -q "^PACKTESTS: .*, 0 failed" "$OUT/pack_log.txt"; then
   echo "PACK TESTS FAILED - see $OUT/pack_report.txt"
   exit 1
 fi
+cp "$OUT/report.txt" tools/tests/last_report.txt
+cp "$OUT/pack_report.txt" tools/tests/last_pack_report.txt
 echo "All tests passed. Report: $OUT/report.txt"

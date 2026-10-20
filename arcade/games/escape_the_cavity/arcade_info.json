@@ -1,0 +1,26 @@
+{
+	"order": 4,
+	"id": "escape_the_cavity",
+	"about": "You are a photon trapped in a VCSEL, and the only way out is to hop across Bragg mirrors while Reviewer 2 sweeps the room with a laser pointer. Survive 72 seconds and 6 levels.",
+	"controls": "Phone: drag on the left half to move, JUMP button to jump. PC: arrows to move, SPACE or up to jump.",
+	"length": "72 s round, 6 levels",
+	"effort": "Web effort 4 of 8: Polished",
+	"godot_time": "~5 min",
+	"name": "Escape the Cavity",
+	"publisher": "Lab Arcade",
+	"genre": "Platformer",
+	"tagline": "You're a photon stuck in a laser. Hop the mirrors, grab carriers, survive 6 levels.",
+	"color": "#cc4d6b",
+	"versions": [
+		{
+			"v": 2,
+			"date": "2026-10-19",
+			"scene": "res://games/escape_the_cavity/v2/game.tscn",
+			"notes": "Godot remake of web v2: difficulty setting, 6 levels with the Lab Cat."
+		}
+	],
+	"web": [
+		"v1 (2026-10-18): original",
+		"v2 (2026-10-19): difficulty setting, 6 levels with a new Lab Cat, broader jokes"
+	]
+}

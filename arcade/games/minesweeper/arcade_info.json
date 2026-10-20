@@ -1,0 +1,24 @@
+{
+	"order": 13,
+	"id": "minesweeper",
+	"about": "Open every cell that hides no mine. Each number counts the mines around it. Easy is 10x7 with 10 mines, Normal 14x9 with 22, Hard 16x10 with 35. The first tap is always safe.",
+	"controls": "Tap to open, long-press or Flag mode to flag a mine. Tap a number whose mines are flagged to open the rest around it. PC: click, right-click to flag.",
+	"save_file": "user://minesweeper_save.json",
+	"length": "3-10 min per board (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Minesweeper",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Open every safe cell; the numbers tell you where the mines are.",
+	"color": "#738c66",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/minesweeper/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

@@ -1,0 +1,28 @@
+{
+	"order": 25,
+	"id": "racing",
+	"name": "Kenney Racing",
+	"publisher": "Kenney",
+	"genre": "Racing",
+	"tagline": "Arcade driving around a track with a bouncy little truck.",
+	"about": "A tiny arcade racer by Kenney: drift a toy truck around a track, bump into the other cars and enjoy the skid marks. There's no lap timer yet; it's a driving toy.",
+	"controls": "Drag on the left half and point where the truck should go on screen; it turns that way and drives. GAS and BRAKE work too (BRAKE also reverses). PC: WASD or arrow keys.",
+	"length": "Free play (no end)",
+	"effort": "Open-source starter kit by Kenney",
+	"credit": "Starter Kit Racing by Kenney (kenney.nl), github.com/KenneyNL/Starter-Kit-Racing. Code and art: MIT license. Added to Lab Arcade with touch controls and a back button.",
+	"godot_time": "~10 min to review and add",
+	"color": "#b35940",
+	"no_difficulty": true,
+	"no_score": true,
+	"aspect": "expand",
+	"main": "res://external/racing/scenes/main.tscn",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://external/racing/scenes/main.tscn",
+			"notes": "Kenney's Starter Kit Racing (commit 2f2e5f2, 2026-08-21), security-reviewed, with on-screen steering and gas / brake buttons."
+		}
+	],
+	"web": []
+}

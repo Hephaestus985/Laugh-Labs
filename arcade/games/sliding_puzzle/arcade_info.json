@@ -1,0 +1,24 @@
+{
+	"order": 17,
+	"id": "sliding_puzzle",
+	"about": "The 15 puzzle: slide tiles into the empty space until they are in order. Easy 3x3, Normal 4x4, Hard 5x5. Every shuffle can be solved.",
+	"controls": "Tap a tile next to the gap (or in its row or column) to slide it. PC: arrow keys.",
+	"save_file": "user://sliding_puzzle_save.json",
+	"length": "2-10 min per puzzle (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Sliding Puzzle",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Slide the tiles back into order, 1 to 15.",
+	"color": "#8c73cc",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/sliding_puzzle/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

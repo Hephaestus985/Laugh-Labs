@@ -1,0 +1,688 @@
+{
+	"lab": [
+		{
+			"order": 1,
+			"id": "sock_escape",
+			"about": "A runaway sock flees the washing machine through the laundry room: rubber ducks, soap bars, cats, bubbles and a hairdryer. It speeds up every second.",
+			"controls": "Phone: tap the right side to jump (again for a double jump), hold the left side to duck. PC: SPACE / up to jump, down to duck.",
+			"length": "1-3 min per run (endless, gets faster)",
+			"effort": "Original for the arcade",
+			"godot_time": "~10 min",
+			"name": "Sock Escape",
+			"publisher": "Lab Arcade",
+			"genre": "Runner",
+			"tagline": "A sock flees the washing machine. Jump, duck, survive the Dryer of Doom.",
+			"color": "#4d8cd9",
+			"best_file": "user://sock_escape_best.dat",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/sock_escape/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 2,
+			"id": "waveguide_snake",
+			"about": "You are a light pulse in a waveguide. Collect photons and grow, but don't hit the walls, your own tail or scattering defects. Every 5 photons adds defects and speed.",
+			"controls": "Phone: swipe to steer. PC: arrows or WASD.",
+			"length": "1-3 min per run (endless)",
+			"effort": "Laugh Lab built-in game",
+			"godot_time": "~3 min",
+			"name": "Waveguide Snake",
+			"publisher": "Lab Arcade",
+			"genre": "Arcade",
+			"tagline": "You're a light pulse. Eat photons, grow, dodge scattering defects.",
+			"color": "#3373bf",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/waveguide_snake/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab built-in game, with swipe controls."
+				}
+			],
+			"web": [
+				"v1 (2026-10-17): built into Laugh Lab"
+			]
+		},
+		{
+			"order": 3,
+			"id": "cleanroom_parkour",
+			"about": "You're late for your cleanroom slot. Every 14 seconds is a new room with new hazards: pits, flying deadlines, hopping HF, falling reviews. Grab wafers for bonus metres.",
+			"controls": "Phone: tap to jump, tap again in the air to double jump. PC: SPACE or up.",
+			"length": "1-2 min per run (endless, 5 rooms)",
+			"effort": "Laugh Lab built-in game",
+			"godot_time": "~3 min",
+			"name": "Cleanroom Parkour",
+			"publisher": "Lab Arcade",
+			"genre": "Runner",
+			"tagline": "Late for your cleanroom slot. Jump pits, deadlines and falling reviews.",
+			"color": "#8c66bf",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/cleanroom_parkour/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab built-in game, five rooms."
+				}
+			],
+			"web": [
+				"v1 (2026-10-17): built into Laugh Lab"
+			]
+		},
+		{
+			"order": 4,
+			"id": "escape_the_cavity",
+			"about": "You are a photon trapped in a VCSEL, and the only way out is to hop across Bragg mirrors while Reviewer 2 sweeps the room with a laser pointer. Survive 72 seconds and 6 levels.",
+			"controls": "Phone: drag on the left half to move, JUMP button to jump. PC: arrows to move, SPACE or up to jump.",
+			"length": "72 s round, 6 levels",
+			"effort": "Web effort 4 of 8: Polished",
+			"godot_time": "~5 min",
+			"name": "Escape the Cavity",
+			"publisher": "Lab Arcade",
+			"genre": "Platformer",
+			"tagline": "You're a photon stuck in a laser. Hop the mirrors, grab carriers, survive 6 levels.",
+			"color": "#cc4d6b",
+			"versions": [
+				{
+					"v": 2,
+					"date": "2026-10-19",
+					"scene": "res://games/escape_the_cavity/v2/game.tscn",
+					"notes": "Godot remake of web v2: difficulty setting, 6 levels with the Lab Cat."
+				}
+			],
+			"web": [
+				"v1 (2026-10-18): original",
+				"v2 (2026-10-19): difficulty setting, 6 levels with a new Lab Cat, broader jokes"
+			]
+		},
+		{
+			"order": 5,
+			"id": "bend_it_like_einstein",
+			"about": "Photons refuse to turn, so you summon a pocket black hole to bend them into the fiber. Don't let them fall in, and watch out for the goose, the monolith and the nebula.",
+			"controls": "Phone: touch and hold where the black hole should be. PC: hold the mouse, or move with arrows and hold SPACE.",
+			"length": "60 s round, 5 levels",
+			"effort": "Web effort 4 of 8: Polished",
+			"godot_time": "~4 min",
+			"name": "Bend It Like Einstein",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Hold to summon a pocket black hole and bend photons into the fiber.",
+			"color": "#404d8c",
+			"versions": [
+				{
+					"v": 2,
+					"date": "2026-10-19",
+					"scene": "res://games/bend_it_like_einstein/v2/game.tscn",
+					"notes": "Godot remake of web v2: difficulty setting, nebula fog level."
+				}
+			],
+			"web": [
+				"v1 (2026-10-18): original",
+				"v2 (2026-10-19): difficulty setting, real fog level, broader jokes"
+			]
+		},
+		{
+			"order": 6,
+			"id": "orbit_courier",
+			"about": "Deliver party invitations across the galaxy by slingshotting between moving planets. Let go of your orbit at the right moment. You have to planet ahead.",
+			"controls": "Tap anywhere or press SPACE to let go of the orbit.",
+			"length": "2-4 min per run (endless)",
+			"effort": "Web effort 7 of 8: Studio (built and playtested)",
+			"godot_time": "~3 min",
+			"name": "Orbit Courier",
+			"publisher": "Lab Arcade",
+			"genre": "Arcade",
+			"tagline": "Slingshot between moving planets to deliver party invitations.",
+			"color": "#594099",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/orbit_courier/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab game, with a difficulty setting."
+				}
+			],
+			"web": [
+				"v1 (2026-10-18): original"
+			]
+		},
+		{
+			"order": 7,
+			"id": "never_ask_for_directions",
+			"about": "Steer a Viking longship through fjords, gusts, icebergs and a kraken, without once asking for the way. Grab loot, keep your three shields.",
+			"controls": "Phone: hold the screen above or below the ship to steer. PC: up / down.",
+			"length": "2-4 min per run (endless, 5 zones)",
+			"effort": "Web effort 7 of 8: Studio (built and playtested)",
+			"godot_time": "~3 min",
+			"name": "Never Ask for Directions",
+			"publisher": "Lab Arcade",
+			"genre": "Arcade",
+			"tagline": "Steer a Viking longship past fjords, icebergs and a kraken. Don't ask.",
+			"color": "#336b8c",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/never_ask_for_directions/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab game. Sails sideways to fit a landscape screen."
+				}
+			],
+			"web": [
+				"v1 (2026-10-18): original"
+			]
+		},
+		{
+			"order": 8,
+			"id": "lighthouse_keeper",
+			"about": "Swing a very expensive laser beam across a night sea so captains can see the rocks, without lighting up the smugglers or feeding the sea serpent. Each night adds fog, storms, smugglers or the serpent.",
+			"controls": "Phone: touch where the beam should point. PC: move the mouse, or left / right.",
+			"length": "3-6 min per run (endless levels)",
+			"effort": "Web effort 7 of 8: Studio (built and playtested)",
+			"godot_time": "~5 min",
+			"name": "Lighthouse Keeper",
+			"publisher": "Lab Arcade",
+			"genre": "Arcade",
+			"tagline": "Swing a very expensive laser so ships see the rocks. Mind the serpent.",
+			"color": "#b3852e",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/lighthouse_keeper/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab game: fog, storm, smugglers and the serpent."
+				}
+			],
+			"web": [
+				"v1 (2026-10-18): original"
+			]
+		},
+		{
+			"order": 9,
+			"id": "escape_velocity",
+			"about": "Bounce from a Twente rooftop to the Moon, dodging honking geese, space junk and meteoroids, with stroopwafels as syrup-powered rocket fuel. Stomp geese from above.",
+			"controls": "Phone: hold the left or right side of the screen to steer. PC: left / right. Jumping is automatic.",
+			"length": "3-5 min to reach the Moon",
+			"effort": "Web effort 7 of 8: Studio (built and playtested)",
+			"godot_time": "~6 min",
+			"name": "Escape Velocity",
+			"publisher": "Lab Arcade",
+			"genre": "Platformer",
+			"tagline": "Bounce from an Enschede rooftop to the Moon. Stomp geese, eat stroopwafels.",
+			"color": "#3380b3",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/escape_velocity/v1/game.tscn",
+					"notes": "Godot remake of the Laugh Lab game: 5 zones, windmills, geese and the Moon."
+				}
+			],
+			"web": [
+				"v1 (2026-10-18): original"
+			]
+		},
+		{
+			"order": 10,
+			"id": "the_last_knight",
+			"about": "Eleven years of sword school, then someone invented the crossbow, so you chase the inventor through five eras of history: a castle, Viking seas, a Roman aqueduct, a Dutch polder and his tower. Progress saves at every level and at the boss.",
+			"controls": "Phone: drag on the left half to move, JUMP and SWORD buttons. PC: arrows, SPACE / up to jump, X or J to swing. Swing at bolts and axes to parry them.",
+			"save_file": "user://the_last_knight_save.json",
+			"length": "20-30 min: 5 levels and a boss, with saves",
+			"effort": "Web effort 8 of 8: Masterpiece (several playtest rounds)",
+			"godot_time": "~12 min",
+			"name": "The Last Knight",
+			"publisher": "Lab Arcade",
+			"genre": "Action",
+			"tagline": "Chase the crossbow inventor through five eras. Parry, stomp, honk.",
+			"color": "#8c2e40",
+			"versions": [
+				{
+					"v": 2,
+					"date": "2026-10-19",
+					"scene": "res://games/the_last_knight/v2/game.tscn",
+					"notes": "Godot remake of web v2: 5 eras, the boss, save and continue at every level and at the boss."
+				}
+			],
+			"web": [
+				"v1 (2026-10-18): original",
+				"v2 (2026-10-19): save and continue at every level and at the boss"
+			]
+		},
+		{
+			"order": 11,
+			"id": "game_2048",
+			"about": "The classic sliding-number puzzle: every swipe slides all tiles, equal tiles merge into their sum and a new tile appears. Make a 2048 tile, then keep going for a high score. Easy has a 5x5 board and unlimited undo, Normal 4x4 with 3 undos, Hard 4x4 with no undo and more 4s.",
+			"controls": "Swipe anywhere on the board. Undo and New game buttons on the right. PC: arrow keys or WASD, U to undo.",
+			"save_file": "user://game_2048_save.json",
+			"length": "5-20 min per game (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "2048",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Swipe to slide numbered tiles; equal tiles merge. Reach 2048.",
+			"color": "#d9a640",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/game_2048/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 12,
+			"id": "sudoku",
+			"about": "A fresh Sudoku every time, generated on your phone and always with exactly one solution. Easy gives 44 numbers, Normal 34, Hard 27. Pencil notes, hints, undo, and clashing numbers turn red.",
+			"controls": "Tap a cell, then a number on the pad. Notes writes pencil marks, Erase clears, Hint fills a cell. PC: arrows, 1-9, N for notes, H for hint, U to undo.",
+			"save_file": "user://sudoku_save.json",
+			"length": "10-30 min per puzzle (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Sudoku",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Fill the 9x9 grid: every row, column and box holds 1 to 9 once.",
+			"color": "#5980d9",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/sudoku/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 13,
+			"id": "minesweeper",
+			"about": "Open every cell that hides no mine. Each number counts the mines around it. Easy is 10x7 with 10 mines, Normal 14x9 with 22, Hard 16x10 with 35. The first tap is always safe.",
+			"controls": "Tap to open, long-press or Flag mode to flag a mine. Tap a number whose mines are flagged to open the rest around it. PC: click, right-click to flag.",
+			"save_file": "user://minesweeper_save.json",
+			"length": "3-10 min per board (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Minesweeper",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Open every safe cell; the numbers tell you where the mines are.",
+			"color": "#738c66",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/minesweeper/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 14,
+			"id": "solitaire",
+			"about": "Classic Klondike solitaire. Move cards between the seven piles in alternating colours, counting down, and build each suit from Ace to King on the foundations. Easy deals one card at a time with unlimited undo, Normal one card, Hard three cards at a time.",
+			"controls": "Drag cards, or tap a card to send it where it fits best. Tap the deck to draw. Undo and Auto finish buttons on the right.",
+			"save_file": "user://solitaire_save.json",
+			"length": "5-15 min per deal (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Solitaire",
+			"publisher": "Lab Arcade",
+			"genre": "Cards",
+			"tagline": "Klondike patience: build the four suits up from Ace to King.",
+			"color": "#26804d",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/solitaire/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 15,
+			"id": "nonogram",
+			"about": "Picross: the numbers next to each row and column tell how many filled cells there are, in order. Fill the right cells to reveal a picture. Easy 5x5, Normal 8x8, Hard 10x10.",
+			"controls": "Tap a cell to fill it, long-press or Cross mode to mark it empty. Drag to fill a line. Hint and Undo buttons on the right.",
+			"save_file": "user://nonogram_save.json",
+			"length": "3-15 min per picture (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Nonogram",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Fill the grid from the number clues to reveal a hidden picture.",
+			"color": "#b3668c",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/nonogram/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 16,
+			"id": "lights_out",
+			"about": "Every tap flips a light and the four next to it. Turn the whole board dark in as few moves as you can. Puzzles always have a solution. Easy 4x4, Normal 5x5, Hard 6x6.",
+			"controls": "Tap a light. Undo, Hint and Restart buttons on the right.",
+			"save_file": "user://lights_out_save.json",
+			"length": "1-5 min per board (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Lights Out",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Tap a light to flip it and its neighbours. Turn them all off.",
+			"color": "#d9cc59",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/lights_out/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 17,
+			"id": "sliding_puzzle",
+			"about": "The 15 puzzle: slide tiles into the empty space until they are in order. Easy 3x3, Normal 4x4, Hard 5x5. Every shuffle can be solved.",
+			"controls": "Tap a tile next to the gap (or in its row or column) to slide it. PC: arrow keys.",
+			"save_file": "user://sliding_puzzle_save.json",
+			"length": "2-10 min per puzzle (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Sliding Puzzle",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Slide the tiles back into order, 1 to 15.",
+			"color": "#8c73cc",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/sliding_puzzle/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 18,
+			"id": "mahjong",
+			"about": "Remove matching pairs of tiles. A tile is free when nothing lies on top of it and its left or right side is open. Easy has fewer tiles and layers. Every deal is built so it can be solved.",
+			"controls": "Tap two matching free tiles. Hint, Shuffle and Undo buttons on the right.",
+			"save_file": "user://mahjong_save.json",
+			"length": "5-15 min per stack (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Mahjong Solitaire",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Match pairs of free tiles until the stack is gone.",
+			"color": "#bf4d40",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/mahjong/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 19,
+			"id": "sokoban",
+			"about": "The warehouse puzzle: walk around and push crates onto the marked spots. Crates can only be pushed, one at a time. Every level is built backwards from the solved warehouse, so it can always be solved, and each solved level unlocks a bigger one. Easy has 2 crates, Normal 3, Hard 4.",
+			"controls": "Swipe to take one step (and push), or tap a square to walk there. Undo, Restart and Skip level buttons on the right. PC: arrow keys, U to undo, R to restart.",
+			"save_file": "user://sokoban_save.json",
+			"length": "1-10 min per level, endless levels (saves progress)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Sokoban",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Push every crate onto a target. You can push, never pull.",
+			"color": "#99734d",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/sokoban/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 20,
+			"id": "flow",
+			"about": "Draw a pipe from each dot to its partner of the same colour. Pipes can't cross, and in the end every square should be filled. Easy 5x5, Normal 7x7, Hard 9x9; every puzzle is generated with a solution.",
+			"controls": "Drag from a dot to draw its pipe. Drag back over a pipe to shorten it. Hint and Restart buttons on the right.",
+			"save_file": "user://flow_save.json",
+			"length": "1-5 min per puzzle (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Flow",
+			"publisher": "Lab Arcade",
+			"genre": "Puzzle",
+			"tagline": "Connect dots of the same colour with pipes that never cross.",
+			"color": "#40a6bf",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/flow/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 21,
+			"id": "block_stacker",
+			"about": "A falling-block game: turn and slide the pieces so they fill whole rows, which then disappear. It gets faster every 10 lines. Clear 20 rows to win on Easy, 40 on Normal, 60 on Hard, then keep going for a high score.",
+			"controls": "Swipe left or right to slide, tap to rotate, swipe down to drop. Or use the on-screen buttons. PC: arrows, up or X to rotate, space to drop.",
+			"save_file": "user://block_stacker_save.json",
+			"length": "3-15 min per game (saves after every piece)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Block Stacker",
+			"publisher": "Lab Arcade",
+			"genre": "Arcade",
+			"tagline": "Falling blocks: rotate, slide and clear full lines.",
+			"color": "#6659cc",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/block_stacker/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 22,
+			"id": "connect_four",
+			"about": "Drop your discs into the 7 columns and line up four in a row, across, down or diagonally, before the computer does. Easy plays loosely, Normal thinks a few moves ahead, Hard looks deep.",
+			"controls": "Tap a column to drop a disc. Undo and New game buttons on the right.",
+			"save_file": "user://connect_four_save.json",
+			"length": "2-5 min per game (saves every move)",
+			"effort": "Original for the arcade",
+			"godot_time": "~15 min",
+			"name": "Connect Four",
+			"publisher": "Lab Arcade",
+			"genre": "Board",
+			"tagline": "Drop discs and get four in a row before the computer does.",
+			"color": "#d94d4d",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://games/connect_four/v1/game.tscn",
+					"notes": "First version."
+				}
+			],
+			"web": []
+		}
+	],
+	"external": [
+		{
+			"order": 23,
+			"id": "outpost_assault",
+			"name": "Outpost Assault",
+			"publisher": "Quiver",
+			"genre": "Strategy",
+			"tagline": "Tower defense: build gatling, cannon and missile turrets to hold the outpost.",
+			"about": "Waves of infantry, tanks and helicopters march on your outpost. Tap the empty turret slots to build gatling, single-shot or missile turrets, and repair or replace them between waves. Survive three growing waves to win. Made by Quiver (quiver.dev) as an open-source Godot 4 template.",
+			"controls": "Tap a turret slot to build, tap a turret to repair, replace or remove it (its range shows while selected). Drag with one finger to move the map; pinch or use the + / - buttons to zoom; II pauses. PC: click, middle-drag, scroll wheel, ESC.",
+			"length": "10-15 min: 3 waves",
+			"effort": "Open-source game by Quiver",
+			"credit": "Outpost Assault by Quiver (quiver.dev), github.com/quiver-dev/tower-defense-godot4. Code: MIT license. Art: CC BY 4.0. Font: Akashi by Ed Merritt. Added to Lab Arcade with touch controls and a back button.",
+			"godot_time": "~30 min to review and add",
+			"color": "#596b40",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"main": "res://external/outpost_assault/scenes/maps/map_template.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://external/outpost_assault/interfaces/UI/menu/menu.tscn",
+					"notes": "Quiver's Outpost Assault (commit 1cbd622, 2026-08-21), security-reviewed, with touch pan / pinch zoom and a way back to the arcade."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 24,
+			"id": "platformer_3d",
+			"name": "3D Platformer",
+			"publisher": "Kenney",
+			"genre": "Platformer",
+			"tagline": "Run, double-jump and collect coins across floating 3D platforms.",
+			"about": "A small, polished 3D platformer by Kenney: run across floating islands, double-jump between platforms, break bricks from below, ride falling platforms and collect every coin. Fall off and you start again.",
+			"controls": "Drag on the left half to walk, JUMP (tap again in the air for a double jump), < and > turn the camera, + and - zoom. PC: WASD, space, arrow keys.",
+			"length": "5-10 min: one level",
+			"effort": "Open-source starter kit by Kenney",
+			"credit": "Starter Kit 3D Platformer by Kenney (kenney.nl), github.com/KenneyNL/Starter-Kit-3D-Platformer. Code and art: MIT license. Added to Lab Arcade with touch controls and a back button.",
+			"godot_time": "~15 min to review and add",
+			"color": "#4d8cbf",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"main": "res://external/platformer_3d/scenes/main.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://external/platformer_3d/scenes/main.tscn",
+					"notes": "Kenney's Starter Kit 3D Platformer (commit 3fa8a04, 2026-03-12), security-reviewed, with an on-screen stick and buttons."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 25,
+			"id": "racing",
+			"name": "Kenney Racing",
+			"publisher": "Kenney",
+			"genre": "Racing",
+			"tagline": "Arcade driving around a track with a bouncy little truck.",
+			"about": "A tiny arcade racer by Kenney: drift a toy truck around a track, bump into the other cars and enjoy the skid marks. There's no lap timer yet; it's a driving toy.",
+			"controls": "Drag on the left half and point where the truck should go on screen; it turns that way and drives. GAS and BRAKE work too (BRAKE also reverses). PC: WASD or arrow keys.",
+			"length": "Free play (no end)",
+			"effort": "Open-source starter kit by Kenney",
+			"credit": "Starter Kit Racing by Kenney (kenney.nl), github.com/KenneyNL/Starter-Kit-Racing. Code and art: MIT license. Added to Lab Arcade with touch controls and a back button.",
+			"godot_time": "~10 min to review and add",
+			"color": "#b35940",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"main": "res://external/racing/scenes/main.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://external/racing/scenes/main.tscn",
+					"notes": "Kenney's Starter Kit Racing (commit 2f2e5f2, 2026-08-21), security-reviewed, with on-screen steering and gas / brake buttons."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 26,
+			"id": "tactical_rpg",
+			"name": "Tactical RPG",
+			"publisher": "ramaureirac & mbusson",
+			"genre": "Strategy",
+			"tagline": "Turn-based battle on a 3D board: move your units, attack, outlast.",
+			"about": "A small turn-based tactics battle in the style of Final Fantasy Tactics: your team and the enemy team take turns on a 3D grid. Pick a unit, move it across the tiles, attack an enemy in range, then wait. The enemy plays back. Win by defeating every enemy unit.",
+			"controls": "Tap a unit to pick it, then Move or Attack and tap a tile. Wait ends that unit's turn, End turn ends yours. Arrow buttons move the camera, << >> turn it, + and - zoom. PC: mouse, WASD, Q / E, wheel.",
+			"length": "10-20 min: one battle",
+			"effort": "Open-source demo by ramaureirac and mbusson",
+			"credit": "Godot Tactical RPG by @ramaureirac and @mbusson, github.com/ramaureirac/godot-tactical-rpg. MIT license. Added to Lab Arcade with tap controls, camera buttons, a win / lose ending and a back button.",
+			"godot_time": "~45 min to review and add",
+			"color": "#7366a6",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"main": "res://external/tactical_rpg/assets/scene/main.tscn",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://external/tactical_rpg/assets/scene/main.tscn",
+					"notes": "Godot Tactical RPG (commit cfe785e, 2026-02-21), security-reviewed, with tap controls, camera buttons and a victory / defeat ending."
+				}
+			],
+			"web": []
+		},
+		{
+			"order": 27,
+			"id": "open_rpg",
+			"name": "Open RPG",
+			"publisher": "GDQuest",
+			"genre": "RPG",
+			"tagline": "A little pixel-art RPG: explore a town, solve a puzzle, fight in turn-based battles.",
+			"about": "A short JRPG-style adventure by GDQuest: a small robot wakes up in a town, helps a ghost in the woods, talks to the townsfolk, collects tokens for an adoring fan, opens chests and doors, solves a wand puzzle and fights turn-based battles with a party of animals.",
+			"controls": "Tap where to walk, tap people and objects to talk or use them, tap to continue a conversation. In battle tap an action, then tap the enemy (or friend) to use it on. BACK undoes a choice. PC: arrow keys / WASD, space, mouse, Esc.",
+			"length": "20-30 min: one short story",
+			"effort": "Open-source demo by GDQuest and contributors",
+			"credit": "Godot Open RPG by GDQuest and contributors, github.com/gdquest-demos/godot-open-rpg. Code MIT, art and music by the authors listed in CREDITS.md. Uses Dialogic 2 (MIT). Added to Lab Arcade with tap-to-pick targets, a BACK button and a back-to-arcade button.",
+			"godot_time": "~1.5 h to review and add",
+			"color": "#599966",
+			"no_difficulty": true,
+			"no_score": true,
+			"aspect": "expand",
+			"main": "res://external/open_rpg/lab_arcade_main.tscn",
+			"park": "res://external/open_rpg/lab_arcade_park.gd",
+			"versions": [
+				{
+					"v": 1,
+					"date": "2026-10-19",
+					"scene": "res://external/open_rpg/lab_arcade_main.tscn",
+					"notes": "Godot Open RPG (commit d59f2f7, 2026-10-13) with Dialogic 2, security-reviewed, with tap controls for battles and a back button."
+				}
+			],
+			"web": []
+		}
+	]
+}

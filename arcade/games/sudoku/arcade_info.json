@@ -1,0 +1,24 @@
+{
+	"order": 12,
+	"id": "sudoku",
+	"about": "A fresh Sudoku every time, generated on your phone and always with exactly one solution. Easy gives 44 numbers, Normal 34, Hard 27. Pencil notes, hints, undo, and clashing numbers turn red.",
+	"controls": "Tap a cell, then a number on the pad. Notes writes pencil marks, Erase clears, Hint fills a cell. PC: arrows, 1-9, N for notes, H for hint, U to undo.",
+	"save_file": "user://sudoku_save.json",
+	"length": "10-30 min per puzzle (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Sudoku",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Fill the 9x9 grid: every row, column and box holds 1 to 9 once.",
+	"color": "#5980d9",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/sudoku/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

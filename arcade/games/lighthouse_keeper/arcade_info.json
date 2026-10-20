@@ -1,0 +1,25 @@
+{
+	"order": 8,
+	"id": "lighthouse_keeper",
+	"about": "Swing a very expensive laser beam across a night sea so captains can see the rocks, without lighting up the smugglers or feeding the sea serpent. Each night adds fog, storms, smugglers or the serpent.",
+	"controls": "Phone: touch where the beam should point. PC: move the mouse, or left / right.",
+	"length": "3-6 min per run (endless levels)",
+	"effort": "Web effort 7 of 8: Studio (built and playtested)",
+	"godot_time": "~5 min",
+	"name": "Lighthouse Keeper",
+	"publisher": "Lab Arcade",
+	"genre": "Arcade",
+	"tagline": "Swing a very expensive laser so ships see the rocks. Mind the serpent.",
+	"color": "#b3852e",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/lighthouse_keeper/v1/game.tscn",
+			"notes": "Godot remake of the Laugh Lab game: fog, storm, smugglers and the serpent."
+		}
+	],
+	"web": [
+		"v1 (2026-10-18): original"
+	]
+}

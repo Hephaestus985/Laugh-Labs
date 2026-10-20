@@ -1,0 +1,25 @@
+{
+	"order": 9,
+	"id": "escape_velocity",
+	"about": "Bounce from a Twente rooftop to the Moon, dodging honking geese, space junk and meteoroids, with stroopwafels as syrup-powered rocket fuel. Stomp geese from above.",
+	"controls": "Phone: hold the left or right side of the screen to steer. PC: left / right. Jumping is automatic.",
+	"length": "3-5 min to reach the Moon",
+	"effort": "Web effort 7 of 8: Studio (built and playtested)",
+	"godot_time": "~6 min",
+	"name": "Escape Velocity",
+	"publisher": "Lab Arcade",
+	"genre": "Platformer",
+	"tagline": "Bounce from an Enschede rooftop to the Moon. Stomp geese, eat stroopwafels.",
+	"color": "#3380b3",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/escape_velocity/v1/game.tscn",
+			"notes": "Godot remake of the Laugh Lab game: 5 zones, windmills, geese and the Moon."
+		}
+	],
+	"web": [
+		"v1 (2026-10-18): original"
+	]
+}

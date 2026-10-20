@@ -1,0 +1,24 @@
+{
+	"order": 20,
+	"id": "flow",
+	"about": "Draw a pipe from each dot to its partner of the same colour. Pipes can't cross, and in the end every square should be filled. Easy 5x5, Normal 7x7, Hard 9x9; every puzzle is generated with a solution.",
+	"controls": "Drag from a dot to draw its pipe. Drag back over a pipe to shorten it. Hint and Restart buttons on the right.",
+	"save_file": "user://flow_save.json",
+	"length": "1-5 min per puzzle (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Flow",
+	"publisher": "Lab Arcade",
+	"genre": "Puzzle",
+	"tagline": "Connect dots of the same colour with pipes that never cross.",
+	"color": "#40a6bf",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/flow/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

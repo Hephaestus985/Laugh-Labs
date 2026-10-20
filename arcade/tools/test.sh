@@ -7,7 +7,8 @@
 # VISUAL=1 tools/test.sh ... opens a silent window far off-screen and also checks
 # that every game draws something (screenshots land in the report folder).
 cd "$(dirname "$0")/.."
-GODOT="flatpak run --filesystem=home --filesystem=/tmp org.godotengine.Godot"
+python3 -I tools/catalog.py >/dev/null
+GODOT=${GODOT:-"flatpak run --filesystem=home --filesystem=/tmp org.godotengine.Godot"}
 OUT=${OUT:-/tmp/labarcade-tests}
 mkdir -p "$OUT"
 MODE="--headless"; [ "${VISUAL:-0}" = "1" ] && MODE="--position 6000,6000 --resolution 960x540"

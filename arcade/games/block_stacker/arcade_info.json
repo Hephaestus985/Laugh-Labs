@@ -1,0 +1,24 @@
+{
+	"order": 21,
+	"id": "block_stacker",
+	"about": "A falling-block game: turn and slide the pieces so they fill whole rows, which then disappear. It gets faster every 10 lines. Clear 20 rows to win on Easy, 40 on Normal, 60 on Hard, then keep going for a high score.",
+	"controls": "Swipe left or right to slide, tap to rotate, swipe down to drop. Or use the on-screen buttons. PC: arrows, up or X to rotate, space to drop.",
+	"save_file": "user://block_stacker_save.json",
+	"length": "3-15 min per game (saves after every piece)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Block Stacker",
+	"publisher": "Lab Arcade",
+	"genre": "Arcade",
+	"tagline": "Falling blocks: rotate, slide and clear full lines.",
+	"color": "#6659cc",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/block_stacker/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}

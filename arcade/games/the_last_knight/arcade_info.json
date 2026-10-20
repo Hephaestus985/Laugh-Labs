@@ -1,0 +1,27 @@
+{
+	"order": 10,
+	"id": "the_last_knight",
+	"about": "Eleven years of sword school, then someone invented the crossbow, so you chase the inventor through five eras of history: a castle, Viking seas, a Roman aqueduct, a Dutch polder and his tower. Progress saves at every level and at the boss.",
+	"controls": "Phone: drag on the left half to move, JUMP and SWORD buttons. PC: arrows, SPACE / up to jump, X or J to swing. Swing at bolts and axes to parry them.",
+	"save_file": "user://the_last_knight_save.json",
+	"length": "20-30 min: 5 levels and a boss, with saves",
+	"effort": "Web effort 8 of 8: Masterpiece (several playtest rounds)",
+	"godot_time": "~12 min",
+	"name": "The Last Knight",
+	"publisher": "Lab Arcade",
+	"genre": "Action",
+	"tagline": "Chase the crossbow inventor through five eras. Parry, stomp, honk.",
+	"color": "#8c2e40",
+	"versions": [
+		{
+			"v": 2,
+			"date": "2026-10-19",
+			"scene": "res://games/the_last_knight/v2/game.tscn",
+			"notes": "Godot remake of web v2: 5 eras, the boss, save and continue at every level and at the boss."
+		}
+	],
+	"web": [
+		"v1 (2026-10-18): original",
+		"v2 (2026-10-19): save and continue at every level and at the boss"
+	]
+}

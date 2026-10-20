@@ -1,0 +1,28 @@
+{
+	"order": 26,
+	"id": "tactical_rpg",
+	"name": "Tactical RPG",
+	"publisher": "ramaureirac & mbusson",
+	"genre": "Strategy",
+	"tagline": "Turn-based battle on a 3D board: move your units, attack, outlast.",
+	"about": "A small turn-based tactics battle in the style of Final Fantasy Tactics: your team and the enemy team take turns on a 3D grid. Pick a unit, move it across the tiles, attack an enemy in range, then wait. The enemy plays back. Win by defeating every enemy unit.",
+	"controls": "Tap a unit to pick it, then Move or Attack and tap a tile. Wait ends that unit's turn, End turn ends yours. Arrow buttons move the camera, << >> turn it, + and - zoom. PC: mouse, WASD, Q / E, wheel.",
+	"length": "10-20 min: one battle",
+	"effort": "Open-source demo by ramaureirac and mbusson",
+	"credit": "Godot Tactical RPG by @ramaureirac and @mbusson, github.com/ramaureirac/godot-tactical-rpg. MIT license. Added to Lab Arcade with tap controls, camera buttons, a win / lose ending and a back button.",
+	"godot_time": "~45 min to review and add",
+	"color": "#7366a6",
+	"no_difficulty": true,
+	"no_score": true,
+	"aspect": "expand",
+	"main": "res://external/tactical_rpg/assets/scene/main.tscn",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://external/tactical_rpg/assets/scene/main.tscn",
+			"notes": "Godot Tactical RPG (commit cfe785e, 2026-02-21), security-reviewed, with tap controls, camera buttons and a victory / defeat ending."
+		}
+	],
+	"web": []
+}

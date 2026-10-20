@@ -1,0 +1,25 @@
+{
+	"order": 2,
+	"id": "waveguide_snake",
+	"about": "You are a light pulse in a waveguide. Collect photons and grow, but don't hit the walls, your own tail or scattering defects. Every 5 photons adds defects and speed.",
+	"controls": "Phone: swipe to steer. PC: arrows or WASD.",
+	"length": "1-3 min per run (endless)",
+	"effort": "Laugh Lab built-in game",
+	"godot_time": "~3 min",
+	"name": "Waveguide Snake",
+	"publisher": "Lab Arcade",
+	"genre": "Arcade",
+	"tagline": "You're a light pulse. Eat photons, grow, dodge scattering defects.",
+	"color": "#3373bf",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/waveguide_snake/v1/game.tscn",
+			"notes": "Godot remake of the Laugh Lab built-in game, with swipe controls."
+		}
+	],
+	"web": [
+		"v1 (2026-10-17): built into Laugh Lab"
+	]
+}

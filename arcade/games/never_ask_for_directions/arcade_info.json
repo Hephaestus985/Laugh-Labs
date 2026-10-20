@@ -1,0 +1,25 @@
+{
+	"order": 7,
+	"id": "never_ask_for_directions",
+	"about": "Steer a Viking longship through fjords, gusts, icebergs and a kraken, without once asking for the way. Grab loot, keep your three shields.",
+	"controls": "Phone: hold the screen above or below the ship to steer. PC: up / down.",
+	"length": "2-4 min per run (endless, 5 zones)",
+	"effort": "Web effort 7 of 8: Studio (built and playtested)",
+	"godot_time": "~3 min",
+	"name": "Never Ask for Directions",
+	"publisher": "Lab Arcade",
+	"genre": "Arcade",
+	"tagline": "Steer a Viking longship past fjords, icebergs and a kraken. Don't ask.",
+	"color": "#336b8c",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/never_ask_for_directions/v1/game.tscn",
+			"notes": "Godot remake of the Laugh Lab game. Sails sideways to fit a landscape screen."
+		}
+	],
+	"web": [
+		"v1 (2026-10-18): original"
+	]
+}

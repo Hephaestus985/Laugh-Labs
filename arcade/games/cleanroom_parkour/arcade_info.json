@@ -1,0 +1,25 @@
+{
+	"order": 3,
+	"id": "cleanroom_parkour",
+	"about": "You're late for your cleanroom slot. Every 14 seconds is a new room with new hazards: pits, flying deadlines, hopping HF, falling reviews. Grab wafers for bonus metres.",
+	"controls": "Phone: tap to jump, tap again in the air to double jump. PC: SPACE or up.",
+	"length": "1-2 min per run (endless, 5 rooms)",
+	"effort": "Laugh Lab built-in game",
+	"godot_time": "~3 min",
+	"name": "Cleanroom Parkour",
+	"publisher": "Lab Arcade",
+	"genre": "Runner",
+	"tagline": "Late for your cleanroom slot. Jump pits, deadlines and falling reviews.",
+	"color": "#8c66bf",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/cleanroom_parkour/v1/game.tscn",
+			"notes": "Godot remake of the Laugh Lab built-in game, five rooms."
+		}
+	],
+	"web": [
+		"v1 (2026-10-17): built into Laugh Lab"
+	]
+}

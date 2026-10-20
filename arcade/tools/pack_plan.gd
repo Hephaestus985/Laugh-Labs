@@ -18,7 +18,7 @@ func _init() -> void:
 	for c in ProjectSettings.get_global_class_list():
 		classes[c["class"]] = c["path"]
 	var base := {}
-	for f in ["res://menu.tscn", "res://menu.gd", "res://games.gd", "res://default_bus_layout.tres", "res://icon.png", "res://icon_192.png", "res://icon_bg.png", "res://icon_fg.png", "res://icon_mono.png"]:
+	for f in ["res://menu.tscn", "res://menu.gd", "res://games.gd", "res://catalog.json", "res://default_bus_layout.tres", "res://icon.png", "res://icon_192.png", "res://icon_bg.png", "res://icon_fg.png", "res://icon_mono.png"]:
 		_add(base, f)
 	for f in _files_in("res://common"):
 		_add(base, f)
@@ -46,7 +46,7 @@ func _init() -> void:
 	# classes by name. Scripts are small; the art, sound and scenes stay in the packs.
 	for root in ["res://games", "res://external"]:
 		for f in _files_in(root):
-			if f.ends_with(".gd"):
+			if f.ends_with(".gd") and f.get_file() != "arcade_tests.gd":
 				base[f] = true
 	var packs := {}
 	for g in Games.LIST:
@@ -75,7 +75,7 @@ func _pack_files(dir: String, base: Dictionary) -> Array:
 
 
 func _is_resource(f: String) -> bool:
-	return not (f.ends_with(".import") or f.ends_with(".uid") or f.ends_with(".md") or f.get_file().begins_with("LICENSE") or f.ends_with(".txt"))
+	return not (f.ends_with(".import") or f.ends_with(".uid") or f.ends_with(".md") or f.get_file().begins_with("LICENSE") or f.ends_with(".txt") or f.get_file() in ["arcade_info.json", "arcade_tests.gd"])
 
 
 func _files_in(dir: String) -> Array:

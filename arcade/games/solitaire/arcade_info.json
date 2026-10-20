@@ -1,0 +1,24 @@
+{
+	"order": 14,
+	"id": "solitaire",
+	"about": "Classic Klondike solitaire. Move cards between the seven piles in alternating colours, counting down, and build each suit from Ace to King on the foundations. Easy deals one card at a time with unlimited undo, Normal one card, Hard three cards at a time.",
+	"controls": "Drag cards, or tap a card to send it where it fits best. Tap the deck to draw. Undo and Auto finish buttons on the right.",
+	"save_file": "user://solitaire_save.json",
+	"length": "5-15 min per deal (saves every move)",
+	"effort": "Original for the arcade",
+	"godot_time": "~15 min",
+	"name": "Solitaire",
+	"publisher": "Lab Arcade",
+	"genre": "Cards",
+	"tagline": "Klondike patience: build the four suits up from Ace to King.",
+	"color": "#26804d",
+	"versions": [
+		{
+			"v": 1,
+			"date": "2026-10-19",
+			"scene": "res://games/solitaire/v1/game.tscn",
+			"notes": "First version."
+		}
+	],
+	"web": []
+}
