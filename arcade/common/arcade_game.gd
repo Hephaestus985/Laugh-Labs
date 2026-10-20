@@ -53,6 +53,11 @@ func _enter_tree() -> void:
 	font = ThemeDB.fallback_font
 	is_mobile = OS.has_feature("mobile")
 	use_game_screen(get_window())
+	# opened from the game's start screen with Play: skip the game's own title
+	if Engine.get_meta("auto_start", false):
+		Engine.set_meta("auto_start", false)
+		_tap_just = true
+		_a_just = true
 
 
 ## Games are drawn for a 1280x720 landscape screen; the menu may have been in portrait.
@@ -78,6 +83,7 @@ func load_best() -> void:
 
 
 func submit_score(score: int) -> bool:
+	GameData.add_score(game_id, score, difficulty())
 	if score > best:
 		best = score
 		var f := FileAccess.open(best_path(), FileAccess.WRITE)
@@ -120,7 +126,8 @@ func launch_mode() -> String:
 
 
 func back_to_menu() -> void:
-	get_tree().change_scene_to_file(MENU_SCENE)
+	get_tree().paused = false
+	get_tree().change_scene_to_file.call_deferred(GameData.back_scene())
 
 
 func _notification(what: int) -> void:

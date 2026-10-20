@@ -91,6 +91,10 @@ func _ready() -> void:
 		var f := FileAccess.open(SAVE_PATH, FileAccess.READ)
 		if f:
 			best = f.get_32()
+	# opened from the game's start screen with Play: skip the title
+	if Engine.get_meta("auto_start", false):
+		Engine.set_meta("auto_start", false)
+		reset_game()
 
 
 func save_best() -> void:
@@ -182,7 +186,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func back_to_menu() -> void:
-	get_tree().change_scene_to_file(MENU_SCENE)
+	get_tree().change_scene_to_file(GameData.back_scene())
 
 
 func _notification(what: int) -> void:
@@ -376,6 +380,7 @@ func die(kind: String) -> void:
 	death_msg = lines[randi() % lines.size()]
 	death_tail = DEATH_TAILS[randi() % DEATH_TAILS.size()]
 	puff(PX + 10.0, py - 35.0, 30, Color(1.0, 0.5, 0.5, 1.0))
+	GameData.add_score("sock_escape", score(), ArcadeGame.get_difficulty("sock_escape"))
 	if score() > best:
 		best = score()
 		new_best = true

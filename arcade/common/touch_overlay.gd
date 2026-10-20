@@ -173,7 +173,7 @@ func back_to_launcher() -> void:
 	get_tree().paused = false
 	Input.set_default_cursor_shape(Input.CURSOR_ARROW)
 	# deferred: the game may still be in the middle of handling this input event
-	get_tree().change_scene_to_file.call_deferred(LAUNCHER)
+	get_tree().change_scene_to_file.call_deferred(GameData.back_scene())
 
 
 func _notification(what: int) -> void:

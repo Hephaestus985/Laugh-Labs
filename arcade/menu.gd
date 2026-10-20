@@ -670,26 +670,13 @@ func make_card(g: Dictionary) -> Control:
 	meta.autowrap_mode = TextServer.AUTOWRAP_OFF
 	meta.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	v.add_child(meta)
-	var sv := save_info(g)
-	var notes := []
-	if not g.get("no_score", false) and read_best(g) > 0:
-		notes.append("Best %d" % read_best(g))
-	if sv != "":
-		notes.append("Saved: " + sv)
-	if plays(g["id"]) > 0:
-		notes.append("Played %dx" % plays(g["id"]))
-	if not notes.is_empty():
-		var nl := label("  ·  ".join(notes), 17, GOLD)
-		nl.autowrap_mode = TextServer.AUTOWRAP_OFF
-		nl.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		v.add_child(nl)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 6)
 	v.add_child(row)
 	var scene: String = newest(g)["scene"]
 	var pk := Packs.key_for(g, scene)
 	var pst := Packs.status(pk)
-	var ptxt := "Continue" if sv != "" else "Play"
+	var ptxt := "Play"
 	if pst == "download":
 		ptxt = "Get " + Packs.size_text(Packs.size_of(pk))
 	elif pst == "update":
@@ -697,18 +684,9 @@ func make_card(g: Dictionary) -> Control:
 	var play := button(ptxt, Color(0.33, 0.62, 0.10) if pst == "ready" else Color(0.15, 0.45, 0.75), 21)
 	play.name = "Play"
 	play.size_flags_stretch_ratio = 1.6
-	play.pressed.connect(func(): launch(g, scene, "continue" if sv != "" else ""))
+	play.pressed.connect(func(): launch(g, scene))
 	row.add_child(play)
 	var gid: String = g["id"]
-	if not g.get("no_difficulty", false):
-		var db := button(ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0.20, 0.27, 0.36), 17)
-		db.name = "Difficulty"
-		db.tooltip_text = "Difficulty: tap to change"
-		db.pressed.connect(func():
-			var d := (ArcadeGame.get_difficulty(gid) + 1) % 3
-			ArcadeGame.set_difficulty(gid, d)
-			db.text = ArcadeGame.DIFF_NAMES[d])
-		row.add_child(db)
 	var info := button("Info", Color(0.20, 0.27, 0.36), 17)
 	info.name = "Info"
 	info.pressed.connect(func(): show_info(g))
@@ -731,7 +709,9 @@ func make_card(g: Dictionary) -> Control:
 	return card
 
 
-func launch(g: Dictionary, scene: String, mode: String) -> void:
+## Open a game: download it if needed, then show its own start screen (where you
+## pick Continue / New game, difficulty and so on).
+func launch(g: Dictionary, scene: String, mode: String = "") -> void:
 	if launch_hook.is_valid():
 		launch_hook.call(g["id"], scene, mode)
 		return
@@ -739,15 +719,9 @@ func launch(g: Dictionary, scene: String, mode: String) -> void:
 	if Packs.status(pk) != "ready":
 		download(pk, func(): launch(g, scene, mode))
 		return
-	record_play(g["id"])
-	if g.get("aspect", "") == "expand":
-		# games made by others: full landscape screen, their own layout
-		get_window().content_scale_size = LANDSCAPE
-		get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
-		if OS.has_feature("mobile"):
-			DisplayServer.screen_set_orientation(DisplayServer.SCREEN_SENSOR_LANDSCAPE)
-	Engine.set_meta("launch_mode", mode)
-	get_tree().change_scene_to_file(scene)
+	Engine.set_meta("hub_game", g["id"])
+	Engine.set_meta("hub_scene", scene)
+	get_tree().change_scene_to_file(GameData.HUB)
 
 
 # ---------------------------------------------------------------- downloads
@@ -907,7 +881,6 @@ func show_info(g: Dictionary) -> void:
 		vl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		kv.add_child(vl)
 	# the action bar: play / get, new game, difficulty, home
-	var sv := save_info(g)
 	var scene: String = newest(g)["scene"]
 	var pk := Packs.key_for(g, scene)
 	var pst := Packs.status(pk)
@@ -918,7 +891,7 @@ func show_info(g: Dictionary) -> void:
 	row.add_theme_constant_override("h_separation", 10)
 	row.add_theme_constant_override("v_separation", 10)
 	bar.add_child(row)
-	var ptxt := "Continue  ·  %s" % sv if sv != "" else "Play"
+	var ptxt := "Play"
 	if pst == "download":
 		ptxt = "Get  ·  %s" % Packs.size_text(Packs.size_of(pk))
 	elif pst == "update":
@@ -926,21 +899,8 @@ func show_info(g: Dictionary) -> void:
 	var play := button(ptxt, Color(0.33, 0.62, 0.10) if pst == "ready" else Color(0.15, 0.45, 0.75), 26, false)
 	play.name = "Play"
 	play.custom_minimum_size = Vector2(260, 64)
-	play.pressed.connect(func(): launch(g, scene, "continue" if sv != "" else ""))
+	play.pressed.connect(func(): launch(g, scene))
 	row.add_child(play)
-	if sv != "":
-		var ng := button("New game", Color(0.22, 0.30, 0.40), 22, false)
-		ng.custom_minimum_size = Vector2(0, 64)
-		ng.pressed.connect(func(): launch(g, scene, "new"))
-		row.add_child(ng)
-	if not g.get("no_difficulty", false):
-		var db := button("Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)], Color(0.22, 0.30, 0.40), 20, false)
-		db.name = "Difficulty"
-		db.custom_minimum_size = Vector2(0, 64)
-		db.pressed.connect(func():
-			ArcadeGame.set_difficulty(gid, (ArcadeGame.get_difficulty(gid) + 1) % 3)
-			db.text = "Difficulty: " + ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(gid)])
-		row.add_child(db)
 	var hb := button("- Home" if is_favorite(gid) else "+ Home", Color(0.22, 0.30, 0.40), 20, false)
 	hb.name = "HomeToggle"
 	hb.custom_minimum_size = Vector2(0, 64)
@@ -953,7 +913,7 @@ func show_info(g: Dictionary) -> void:
 	tags.add_theme_constant_override("h_separation", 8)
 	tags.add_theme_constant_override("v_separation", 8)
 	inner.add_child(tags)
-	for tg in [g.get("genre", ""), g.get("length", ""), "Open source" if is_external(g) else "Lab Arcade original", "Saves progress" if g.has("save_file") or sv != "" else "", "Difficulty levels" if not g.get("no_difficulty", false) else ""]:
+	for tg in [g.get("genre", ""), g.get("length", ""), "Open source" if is_external(g) else "Lab Arcade original", "Saves progress" if g.has("save_file") else "", "Difficulty levels" if not g.get("no_difficulty", false) else ""]:
 		if tg != "":
 			tags.add_child(chip(tg, Color(0.40, 0.60, 0.80, 0.25)))
 	# screenshots
@@ -974,8 +934,6 @@ func show_info(g: Dictionary) -> void:
 	section(inner, "How to play")
 	inner.add_child(label(g.get("controls", ""), 20, Color(0.9, 0.9, 1)))
 	section(inner, "Details")
-	var best := read_best(g)
-	var lp := last_played(gid)
 	var last: Dictionary = newest(g)
 	var facts := [
 		["Made by", g.get("publisher", "?")],
@@ -984,9 +942,6 @@ func show_info(g: Dictionary) -> void:
 		["Latest version", "v%d, %s" % [last["v"], last["date"]]],
 		["One run", g.get("length", "?")],
 		["Download", Packs.size_text(Packs.size_of(pk)) + ("" if pst != "ready" or Packs.builtin.has(pk) else " (on this phone)")],
-		["Best score", "not tracked" if g.get("no_score", false) else (str(best) if best > 0 else "none yet")],
-		["Played", "%d times" % plays(gid) + ("" if lp == 0 else ", last on " + Time.get_date_string_from_unix_time(lp))],
-		["Saved progress", sv if sv != "" else ("none" if g.has("save_file") else "not saved between sessions")],
 		["Effort", g.get("effort", "?")],
 		["Built in Godot in", g.get("godot_time", "?")],
 	]
@@ -1017,7 +972,7 @@ func show_info(g: Dictionary) -> void:
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		var vscene: String = v["scene"]
-		b.pressed.connect(func(): launch(g, vscene, ""))
+		b.pressed.connect(func(): launch(g, vscene))
 		inner.add_child(b)
 	var downloaded := []
 	for v in vs:
@@ -1075,18 +1030,6 @@ func show_settings() -> void:
 	clear_body()
 	back_bar("Settings")
 	var inner := scroll_box()
-	section(inner, "Difficulty for all games")
-	inner.add_child(label("Sets every game at once. You can still change single games on their card.", 19, MUTED))
-	var drow := HBoxContainer.new()
-	drow.add_theme_constant_override("separation", 8)
-	inner.add_child(drow)
-	for d in 3:
-		var b := button(ArcadeGame.DIFF_NAMES[d], PANEL, 22)
-		b.pressed.connect(func():
-			for g in Games.LIST:
-				ArcadeGame.set_difficulty(g["id"], d)
-			b.text = ArcadeGame.DIFF_NAMES[d] + " (set)")
-		drow.add_child(b)
 	section(inner, "Sort games by")
 	var srow := HFlowContainer.new()
 	srow.add_theme_constant_override("h_separation", 8)
@@ -1141,20 +1084,6 @@ func show_settings() -> void:
 				confirm_delete = true
 			show_settings())
 		inner.add_child(delall)
-	section(inner, "Data")
-	var reset := button("Tap again to really reset all high scores" if confirm_reset else "Reset all high scores", Color(0.6, 0.2, 0.25) if confirm_reset else PANEL, 20)
-	reset.pressed.connect(func():
-		if confirm_reset:
-			for g in Games.LIST:
-				var p := best_path(g)
-				if FileAccess.file_exists(p):
-					DirAccess.remove_absolute(ProjectSettings.globalize_path(p))
-			confirm_reset = false
-			reset.text = "High scores reset"
-		else:
-			confirm_reset = true
-			show_settings())
-	inner.add_child(reset)
 	section(inner, "About")
 	inner.add_child(label("Lab Arcade %s  ·  %d + %d games  ·  made with Godot %s\ngithub.com/Hephaestus985/Laugh-Labs" % [ProjectSettings.get_setting("application/config/version", "?"), Games.LIST.size(), Games.EXTERNAL.size(), Engine.get_version_info()["string"]], 19, MUTED))
 

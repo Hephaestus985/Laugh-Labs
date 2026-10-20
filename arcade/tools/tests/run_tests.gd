@@ -171,7 +171,7 @@ func backup_user_files() -> void:
 	if d == null:
 		return
 	for f in d.get_files():
-		if f in USER_FILES or f.begins_with("best_"):
+		if f in USER_FILES or f.begins_with("best_") or f.begins_with("scores_"):
 			backup[f] = FileAccess.get_file_as_bytes("user://" + f)
 			d.remove(f)
 
@@ -179,7 +179,7 @@ func backup_user_files() -> void:
 func restore_user_files() -> void:
 	var d := DirAccess.open("user://")
 	for f in d.get_files():
-		if f in USER_FILES or f.begins_with("best_"):
+		if f in USER_FILES or f.begins_with("best_") or f.begins_with("scores_"):
 			d.remove(f)
 	for f in backup:
 		var fa := FileAccess.open("user://" + f, FileAccess.WRITE)
@@ -226,6 +226,7 @@ func run_all() -> void:
 		if arg.begins_with("only="):  # quick run of some games: only=sudoku,minesweeper
 			if "menu" in OS.get_cmdline_user_args():
 				await test_menu()
+				await test_hubs()
 			var ids: PackedStringArray = arg.substr(5).split(",")
 			for g in Games.LIST + Games.EXTERNAL:
 				if g["id"] in ids:
@@ -241,6 +242,7 @@ func run_all() -> void:
 			await test_external(g)
 		return  # quick run: games by others only
 	await test_menu()
+	await test_hubs()
 	if "menu" in OS.get_cmdline_user_args():
 		return  # quick run: launcher only
 	for g in Games.LIST:
@@ -287,18 +289,11 @@ func test_menu() -> void:
 			plays_ok = plays_ok and c.find_child("Play", true, false) != null and c.find_child("Info", true, false) != null and c.find_child("HomeToggle", true, false) != null
 	check("menu", "every card has Play, Info, + Home", plays_ok)
 	check("menu", "renders", screen_detail("menu_landscape") > 3.0, "not checked: running headless" if headless else "")
-	var db: Button = null
+	# game settings (difficulty, saves, scores) live on each game's own start screen
+	var settings_free := true
 	for c in cards.get_children():
-		db = c.find_child("Difficulty", true, false)
-		if db:
-			break
-	if check("menu", "has difficulty buttons", db != null):
-		var before := db.text
-		db.emit_signal("pressed")
-		await frames(1)
-		check("menu", "difficulty button cycles", db.text != before, "%s -> %s" % [before, db.text])
-		for g in Games.LIST:
-			ArcadeGame.set_difficulty(g["id"], 1)
+		settings_free = settings_free and c.find_child("Difficulty", true, false) == null
+	check("menu", "no game settings in the launcher", settings_free)
 	# tapping Play on a card launches exactly that card's game (scaled like a phone)
 	var launched := []
 	m.launch_hook = func(id, _scene, _mode): launched.append(id)
@@ -511,6 +506,87 @@ func test_menu() -> void:
 	m.queue_free()
 	await frames(2)
 	check("menu", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))
+
+
+## Each game's own start screen: play buttons, difficulty, high scores, saved game,
+## sound, back to the arcade; and that Play really starts the game.
+func test_hubs() -> void:
+	var all_ok := {"opens": true, "play": true, "back": true}
+	for g in Games.LIST + Games.EXTERNAL:
+		var id: String = g["id"]
+		var vs: Array = g["versions"]
+		Engine.set_meta("hub_game", id)
+		Engine.set_meta("hub_scene", vs[vs.size() - 1]["scene"])
+		var h: Control = spawn("res://common/game_hub.tscn")
+		await frames(2)
+		all_ok["opens"] = all_ok["opens"] and h.find_child("BackToArcade", true, false) != null
+		var started := []
+		h.launch_hook = func(gid, _scene, mode): started.append([gid, mode])
+		var p: Button = h.find_child("Play", true, false)
+		if p == null:
+			p = h.find_child("Continue", true, false)
+		if p:
+			p.emit_signal("pressed")
+		all_ok["play"] = all_ok["play"] and started.size() == 1 and started[0][0] == id
+		all_ok["back"] = all_ok["back"] and GameData.back_scene() == GameData.HUB
+		h.queue_free()
+		await frames(1)
+	check("start screens", "every game has its own start screen", all_ok["opens"])
+	check("start screens", "Play on the start screen starts that game", all_ok["play"])
+	check("start screens", "< MENU in a game comes back to its start screen", all_ok["back"])
+	# difficulty, high scores, saved game and sound on one game with all of them
+	var knight: Dictionary = {}
+	for g in Games.LIST:
+		if g["id"] == "the_last_knight":
+			knight = g
+	Engine.set_meta("hub_game", "the_last_knight")
+	Engine.set_meta("hub_scene", "")
+	var h: Control = spawn("res://common/game_hub.tscn")
+	await frames(2)
+	(h.find_child("Diff2", true, false) as Button).emit_signal("pressed")
+	await frames(1)
+	check("start screens", "difficulty is set on the start screen", ArcadeGame.get_difficulty("the_last_knight") == 2)
+	ArcadeGame.set_difficulty("the_last_knight", 1)
+	GameData.add_score("the_last_knight", 4321, 2)
+	GameData.add_score("the_last_knight", 99, 0)
+	h.build()
+	await frames(1)
+	var hs: Node = h.find_child("HighScores", true, false)
+	var texts := hs.find_children("*", "Label", true, false).map(func(l): return l.text) if hs else []
+	check("start screens", "high scores are listed, best first", texts.size() >= 8 and texts[1] == "4321" and texts.has("99") and texts.has("Hard"), str(texts.slice(0, 8)))
+	var f := FileAccess.open(knight["save_file"], FileAccess.WRITE)
+	f.store_string(JSON.stringify({"lv": 3}))
+	f = null
+	h.build()
+	await frames(1)
+	check("start screens", "a saved game shows Continue and New game", h.find_child("Continue", true, false) != null and h.find_child("NewGame", true, false) != null)
+	(h.find_child("DeleteSave", true, false) as Button).emit_signal("pressed")
+	await frames(1)
+	check("start screens", "the saved game can be deleted", not FileAccess.file_exists(knight["save_file"]) and h.find_child("Play", true, false) != null)
+	(h.find_child("Sound", true, false) as Button).emit_signal("pressed")
+	await frames(1)
+	check("start screens", "sound can be switched off per game", not GameData.sound_on("the_last_knight"))
+	GameData.set_sound("the_last_knight", true)
+	GameData.clear_scores(knight)
+	h.queue_free()
+	Engine.remove_meta("hub_game")
+	Engine.remove_meta("hub_scene")
+	await frames(1)
+	# Play skips the game's own title screen
+	var skip_ok := true
+	for gid in ["sock_escape", "waveguide_snake", "the_last_knight"]:
+		for g in Games.LIST:
+			if g["id"] == gid:
+				var vs: Array = g["versions"]
+				Engine.set_meta("auto_start", true)
+				var n := spawn(vs[vs.size() - 1]["scene"])
+				await frames(4)
+				skip_ok = skip_ok and int(n.get("state")) != 0
+				n.queue_free()
+				await frames(1)
+	Engine.set_meta("auto_start", false)
+	release_all_keys()
+	check("start screens", "Play skips the game's own title", skip_ok)
 
 
 func test_game(g: Dictionary, v: Dictionary) -> void:

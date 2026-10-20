@@ -2,6 +2,11 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.22 (2026-10-20)
+- Every game has its own start screen (`arcade/common/game_hub.gd`): its cover, Play or Continue / New game, difficulty, a top-10 high score list (score, difficulty, date), the saved game (with Delete), sound on/off and clearing the scores, how to play, about and credits. "< MENU" in a game comes back to it; "< Arcade" goes back to the launcher
+- Play on the start screen skips the game's own title screen
+- The launcher is now just the library: covers, game pages and downloads. Difficulty, saves and scores moved to the games' start screens
+
 ## Lab Arcade 1.21 (2026-10-20)
 - Cover art for every game (Steam-style headers): the art games by others ship with where it's good (Open RPG's banner, Outpost Assault's cover and logo), and covers made from real gameplay or drawn by hand for the rest (`arcade/tools/covers/`)
 - The Library is a grid of cover tiles (3 across in landscape): tap a cover for the game's page; Play / difficulty / Info / Home under it

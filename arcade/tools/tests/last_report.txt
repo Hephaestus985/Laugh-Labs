@@ -1,13 +1,12 @@
-Lab Arcade test report  2026-10-20T08:27:01
-556 checks, 0 failed
+Lab Arcade test report  2026-10-20T12:06:52
+564 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
 PASS  menu                       Library has a card per game    27 cards
 PASS  menu                       every card has Play, Info, + Home 
 PASS  menu                       renders                        not checked: running headless
-PASS  menu                       has difficulty buttons         
-PASS  menu                       difficulty button cycles       Normal -> Hard
+PASS  menu                       no game settings in the launcher 
 PASS  menu                       tap on Play opens that card's game 
 PASS  menu                       swipe scrolls from card, label or button 
 PASS  menu                       tap on Info opens that card's page page platformer_3d
@@ -38,6 +37,15 @@ PASS  menu                       back returns to the list
 PASS  menu                       portrait layout = 1 column     skipped without a window
 PASS  menu                       landscape layout = 3 columns   
 PASS  menu                       no errors                      
+PASS  start screens              every game has its own start screen 
+PASS  start screens              Play on the start screen starts that game 
+PASS  start screens              < MENU in a game comes back to its start screen 
+PASS  start screens              difficulty is set on the start screen 
+PASS  start screens              high scores are listed, best first ["#1", "4321", "Hard", "2026-10-20", "#2", "99", "Easy", "2026-10-20"]
+PASS  start screens              a saved game shows Continue and New game 
+PASS  start screens              the saved game can be deleted  
+PASS  start screens              sound can be switched off per game 
+PASS  start screens              Play skips the game's own title 
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene
 PASS  sock_escape v1             uses the landscape game screen 
