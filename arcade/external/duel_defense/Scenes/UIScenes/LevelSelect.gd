@@ -11,6 +11,7 @@ func _ready():
 
 func open():
 	populate_levels()
+	lab_fit()  # [Lab Arcade] phone-sized
 	visible = true
 	
 func populate_levels():

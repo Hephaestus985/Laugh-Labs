@@ -241,10 +241,10 @@
   }
  },
  "duel_defense/v1": {
-  "file": "duel_defense_v1-c25e6815906d.pck",
+  "file": "duel_defense_v1-f46cfa99150b.pck",
   "scene": "res://external/duel_defense/Scenes/MainScenes/SceneHandler.tscn",
-  "sha256": "c25e6815906d8affc59f343a377ee7e1d9553e6f5f3e8de95941046ad4d59eaf",
-  "size": 22481116,
+  "sha256": "f46cfa99150b8e4fb057dd6373ac8ad938a480d99a4af3326837ba68199f11d5",
+  "size": 22481708,
   "uids": {
    "uid://1mgkinft07ww": "res://external/duel_defense/Assets/Audio/Music/Tactical Pursuit.mp3",
    "uid://1w6x2qsf3iss": "res://external/duel_defense/Assets/Enemies/Red_Gun_03.png",

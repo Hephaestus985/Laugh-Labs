@@ -8,8 +8,21 @@ func _unhandled_input(event):
 	if event.is_action_released("ui_cancel") or event.is_action_released("dd_menu"):
 		self.visible = false
 
+# [Lab Arcade] phone-sized: most of the screen, bigger text and title bar
+func lab_fit() -> void:
+	var view: Vector2 = get_tree().root.get_visible_rect().size
+	content_scale_factor = 1.35
+	add_theme_constant_override("title_height", 54)
+	add_theme_font_size_override("title_font_size", 30)
+	if theme == null:
+		theme = DdArcade.THEME
+	size = Vector2i(view * Vector2(0.86, 0.82))
+	position = Vector2i((view - Vector2(size)) / 2.0)
+
+
 func open_popup():
-	self.popup_centered()
+	lab_fit()
+	self.popup_centered(size)
 	var container = content_container
 	if not container:
 		return

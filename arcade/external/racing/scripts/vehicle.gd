@@ -42,6 +42,13 @@ var prev_position: Vector3
 
 var calculated_lean: float
 
+# [Lab Arcade] racing: computer drivers, boost pads and the start countdown
+var ai := false  # driven by the race (ai_input) instead of the player
+var ai_input := Vector2.ZERO  # x: steering -1..1, y: throttle -1..1
+var controls_on := true  # off during the countdown and after the finish
+var boost := 0.0  # seconds of boost left (from a boost pad)
+const BOOST_SPEED := 1.65
+
 # Public Functions
 
 func get_vehicle_position() -> Vector3: return vehicle_model.global_position
@@ -80,6 +87,9 @@ func _physics_process(delta):
 	colliding = raycast.is_colliding()
 
 	var target_speed = input.z
+	if boost > 0.0:  # [Lab Arcade] boost pad: full throttle and then some
+		boost -= delta
+		target_speed = BOOST_SPEED
 
 	if (target_speed < 0 and linear_speed > 0.01):
 		linear_speed = lerp(linear_speed, 0.0, delta * 8)
@@ -113,9 +123,16 @@ func _physics_process(delta):
 func handle_input(delta):
 
 	if raycast.is_colliding():
-		input.x = Input.get_axis("left", "right")
-		input.z = Input.get_axis("back", "forward")
-		_screen_stick_steer()
+		if not controls_on:
+			input.x = 0.0
+			input.z = 0.0
+		elif ai:
+			input.x = ai_input.x
+			input.z = ai_input.y
+		else:
+			input.x = Input.get_axis("left", "right")
+			input.z = Input.get_axis("back", "forward")
+			_screen_stick_steer()
 
 	sphere.angular_velocity += vehicle_model.get_global_transform().basis.x * (linear_speed * 100) * delta
 

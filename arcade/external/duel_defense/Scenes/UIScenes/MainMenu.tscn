@@ -15,9 +15,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 50
-theme_override_constants/margin_top = 50
+theme_override_constants/margin_top = 24
 theme_override_constants/margin_right = 50
-theme_override_constants/margin_bottom = 50
+theme_override_constants/margin_bottom = 16
 
 [node name="TitleContainer" type="VBoxContainer" parent="Container"]
 layout_mode = 2
@@ -42,68 +42,74 @@ custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 script = ExtResource("2_uae1j")
-spacing = 30.0
-initial_spacing = 80.0
+spacing = 14.0
+initial_spacing = 10.0
 
 [node name="ResumeGame" type="Button" parent="Container/VBoxContainer"]
 visible = false
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Resume Game"
 
 [node name="MainMenu" type="Button" parent="Container/VBoxContainer"]
 visible = false
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Main Menu
 "
 
 [node name="NewGame" type="Button" parent="Container/VBoxContainer"]
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Level Select"
 
 [node name="Settings" type="Button" parent="Container/VBoxContainer"]
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Settings"
 
 [node name="Achivements" type="Button" parent="Container/VBoxContainer"]
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Achivements"
 
 [node name="Editor" type="Button" parent="Container/VBoxContainer"]
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Editor"
 
 [node name="Mods" type="Button" parent="Container/VBoxContainer"]
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Mods"
 
 [node name="About" type="Button" parent="Container/VBoxContainer"]
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
 text = "About"
+
+[node name="HowToPlay" type="Button" parent="Container/VBoxContainer"]
+custom_minimum_size = Vector2(350, 66)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "How to play"
 
 [node name="Sep" type="Control" parent="Container/VBoxContainer"]
 layout_mode = 2
 
 [node name="Quit" type="Button" parent="Container/VBoxContainer"]
-custom_minimum_size = Vector2(350, 75)
+custom_minimum_size = Vector2(350, 66)
 layout_mode = 2
 size_flags_horizontal = 4
-text = "Quit"
+text = "Back to Arcade"
 
 [node name="BackgroundMusic" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6")

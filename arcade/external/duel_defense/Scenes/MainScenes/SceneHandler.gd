@@ -156,6 +156,8 @@ func load_congrats_menu(result):
 func link_main_menu():
 	# warning-ignore:return_value_discarded
 	get_node("MainMenu/Container/VBoxContainer/NewGame").connect("pressed", Callable(self, "on_new_game_pressed"))
+	# [Lab Arcade] the game's help page, from its own menu
+	get_node("MainMenu/Container/VBoxContainer/HowToPlay").pressed.connect(func(): HelpPage.open(self, DdArcade.HELP))
 	# warning-ignore:return_value_discarded
 	get_node("MainMenu/Container/VBoxContainer/ResumeGame").connect("pressed", Callable(self, "on_resume_game_pressed"))
 	# warning-ignore:return_value_discarded
@@ -200,8 +202,9 @@ func update_menu_items():
 		get_node("MainMenu/Container/VBoxContainer/About").visible = true
 		get_node("MainMenu/Container/VBoxContainer/NewGame").grab_focus()
 	
-	# [Lab Arcade] Quit goes back to the arcade, also on phones
+	# [Lab Arcade] Quit goes back to the arcade, also on phones; the map editor needs a mouse
 	get_node("MainMenu/Container/VBoxContainer/Quit").visible = true
+	get_node("MainMenu/Container/VBoxContainer/Editor").visible = not DisplayServer.is_touchscreen_available()
 		
 func on_main_menu_pressed():
 	on_congrats_main_menu()

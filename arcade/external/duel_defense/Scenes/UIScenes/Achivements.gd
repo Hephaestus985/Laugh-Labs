@@ -9,6 +9,7 @@ func _ready():
 
 func open():
 	populate_achivements()
+	lab_fit()  # [Lab Arcade] phone-sized
 	visible = true
 	
 func populate_achivements():

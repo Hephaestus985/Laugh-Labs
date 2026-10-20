@@ -191,6 +191,9 @@ func back_to_launcher() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not HelpPage.is_open():
+		# a game may handle back itself first (close a pop-up): "on_back" returns true then
+		if config.get("on_back") is Callable and (config["on_back"] as Callable).call():
+			return
 		back_to_launcher()
 
 

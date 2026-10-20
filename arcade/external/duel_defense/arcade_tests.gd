@@ -5,7 +5,34 @@ extends RefCounted
 
 static func phone(rt: Node, handler: Node, name: String) -> void:
 	await rt.frames(10)
-	handler.call("on_load_map", "Map1")
+	# by touch: Level select opens a big pop-up, the back button closes it, a level starts
+	var ls_btn: Button = handler.get_node("MainMenu/Container/VBoxContainer/NewGame")
+	await rt.tap(ls_btn.get_global_rect().get_center())
+	await rt.frames(6)
+	var popup: Window = handler.get("level_select")
+	var view: Vector2 = rt.get_viewport().get_visible_rect().size
+	rt.check(name, "Level select opens a phone-sized pop-up (phone)", popup.visible and popup.size.x > view.x * 0.7, "%s in %s" % [popup.size, view])
+	rt.get_tree().root.propagate_notification(Node.NOTIFICATION_WM_GO_BACK_REQUEST)
+	await rt.frames(6)
+	rt.check(name, "the back button closes a pop-up and stays in the game", not popup.visible and rt.get_tree().current_scene == handler)
+	await rt.tap(ls_btn.get_global_rect().get_center())
+	await rt.frames(6)
+	var first: Button = popup.find_children("*", "Button", true, false).filter(func(b): return b.is_visible_in_tree())[0]
+	# the pop-up's contents are scaled up, and it sits at its position on the screen
+	var r: Rect2 = first.get_global_rect()
+	await rt.tap(Vector2(popup.position) + r.get_center() * popup.content_scale_factor)
+	await rt.frames(10)
+	var started := false
+	for i in 40:
+		var gs: Node = handler.get_node_or_null("GameScene")
+		if gs and not gs.get("main_menu_mode"):
+			started = true
+			break
+		await rt.frames(5)
+	rt.check(name, "tapping a level starts it (phone)", started)
+	rt.check(name, "the menu has How to play and Back to Arcade", handler.get_node("MainMenu/Container/VBoxContainer/HowToPlay") != null and handler.get_node("MainMenu/Container/VBoxContainer/Quit").text == "Back to Arcade")
+	if not started:
+		handler.call("on_load_map", "Map1")
 	var game: Node = null
 	for i in 60:
 		await rt.frames(5)
@@ -42,3 +69,4 @@ static func phone(rt: Node, handler: Node, name: String) -> void:
 		await rt.frames(5)
 		rt.check(name, "a tap on a turret opens its upgrades (phone)", game.get("upgrade_mode") == true)
 	rt.check(name, "the mod system is gone", handler.get_node_or_null("Mods") == null and not ResourceLoader.exists("res://external/duel_defense/CommonScripts/ModManager.gd"))
+

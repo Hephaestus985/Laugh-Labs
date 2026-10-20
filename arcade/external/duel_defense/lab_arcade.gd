@@ -6,6 +6,7 @@ extends RefCounted
 ## (developer console, debug overlay, controller icons) sleep. The launcher calls park().
 
 const THEME := preload("res://external/duel_defense/Resources/Themes/MainTheme.tres")
+const HELP := "res://external/duel_defense/lab_arcade_help.json"
 const CLEAR_COLOR := Color(0.0666667, 0.341176, 0.25098, 1)
 const LISTENERS := ["DdConsole", "DdDebugMenu", "DdControllerIcons"]
 
@@ -34,7 +35,10 @@ static func setup(scene: Node) -> void:
 	var win := tree.root
 	win.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
 	win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
-	win.content_scale_size = Vector2i(1920, 1080)
+	# [Lab Arcade] the game was laid out for 1920x1080 on a monitor; on a phone that makes
+	# text and buttons tiny, so it gets a smaller canvas (everything 1.5x bigger) and the
+	# camera fits the map to it
+	win.content_scale_size = Vector2i(1280, 720)
 	_old_clear = RenderingServer.get_default_clear_color()
 	RenderingServer.set_default_clear_color(CLEAR_COLOR)
 	_set_awake(tree, true)
@@ -51,13 +55,23 @@ static func setup(scene: Node) -> void:
 	if not tree.node_added.is_connected(_themed):
 		tree.node_added.connect(_themed)
 	# the game has its own menu (and pause); this adds the phone's back button
-	TouchOverlay.add_to(scene, {"no_menu": true, "on_exit": leave.bind(tree),
-		"help": "res://external/duel_defense/lab_arcade_help.json", "help_id": "duel_defense"})  # "?": how to play
+	# no buttons on top of the game's own menu: "How to play" and "Back to Arcade" are in it
+	TouchOverlay.add_to(scene, {"no_menu": true, "on_exit": leave.bind(tree), "on_back": close_popup.bind(tree)})
+	HelpPage.open_first_time(scene, "duel_defense", HELP)
 
 
 static func _themed(n: Node) -> void:
 	if n is Control and not n.get_parent() is Control and (n as Control).theme == null:
 		(n as Control).theme = THEME
+
+
+## The phone's back button closes an open pop-up first (levels, settings...).
+static func close_popup(tree: SceneTree) -> bool:
+	for w in tree.root.find_children("*", "Window", true, false):
+		if w is DdWindowPopup and w.visible:
+			w.hide()
+			return true
+	return false
 
 
 static func back_to_arcade(tree: SceneTree) -> void:

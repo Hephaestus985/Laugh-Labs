@@ -2,6 +2,14 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 2.2 (2026-10-20)
+- Duel Defense made for phones:
+  - fixed: picking a level did nothing, so you couldn't start a game (a link was lost when the online mods screen was removed); the pop-ups' close buttons work again too
+  - fixed: the "?" help button sat on top of Level select and Settings, so taps there opened the help instead
+  - everything is 1.5x bigger, pop-ups (levels, settings, achievements, about) fill most of the screen with bigger text, and the phone's back button closes them
+  - the menu has "How to play" and "Back to Arcade" (was "Quit"); the map editor, which needs a mouse, is hidden on phones
+  - a new phone test taps Level select, closes it with back, taps a level and plays it
+
 ## Lab Arcade 2.1 (2026-10-20)
 - Every game starts at version 1.0: The Last Knight, Escape the Cavity and Bend It Like Einstein were numbered v2 (their v1 was the old web version, never in the app) and are now v1.0 like all the others
 - Game versions are shown as v1.0, v1.1... on the game pages and start screens
