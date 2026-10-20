@@ -1,0 +1,33 @@
+{
+	"title": "Deck Crawler: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Climb the map from the bottom to the boss at the top and defeat it. If your health reaches 0 the run is over and you start again with a fresh deck."
+		],
+		[
+			"The map",
+			"Tap a lit room on the next floor to go there; drag to scroll the map. Sword rooms are battles, the chest is treasure (a free relic), the heart is a campfire (rest to heal 30% of your health), the coin is a shop (buy cards and relics with gold) and the white diamond is an event. The boss waits at the top."
+		],
+		[
+			"Your turn",
+			"Each turn you get 3 mana and draw a new hand (Warrior 4 cards, Assassin 5, Wizard 3). The number in a card's top corner is its mana cost. Drag a card up onto the battlefield to play it; attacks that hit one enemy show an arrow, so drop them on the enemy you want. Drag a card back down to cancel. Tap End Turn when you're done: your unused cards go to the discard pile."
+		],
+		[
+			"Block and intent",
+			"Block (the shield) absorbs damage until your next turn, then it's gone. Above each enemy you see its intent: what it will do on its turn, for example a sword with the damage it will deal. Block enough to survive big attacks, attack when they're defending."
+		],
+		[
+			"Statuses",
+			"Some cards put statuses on you or on enemies, shown as small icons. Exposed: takes 50% more damage for a few turns. Muscle: attacks deal extra damage. Tap a status icon to read what it does."
+		],
+		[
+			"Rewards and relics",
+			"Winning a battle gives gold and a choice of new cards for your deck (you may also skip). Relics give lasting bonuses for the whole run; tap a relic at the top to read it. Your card piles (bottom corners) can be tapped to look at them."
+		],
+		[
+			"Tips",
+			"A smaller deck draws your best cards more often, so you don't have to take every card. Rest at campfires when your health is low. The run saves as you go: Continue on the main menu picks it up."
+		]
+	]
+}

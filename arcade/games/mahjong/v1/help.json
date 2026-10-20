@@ -1,0 +1,25 @@
+{
+	"title": "Mahjong Solitaire: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Clear the whole stack of tiles by removing them in matching pairs."
+		],
+		[
+			"Which tiles you can take",
+			"Only free tiles can be picked. A tile is free when nothing lies on top of it and its left side or its right side is open (no tile right next to it on that side)."
+		],
+		[
+			"Controls",
+			"Tap a free tile, then a matching free tile, and both disappear. Hint shows a pair you can take. Shuffle mixes the tiles that are left (handy when no pairs are free). Undo puts the last pair back."
+		],
+		[
+			"Tips",
+			"Take tiles that free others first: tops of stacks and long rows. When several matching tiles are free, choose the pair that opens up the most other tiles. Shuffling costs points, so look around before you shuffle."
+		],
+		[
+			"Difficulty and score",
+			"Easy has 2 layers, Normal 3 and Hard 4. Higher stacks and quicker clears score more."
+		]
+	]
+}

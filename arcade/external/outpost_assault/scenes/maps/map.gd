@@ -52,11 +52,14 @@ func _add_touch_buttons() -> void:
 	box.anchor_bottom = 1.0
 	box.offset_left = -112.0
 	box.offset_right = -16.0
-	box.offset_top = -330.0
+	box.offset_top = -438.0
 	box.offset_bottom = -16.0
 	box.add_theme_constant_override("separation", 12)
 	layer.add_child(box)
-	for spec in [["ZoomIn", "+", func(): camera.zoom_by(1.25)], ["ZoomOut", "-", func(): camera.zoom_by(0.8)], ["PauseButton", "II", _pause]]:
+	# "?" opens this game's help page (and it opens by itself the first time)
+	var help := "res://external/outpost_assault/lab_arcade_help.json"
+	HelpPage.open_first_time(self, "outpost_assault", help)
+	for spec in [["HelpButton", "?", func(): HelpPage.open(self, help)], ["ZoomIn", "+", func(): camera.zoom_by(1.25)], ["ZoomOut", "-", func(): camera.zoom_by(0.8)], ["PauseButton", "II", _pause]]:
 		var b := Button.new()
 		b.name = spec[0]
 		b.text = spec[1]
@@ -75,7 +78,7 @@ func _pause() -> void:
 
 # [Lab Arcade] Android back button: back to this game's main menu
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not HelpPage.is_open():
 		get_tree().paused = false
 		Global.is_gameover = false
 		Scenes.change_scene(Scenes.MAIN_MENU)

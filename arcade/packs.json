@@ -86,10 +86,10 @@
   "uids": {}
  },
  "deck_builder/v1": {
-  "file": "deck_builder_v1-645891a512fa.pck",
+  "file": "deck_builder_v1-3e44188b3282.pck",
   "scene": "res://external/deck_builder/scenes/run/run.tscn",
-  "sha256": "645891a512faa93256eceb6745707da5ca2488e279cb0f8d128e62dd84a75d3d",
-  "size": 14967780,
+  "sha256": "3e44188b3282714d5e57fd72fbfb39ce9f4f24856ad8629464abcc4eea2239c7",
+  "size": 14969848,
   "uids": {
    "uid://01cnuv5m4n6f": "res://external/deck_builder/art/tile_0112.png",
    "uid://1u3b3hwqd8yh": "res://external/deck_builder/art/tile_0110.png",
@@ -241,10 +241,10 @@
   }
  },
  "duel_defense/v1": {
-  "file": "duel_defense_v1-8acb794ae7dc.pck",
+  "file": "duel_defense_v1-c25e6815906d.pck",
   "scene": "res://external/duel_defense/Scenes/MainScenes/SceneHandler.tscn",
-  "sha256": "8acb794ae7dcf32ca90510797b5b1730ceef5da9a8711c89e22af05bd66b9c57",
-  "size": 22479592,
+  "sha256": "c25e6815906d8affc59f343a377ee7e1d9553e6f5f3e8de95941046ad4d59eaf",
+  "size": 22481116,
   "uids": {
    "uid://1mgkinft07ww": "res://external/duel_defense/Assets/Audio/Music/Tactical Pursuit.mp3",
    "uid://1w6x2qsf3iss": "res://external/duel_defense/Assets/Enemies/Red_Gun_03.png",
@@ -428,17 +428,17 @@
   "uids": {}
  },
  "mahjong/v1": {
-  "file": "mahjong_v1-390fdedeb670.pck",
+  "file": "mahjong_v1-bb5fd74658c2.pck",
   "scene": "res://games/mahjong/v1/game.tscn",
-  "sha256": "390fdedeb67081175bf9b67a8b1c1379da51436cd61701bf049baccc55f470f5",
-  "size": 128308,
+  "sha256": "bb5fd74658c203b76e456da7c45f39fef32f46e4806df1ba1deb7acc08208e01",
+  "size": 340276,
   "uids": {}
  },
  "minesweeper/v1": {
-  "file": "minesweeper_v1-1c050465c122.pck",
+  "file": "minesweeper_v1-f30464a512d4.pck",
   "scene": "res://games/minesweeper/v1/game.tscn",
-  "sha256": "1c050465c122f6a556d7eb2dbe34b2a7fedbf7a1f881c21e3125d627ae0b6bea",
-  "size": 127440,
+  "sha256": "f30464a512d49f5f46c0579775c3bb46af0d00c0d6e5cdf3155f1836937c40ff",
+  "size": 339588,
   "uids": {}
  },
  "never_ask_for_directions/v1": {
@@ -449,10 +449,10 @@
   "uids": {}
  },
  "nonogram/v1": {
-  "file": "nonogram_v1-67ac0bb054fb.pck",
+  "file": "nonogram_v1-99b0c0699361.pck",
   "scene": "res://games/nonogram/v1/game.tscn",
-  "sha256": "67ac0bb054fbf10f95dc32251c00913d687b745d3b72606a2ee3c6517773e9d3",
-  "size": 129480,
+  "sha256": "99b0c069936113825062ecd6651c9e768c5e9a98d1275b9bab34213a8d6a2b28",
+  "size": 341640,
   "uids": {}
  },
  "open_rpg/v1": {
@@ -593,10 +593,10 @@
   }
  },
  "open_rts/v1": {
-  "file": "open_rts_v1-893ef961f768.pck",
+  "file": "open_rts_v1-f28720789369.pck",
   "scene": "res://external/open_rts/source/main-menu/Play.tscn",
-  "sha256": "893ef961f768be1a519620cf467f273755d07cdef04f145279120d1cc0fbf59d",
-  "size": 4700204,
+  "sha256": "f28720789369855edcc61ba7c9669cd5a794e362d07433f0ffcf33fecd5c81da",
+  "size": 4702268,
   "uids": {
    "uid://0c32kpq14jmq": "res://external/open_rts/source/shaders/3d/simple_fog_of_war.gdshader",
    "uid://0gow0ughqu8u": "res://external/open_rts/source/match/units/Drone.tscn",
@@ -1085,10 +1085,10 @@
   "uids": {}
  },
  "outpost_assault/v1": {
-  "file": "outpost_assault_v1-35ba4251bd07.pck",
+  "file": "outpost_assault_v1-408464aba192.pck",
   "scene": "res://external/outpost_assault/scenes/maps/map_template.tscn",
-  "sha256": "35ba4251bd07fce35c421d398d8b0c2919b14c37a02d110305853476092394c2",
-  "size": 17822008,
+  "sha256": "408464aba19232a086bea2386389ec70a83a4e5a286737901a00bbc49088f950",
+  "size": 18034652,
   "uids": {
    "uid://0h6p5kq7bwnw": "res://external/outpost_assault/entities/enemies/infantry/infantry_t2.tscn",
    "uid://0nqxb5aias7b": "res://external/outpost_assault/entities/assets/textures/missile_vfx/gun_fx_01.png",
@@ -1698,31 +1698,31 @@
   "uids": {}
  },
  "sokoban/v1": {
-  "file": "sokoban_v1-a5c4272b02e5.pck",
+  "file": "sokoban_v1-22cd2eca30a7.pck",
   "scene": "res://games/sokoban/v1/game.tscn",
-  "sha256": "a5c4272b02e5102700f1b6244670db0506ca10e40feea01037a51046acd229a1",
-  "size": 130484,
+  "sha256": "22cd2eca30a74de80f8b2f73fb7cc1d58e7c021a0458e97ec94893b158434f81",
+  "size": 342548,
   "uids": {}
  },
  "solitaire/v1": {
-  "file": "solitaire_v1-946026c60ee8.pck",
+  "file": "solitaire_v1-e2f8f11a9595.pck",
   "scene": "res://games/solitaire/v1/game.tscn",
-  "sha256": "946026c60ee84db5d5695e7c78aa7f51f4b1a39614c2f00d3151172cb2dccf1c",
-  "size": 135768,
+  "sha256": "e2f8f11a9595d0689d8ced226820de684a98b36780318b09bd55a687899cc4c0",
+  "size": 348040,
   "uids": {}
  },
  "sudoku/v1": {
-  "file": "sudoku_v1-d70c88e4c3ff.pck",
+  "file": "sudoku_v1-d78d10bedd92.pck",
   "scene": "res://games/sudoku/v1/game.tscn",
-  "sha256": "d70c88e4c3fff71b9245bad8e4ddab7cd285b6f21bcdeba06a0f972e6cc28d3f",
-  "size": 130288,
+  "sha256": "d78d10bedd92461a338b1cb4173bbee7cd3c6948534e4625766ce85aa42806cc",
+  "size": 342304,
   "uids": {}
  },
  "tactical_rpg/v1": {
-  "file": "tactical_rpg_v1-22fdc9ca9c34.pck",
+  "file": "tactical_rpg_v1-2d2bb0d3167a.pck",
   "scene": "res://external/tactical_rpg/assets/scene/main.tscn",
-  "sha256": "22fdc9ca9c346b0712c532ecfebf00dac6e44acc59ca4604f8c7658289123235",
-  "size": 557848,
+  "sha256": "2d2bb0d3167a23620a96b87710d7936e8335516c0b93870f5e5d86ad56d8244f",
+  "size": 770440,
   "uids": {
    "uid://14x26y1535he": "res://external/tactical_rpg/data/models/world/stats/hero/knight.tres",
    "uid://1fetqfwxu88y": "res://external/tactical_rpg/data/models/world/stats/hero/archer.tres",
@@ -3399,10 +3399,10 @@
   }
  },
  "the_last_knight/v2": {
-  "file": "the_last_knight_v2-de646a9b3b8d.pck",
+  "file": "the_last_knight_v2-5aaffb38fd5a.pck",
   "scene": "res://games/the_last_knight/v2/game.tscn",
-  "sha256": "de646a9b3b8dafc3fcef53761c1fba42dd2747d33cc508b5cc807ef02bd47311",
-  "size": 209244,
+  "sha256": "5aaffb38fd5a41641ae1f578521a398faefd1fb43cac06a9465fc00e315f28f1",
+  "size": 422244,
   "uids": {}
  },
  "waveguide_snake/v1": {

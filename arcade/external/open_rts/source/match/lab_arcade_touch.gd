@@ -30,6 +30,8 @@ func _ready():
 		"small": [["II", _menu], ["BOX", toggle_box], ["ALL", select_army], ["NONE", select_none], ["STOP", cancel_placement]],
 		"no_menu": true,  # the match menu (II) leads back: Exit, then Quit in the main menu
 		"on_exit": RtsArcade.leave.bind(get_tree()),
+		"help": "res://external/open_rts/lab_arcade_help.json",  # "?": goal, resources, units, orders
+		"help_id": "open_rts",
 	})
 	# stay the last child, so this sees finger input before the game's own mouse handlers
 	get_parent().child_entered_tree.connect(func(_n): get_parent().move_child.call_deferred(self, -1))

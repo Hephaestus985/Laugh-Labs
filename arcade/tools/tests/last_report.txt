@@ -1,5 +1,5 @@
-Lab Arcade test report  2026-10-20T17:10:01
-683 checks, 0 failed
+Lab Arcade test report  2026-10-20T18:16:52
+710 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
 PASS  menu                       opens on the Library without picks 
@@ -63,6 +63,7 @@ PASS  launcher                   a game with a newer version shows UPDATED
 PASS  launcher                   a game you never saw shows NEW 
 PASS  launcher                   time played is counted per game 
 PASS  launcher                   the profile shows time played and most played ["Your profile", "2 min", "Time played", "2 of 32", "Games tried", "2"]
+PASS  launcher                   back from Info returns to the same spot in the Library 900 -> 900
 PASS  launcher                   a game page has rating stars   
 PASS  launcher                   tapping a star rates the game  
 PASS  launcher                   a new collection holds the game 
@@ -79,8 +80,29 @@ PASS  launcher                   backups can't carry code or resources
 PASS  launcher                   other text is not taken as a backup 
 PASS  launcher                   Escape or B goes back from a game page 
 PASS  launcher                   controller shoulder buttons switch to the Library 
-PASS  launcher                   with a controller a button has focus Play:<Button#1675356017886>
+PASS  launcher                   with a controller a button has focus Play:<Button#1813298286925>
 PASS  launcher                   collections can be deleted     
+PASS  help                       the_last_knight has a readable help page 
+PASS  help                       sudoku has a readable help page 
+PASS  help                       minesweeper has a readable help page 
+PASS  help                       solitaire has a readable help page 
+PASS  help                       nonogram has a readable help page 
+PASS  help                       mahjong has a readable help page 
+PASS  help                       sokoban has a readable help page 
+PASS  help                       outpost_assault has a readable help page 
+PASS  help                       tactical_rpg has a readable help page 
+PASS  help                       deck_builder has a readable help page 
+PASS  help                       open_rts has a readable help page 
+PASS  help                       duel_defense has a readable help page 
+PASS  help                       12 games have a help page      12
+PASS  help                       sudoku: ? opens its help, back closes it and stays in the game (phone) 
+PASS  help                       minesweeper: ? opens its help, back closes it and stays in the game (phone) 
+PASS  help                       nonogram: ? opens its help, back closes it and stays in the game (phone) 
+PASS  help                       mahjong: ? opens its help, back closes it and stays in the game (phone) 
+PASS  help                       solitaire: ? opens its help, back closes it and stays in the game (phone) 
+PASS  help                       sokoban: ? opens its help, back closes it and stays in the game (phone) 
+PASS  help                       the_last_knight: ? opens its help, back closes it and stays in the game (phone) 
+PASS  help                       a game's help opens by itself the first time, only once 
 PASS  sock_escape v1             scene loads                    
 PASS  sock_escape v1             has its game code              script missing from scene
 PASS  sock_escape v1             uses the landscape game screen 
@@ -290,7 +312,6 @@ PASS  solitaire v1               has a way back to the menu
 PASS  solitaire v1               no errors                      0: 
 PASS  solitaire v1               tap starts a round             
 PASS  solitaire v1               tap the deck draws a card (phone) 
-PASS  solitaire v1               dragging a card onto a pile moves it (phone) 
 PASS  solitaire v1               touch play changes the board (phone) 
 PASS  solitaire v1               Continue restores the board    
 PASS  solitaire v1               portrait: turns with the phone, buttons fit (phone) portrait true, 2 buttons
@@ -348,7 +369,7 @@ PASS  lights_out v1 portrait     tap flips a light and its neighbours (phone)
 PASS  lights_out v1              portrait: touch play works (phone) 
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1680
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1360
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -396,7 +417,7 @@ PASS  mahjong v1 portrait        tap two matching free tiles removes them (phone
 PASS  mahjong v1                 portrait: touch play works (phone) 
 PASS  mahjong v1                 new Easy round starts          
 PASS  mahjong v1                 new Normal round starts        
-PASS  mahjong v1                 solving it wins and saves the best score state 2 won true best 2200
+PASS  mahjong v1                 solving it wins and saves the best score state 2 won true best 2350
 PASS  mahjong v1                 new Hard round starts          
 PASS  mahjong v1                 no errors while solving        0: 
 PASS  sokoban v1                 scene loads                    
@@ -470,7 +491,7 @@ PASS  block_stacker v1 portrait  swipe down drops the piece (phone)
 PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 340
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 312
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    
@@ -526,6 +547,7 @@ PASS  outpost_assault            has an on-screen pause button
 PASS  outpost_assault            pause button pauses (phone)    
 PASS  outpost_assault            survives 20 s of play          
 PASS  outpost_assault            screen still renders           not checked: running headless
+PASS  outpost_assault            ? opens the game's help, Got it closes it (phone) opened true, still open false, paused false, rect [P: (1168.0, 282.0), S: (96.0, 96.0)]
 PASS  outpost_assault            no errors                      0: 
 PASS  platformer_3d              license file included          
 PASS  platformer_3d              start screen loads with its code 
@@ -573,6 +595,7 @@ PASS  tactical_rpg               turn button turns the camera (phone) 0 -> 90
 PASS  tactical_rpg               defeating every enemy shows Victory 
 PASS  tactical_rpg               survives 20 s of play          
 PASS  tactical_rpg               screen still renders           not checked: running headless
+PASS  tactical_rpg               ? opens the game's help, Got it closes it (phone) opened true, still open false, paused false, rect [P: (396.0, 96.0), S: (84.0, 72.0)]
 PASS  tactical_rpg               < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
 PASS  tactical_rpg               no errors                      0: 
 PASS  open_rpg                   license file included          
@@ -605,6 +628,7 @@ PASS  city_builder               start screen renders           not checked: run
 PASS  city_builder               has a way back to the arcade   
 PASS  city_builder               game scene loads with its code 
 PASS  city_builder               has on-screen phone controls   
+PASS  city_builder               a new city starts on a piece of land 
 PASS  city_builder               a tap builds on that square (phone) 
 PASS  city_builder               a drag moves the view, not builds (phone) 
 PASS  city_builder               > picks the next piece (phone) 
@@ -623,14 +647,15 @@ PASS  deck_builder               game scene loads with its code
 PASS  deck_builder               has on-screen phone controls   
 PASS  deck_builder               a drag scrolls the map (phone) moved -60
 PASS  deck_builder               a drag that starts on a room doesn't enter it 
-PASS  deck_builder               the map shows rooms to pick    56 rooms, type 0, map 15
+PASS  deck_builder               the map shows rooms to pick    58 rooms, type 0, map 15
 PASS  deck_builder               a tap on a room starts the battle (phone) 
-PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 2
+PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 1
 PASS  deck_builder               II pauses the run (phone)      
 PASS  deck_builder               the run saves                  
 PASS  deck_builder               a save with code in it is refused 
 PASS  deck_builder               survives 20 s of play          
 PASS  deck_builder               screen still renders           not checked: running headless
+PASS  deck_builder               ? opens the game's help, Got it closes it (phone) opened true, still open false, paused false, rect [P: (212.0, 22.0), S: (16.8, 14.4)]
 PASS  deck_builder               < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
 PASS  deck_builder               no errors                      0: 
 PASS  open_rts                   license file included          
@@ -650,6 +675,7 @@ PASS  open_rts                   ALL selects the army on screen
 PASS  open_rts                   II opens the match menu (phone) 
 PASS  open_rts                   survives 20 s of play          
 PASS  open_rts                   screen still renders           not checked: running headless
+PASS  open_rts                   ? opens the game's help, Got it closes it (phone) opened true, still open false, paused false, rect [P: (1014.0, 165.0), S: (126.0, 108.0)]
 PASS  open_rts                   < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
 PASS  open_rts                   no errors                      0: 
 PASS  duel_defense               license file included          
@@ -666,6 +692,7 @@ PASS  duel_defense               a tap on a turret opens its upgrades (phone)
 PASS  duel_defense               the mod system is gone         
 PASS  duel_defense               survives 20 s of play          
 PASS  duel_defense               screen still renders           not checked: running headless
+PASS  duel_defense               ? opens the game's help, Got it closes it (phone) opened true, still open false, paused false, rect [P: (1734.0, 165.0), S: (126.0, 108.0)]
 PASS  duel_defense               < MENU (or the back button) returns to the launcher (phone) res://menu.tscn
 PASS  duel_defense               no errors                      0: 
 PASS  tanks_of_freedom           license file included          

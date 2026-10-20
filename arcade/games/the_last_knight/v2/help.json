@@ -1,0 +1,33 @@
+{
+	"title": "The Last Knight: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Chase the inventor of the crossbow through five eras (a castle, the Viking seas, a Roman aqueduct, a Dutch polder and his tower) and beat him in a boss fight at the top of his tower."
+		],
+		[
+			"Controls",
+			"Drag on the left half of the screen to run. JUMP jumps; SWORD swings your sword. On a PC: arrows to run, SPACE or up to jump, X or J to swing."
+		],
+		[
+			"Health and lives",
+			"The red dots at the top are your health: every hit takes one. With no health left you lose a life and start again at the last checkpoint flag with full health. When you run out of lives the game is over. Easy gives 4 lives and 4 health, Normal 3 and 3, Hard 2 lives and faster enemies that shoot more often."
+		],
+		[
+			"Fighting",
+			"Swing at enemies, or jump on top of them: a stomp scores half again as many points. Most enemies can be stomped, but watch out for Roman legionaries: their shield blocks from the front, so get behind them. Dutch cyclists always have right of way: jump over them."
+		],
+		[
+			"Parrying",
+			"Swing your sword just as a crossbow bolt or a thrown axe reaches you to knock it back. You'll need this against the inventor himself: parry his bolts and hit him while he reloads."
+		],
+		[
+			"Checkpoints and saving",
+			"Touch a flag to make it your checkpoint. The game saves at the start of every level and before the boss, so Continue on the start screen brings you back there."
+		],
+		[
+			"Score",
+			"Enemies and ducats (coins) give points. Finishing a level fast gives a time bonus, and every life you have left at the end is worth 500 points."
+		]
+	]
+}

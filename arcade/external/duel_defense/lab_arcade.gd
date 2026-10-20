@@ -51,7 +51,8 @@ static func setup(scene: Node) -> void:
 	if not tree.node_added.is_connected(_themed):
 		tree.node_added.connect(_themed)
 	# the game has its own menu (and pause); this adds the phone's back button
-	TouchOverlay.add_to(scene, {"no_menu": true, "on_exit": leave.bind(tree)})
+	TouchOverlay.add_to(scene, {"no_menu": true, "on_exit": leave.bind(tree),
+		"help": "res://external/duel_defense/lab_arcade_help.json", "help_id": "duel_defense"})  # "?": how to play
 
 
 static func _themed(n: Node) -> void:

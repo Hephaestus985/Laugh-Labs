@@ -1,0 +1,25 @@
+{
+	"title": "Sokoban: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Push every crate onto a target spot. The level is done when all crates sit on targets."
+		],
+		[
+			"Rules",
+			"You can push one crate at a time by walking into it, but you can never pull a crate, and you can't push two crates in a row or push a crate into a wall."
+		],
+		[
+			"Controls",
+			"Swipe to take one step in that direction (pushing a crate if one is there). Tap a free square to walk there by the shortest way. Undo takes back a step, Restart starts the level again, Skip level gives you a new one."
+		],
+		[
+			"Tips",
+			"Never push a crate into a corner that isn't a target: it can't come out again. The same goes for a crate pushed against a wall unless there is a target along that wall. Think about the order: fill the targets furthest from the start first. Every level can be solved."
+		],
+		[
+			"Difficulty",
+			"Easy levels have 2 crates, Normal 3 and Hard 4, and from level 11 one more. The rooms grow a little every 5 levels. Your level is remembered."
+		]
+	]
+}

@@ -235,6 +235,12 @@ func spawn(scene_path: String) -> Node:
 # ---------------------------------------------------------------- the tests
 
 func run_all() -> void:
+	# help pages open by themselves the first time a game is played; tests open them on purpose
+	var all_ids := (Games.LIST + Games.EXTERNAL).map(func(g): return g["id"])
+	GameData.set_setting("help", "seen", all_ids)
+	if "help" in OS.get_cmdline_user_args():
+		await test_help()
+		return
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("only="):  # quick run of some games: only=sudoku,minesweeper
 			if "menu" in OS.get_cmdline_user_args():
@@ -257,6 +263,7 @@ func run_all() -> void:
 	await test_menu()
 	await test_hubs()
 	await test_launcher_extras()
+	await test_help()
 	if "menu" in OS.get_cmdline_user_args():
 		return  # quick run: launcher only
 	for g in Games.LIST:
@@ -618,6 +625,24 @@ func test_launcher_extras() -> void:
 	await frames(2)
 	var texts := m.find_children("*", "Label", true, false).map(func(l): return l.text)
 	check("launcher", "the profile shows time played and most played", texts.has("Most played") and texts.has("Sudoku"), str(texts.slice(0, 6)))
+	m.queue_free()
+	await frames(2)
+	# coming back from a game's page keeps the Library where it was (John: it jumped to the top)
+	m = spawn("res://menu.tscn")
+	await frames(3)
+	m.tab = 1
+	m.show_list()
+	await frames(4)
+	var lsc: ScrollContainer = m.current_scroll()
+	lsc.scroll_vertical = 900
+	await frames(2)
+	var at: int = lsc.scroll_vertical
+	var card: Node = m.find_child("Cards", true, false).get_child(6)
+	(card.find_child("Info", true, false) as Button).emit_signal("pressed")
+	await frames(3)
+	m.go_back()
+	await frames(6)
+	check("launcher", "back from Info returns to the same spot in the Library", at > 100 and m.current_scroll().scroll_vertical == at, "%d -> %d" % [at, m.current_scroll().scroll_vertical])
 	m.queue_free()
 	await frames(2)
 	# ratings, collections, the collection filter and the Feel toggles
@@ -1099,9 +1124,90 @@ func test_external(g: Dictionary) -> void:
 	check(name, "survives 20 s of play", is_instance_valid(get_tree().current_scene) and get_tree().current_scene != self)
 	check(name, "screen still renders", screen_detail(name + "_play") > 3.0, "not checked: running headless" if headless else "")
 	get_tree().paused = false
+	await help_button_check(name)
 	await back_via_menu_button(name)
 	var e := new_errors(errs)
 	check(name, "no errors", e.is_empty(), "%d: %s" % [e.size(), ", ".join(e.slice(0, 3))])
+
+
+## Games by others with a help page: "?" opens it (game paused), "Got it" closes it.
+func help_button_check(name: String) -> void:
+	var cur := get_tree().current_scene
+	if not is_instance_valid(cur) or cur == self:
+		return
+	var rect := Rect2()
+	for ov in cur.find_children("*", "TouchOverlay", true, false):
+		for b in (ov as TouchOverlay).buttons:
+			if b[2] == "?":
+				rect = b[0]
+	var hb: Control = cur.find_child("HelpButton", true, false)
+	if hb:
+		rect = hb.get_global_rect()
+	if rect.size == Vector2.ZERO:
+		return
+	await tap(rect.get_center())
+	await frames(4)
+	var ok := HelpPage.is_open() and get_tree().paused
+	var page := HelpPage.current
+	var got: Button = page.find_child("GotIt", true, false) if page else null
+	if got:
+		await tap(got.get_global_rect().get_center())
+		await frames(4)
+	check(name, "? opens the game's help, Got it closes it (phone)", ok and not HelpPage.is_open() and not get_tree().paused, "opened %s, still open %s, paused %s, rect %s" % [ok, HelpPage.is_open(), get_tree().paused, rect])
+	HelpPage.close_current()
+	get_tree().paused = false
+
+
+## Help pages of the games made for the arcade: every page reads well, "?" opens it,
+## the back button and "Got it" close it, and it opens by itself the first time.
+func test_help() -> void:
+	var with_help := 0
+	for g in Games.LIST + Games.EXTERNAL:
+		var vs: Array = g["versions"]
+		var path: String = (str(vs[vs.size() - 1]["scene"]).get_base_dir() + "/help.json") if Games.LIST.has(g) else "res://external/%s/lab_arcade_help.json" % g["id"]
+		if not FileAccess.file_exists(path):
+			continue
+		with_help += 1
+		var d := HelpPage.read(path)
+		check("help", "%s has a readable help page" % g["id"], d.get("sections", []).size() >= 3)
+	check("help", "12 games have a help page", with_help == 12, "%d" % with_help)
+	for gid in ["sudoku", "minesweeper", "nonogram", "mahjong", "solitaire", "sokoban", "the_last_knight"]:
+		var g: Dictionary = Games.LIST.filter(func(x): return x["id"] == gid)[0]
+		var vs: Array = g["versions"]
+		var n: Node = spawn(vs[vs.size() - 1]["scene"])
+		await frames(6)
+		if n.get("state") == 0 and n.has_method("start_new"):
+			n.start_new()
+			await frames(4)
+		var r: Rect2 = n.get("help_btn")
+		await tap(r.get_center())
+		await frames(4)
+		var opened := HelpPage.is_open() and get_tree().paused
+		get_tree().root.propagate_notification(NOTIFICATION_WM_GO_BACK_REQUEST)
+		await frames(4)
+		check("help", "%s: ? opens its help, back closes it and stays in the game (phone)" % gid, opened and not HelpPage.is_open() and not get_tree().paused and is_instance_valid(n) and n.is_inside_tree())
+		n.queue_free()
+		await frames(2)
+	# the first time a game is played its help opens by itself, once
+	GameData.set_setting("help", "seen", [])
+	var s: Dictionary = Games.LIST.filter(func(x): return x["id"] == "sudoku")[0]
+	var first: Node = spawn(s["versions"][0]["scene"])
+	await frames(6)
+	var auto := HelpPage.is_open()
+	var got: Button = HelpPage.current.find_child("GotIt", true, false) if HelpPage.current else null
+	if got:
+		await tap(got.get_global_rect().get_center())
+		await frames(4)
+	first.queue_free()
+	await frames(2)
+	first = spawn(s["versions"][0]["scene"])
+	await frames(6)
+	check("help", "a game's help opens by itself the first time, only once", auto and not HelpPage.is_open())
+	HelpPage.close_current()
+	first.queue_free()
+	await frames(2)
+	GameData.set_setting("help", "seen", (Games.LIST + Games.EXTERNAL).map(func(g): return g["id"]))
+	get_tree().paused = false
 
 
 ## Taps "< MENU" like a player would and checks the launcher comes back cleanly.

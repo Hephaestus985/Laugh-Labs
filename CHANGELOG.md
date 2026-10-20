@@ -2,6 +2,15 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 1.27 (2026-10-20)
+- Help pages inside 12 games: a "?" button opens the game's own page with its goal, controls, rules and tips (the game pauses while it's open; "Got it" or the back button closes it). It also opens by itself the first time you play the game
+  - Puzzles: Minesweeper, Nonogram, Sudoku, Mahjong, Solitaire, Sokoban
+  - The Last Knight, Outpost Assault, Open RTS, Deck Crawler, Duel Defense, Tactical RPG
+- The text lives in each game's own folder (`help.json`, or `lab_arcade_help.json` for games by others), shown by `common/help_page.gd`
+- Small fix: on tiny pixel-art screens (Deck Crawler) the phone buttons' touch areas no longer overlap
+- Back from a game's Info page, Home and Library return to where you were scrolled (rows on Home too) instead of the top
+- City Builder: a new city starts on a piece of grass land with trees around the edge, instead of an empty grey space; new cover art showing a town on its land
+
 ## Lab Arcade 1.26 (2026-10-20)
 - Five bigger games by others, each security-reviewed first (see SECURITY_REVIEW.md in each folder) and made playable by touch:
   - City Builder (Kenney): tap to build roads, parks and houses; drag, pinch and twist the view; your town saves itself

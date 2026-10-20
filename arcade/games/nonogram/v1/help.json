@@ -1,0 +1,25 @@
+{
+	"title": "Nonogram: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Find the hidden picture: fill exactly the right squares of the grid."
+		],
+		[
+			"What the numbers mean",
+			"The numbers next to each row (and above each column) are the lengths of the groups of filled squares in that line, in order. '3 1' means: a group of 3 filled squares, at least one empty square, then a single filled square. A 0 means the whole line is empty."
+		],
+		[
+			"Controls",
+			"Tap a square to fill it, tap again to clear it. Long-press, or switch on Cross mode, to mark a square you know is empty with an X. Drag along a row or column to fill (or cross) many squares at once. Hint fills in one correct square; Undo takes back a move."
+		],
+		[
+			"Tips",
+			"Start with lines whose numbers almost fill them: in a 5-wide row, a 4 always covers the middle 3 squares. Cross out squares you know are empty, they make the other lines easier. A line is done when its groups match its numbers."
+		],
+		[
+			"Difficulty and score",
+			"Easy: 5 x 5. Normal: 8 x 8. Hard: 10 x 10. You score more for bigger grids and quick wins; every hint costs points."
+		]
+	]
+}

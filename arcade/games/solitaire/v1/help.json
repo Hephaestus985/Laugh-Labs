@@ -1,0 +1,29 @@
+{
+	"title": "Solitaire (Klondike): how to play",
+	"sections": [
+		[
+			"Goal",
+			"Move all 52 cards to the four foundation spaces at the top right: one per suit, from Ace up to King."
+		],
+		[
+			"The seven piles",
+			"On the piles, cards go downwards in alternating colours: a red 7 on a black 8, for example. You can move a whole run of face-up cards at once. A face-down card turns over when it is uncovered. Only a King (or a run starting with a King) may go into an empty pile."
+		],
+		[
+			"The deck",
+			"Tap the deck at the top left to draw cards onto the waste pile beside it; the top waste card can be played. When the deck is empty, tap it again to turn the waste back over."
+		],
+		[
+			"Controls",
+			"Drag a card (or run) to where you want it, or just tap it and it goes to the best place it fits. Undo takes back a move. When all cards are face up, Auto finish plays the rest for you."
+		],
+		[
+			"Tips",
+			"Uncover face-down cards first, they hold the cards you need. Don't empty a pile unless you have a King ready to go there. Move Aces and Twos to the foundations straight away."
+		],
+		[
+			"Difficulty and score",
+			"Easy and Normal draw one card at a time; Hard draws three. Fewer moves and less time score more."
+		]
+	]
+}

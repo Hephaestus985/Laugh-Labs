@@ -1,0 +1,33 @@
+{
+	"title": "Open RTS: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Build up a base, an army and a stronger economy than the computer, then destroy everything it owns. The last side with units left wins."
+		],
+		[
+			"Resources",
+			"There are two kinds of crystals: blue and red (the counters top left). Select workers and tap a crystal field to send them mining; each trip brings back 2 crystals to your Command Center. Red crystals take longer to mine."
+		],
+		[
+			"Your workers build",
+			"Select a worker and use the buttons at the bottom to build: a Command Center (8 blue, 8 red), a Vehicle Factory (6 blue), an Aircraft Factory (4 blue, 4 red), an Anti-Ground Turret or an Anti-Air Turret (2 blue, 2 red each). Tap where it should go (drag to turn it); STOP cancels."
+		],
+		[
+			"Training units",
+			"Select a building and use its buttons. Command Center: workers (2 blue). Vehicle Factory: tanks (3 blue, 1 red): strong against everything on the ground. Aircraft Factory: helicopters (1 blue, 3 red), which shoot at ground and air, and drones (2 blue), unarmed scouts that see far. Each building can queue 5 units."
+		],
+		[
+			"Giving orders",
+			"Tap one of your units to select it (tap it again quickly to select all of that kind on screen), or tap BOX and drag to select a group. Then tap the ground to move, an enemy to attack, crystals to mine or an unfinished building to help build it. ALL selects your whole army on screen, NONE clears the selection."
+		],
+		[
+			"Camera",
+			"Drag with one finger to move the view, pinch with two fingers to zoom. The minimap at the bottom left shows the whole map. The fog of war hides what your units can't see; areas you've explored stay greyed."
+		],
+		[
+			"Tips",
+			"Start by training a few extra workers and send them all mining. Turrets protect your base cheaply: anti-ground against tanks, anti-air against helicopters. Use a drone to find the enemy base before you attack. II opens the menu."
+		]
+	]
+}

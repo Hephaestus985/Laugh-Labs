@@ -1,5 +1,18 @@
 [
 	{
+		"version": "1.27",
+		"date": "2026-10-20",
+		"notes": [
+			"Help pages inside 12 games: a \"?\" button opens the game's own page with its goal, controls, rules and tips (the game pauses while it's open; \"Got it\" or the back button closes it). It also opens by itself the first time you play the game",
+			"  - Puzzles: Minesweeper, Nonogram, Sudoku, Mahjong, Solitaire, Sokoban",
+			"  - The Last Knight, Outpost Assault, Open RTS, Deck Crawler, Duel Defense, Tactical RPG",
+			"The text lives in each game's own folder (help.json, or lab_arcade_help.json for games by others), shown by common/help_page.gd",
+			"Small fix: on tiny pixel-art screens (Deck Crawler) the phone buttons' touch areas no longer overlap",
+			"Back from a game's Info page, Home and Library return to where you were scrolled (rows on Home too) instead of the top",
+			"City Builder: a new city starts on a piece of grass land with trees around the edge, instead of an empty grey space; new cover art showing a town on its land"
+		]
+	},
+	{
 		"version": "1.26",
 		"date": "2026-10-20",
 		"notes": [
@@ -48,15 +61,6 @@
 			"Every game has its own start screen (arcade/common/game_hub.gd): its cover, Play or Continue / New game, difficulty, a top-10 high score list (score, difficulty, date), the saved game (with Delete), sound on/off and clearing the scores, how to play, about and credits. \"< MENU\" in a game comes back to it; \"< Arcade\" goes back to the launcher",
 			"Play on the start screen skips the game's own title screen",
 			"The launcher is now just the library: covers, game pages and downloads. Difficulty, saves and scores moved to the games' start screens"
-		]
-	},
-	{
-		"version": "1.21",
-		"date": "2026-10-20",
-		"notes": [
-			"Cover art for every game (Steam-style headers): the art games by others ship with where it's good (Open RPG's banner, Outpost Assault's cover and logo), and covers made from real gameplay or drawn by hand for the rest (arcade/tools/covers/)",
-			"The Library is a grid of cover tiles (3 across in landscape): tap a cover for the game's page; Play / difficulty / Info / Home under it",
-			"A Steam-style game page: the cover with name, description and key facts beside it, a big Play / Get button, tags, screenshots (tap to see full screen), About, How to play, Details, Credits and Versions"
 		]
 	}
 ]

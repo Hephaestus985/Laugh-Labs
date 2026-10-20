@@ -1,0 +1,25 @@
+{
+	"title": "Sudoku: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Fill every empty square with a number from 1 to 9 so that every row, every column and every 3 x 3 box holds each number exactly once."
+		],
+		[
+			"Controls",
+			"Tap a square, then a number on the pad. Notes mode writes small pencil marks instead (handy for squares with a few possible numbers). Erase clears a square, Undo takes back a move, and Hint fills in one correct number."
+		],
+		[
+			"Clashes",
+			"A number shown in red appears twice in the same row, column or box. Fix it before going on."
+		],
+		[
+			"Tips",
+			"Look for a number that can only go in one place in a box, row or column. Squares with only one possible number are free points. When stuck, put pencil marks in a box and look for numbers that fit in one square only."
+		],
+		[
+			"Difficulty and score",
+			"Easy starts with 44 numbers filled in, Normal with 34, Hard with 27. Harder puzzles and faster solves score more; every hint costs points."
+		]
+	]
+}

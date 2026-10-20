@@ -398,6 +398,7 @@ func refresh() -> void:
 # ---------------------------------------------------------------- widgets
 
 func clear_body() -> void:
+	_remember_list()
 	for c in body.get_children():
 		body.remove_child(c)
 		c.queue_free()
@@ -627,6 +628,9 @@ func show_list() -> void:
 			fl.add_child(filter_menu("Collection", "Any collection", GameData.collections().keys(), f_collection, func(v): f_collection = v))
 		fl.add_child(filter_button("Unplayed", "Not played yet", f_unplayed, func(): f_unplayed = not f_unplayed))
 	var inner := scroll_box()
+	list_on_screen = true
+	list_tab = tab
+	_restore_list()
 	if tab == 0:
 		build_home(inner)
 		return
@@ -641,6 +645,43 @@ func show_list() -> void:
 	grid.add_theme_constant_override("v_separation", 16)
 	inner.add_child(grid)
 	fill_cards()
+
+
+# ---------------------------------------------------------------- where you were in the list
+
+var list_on_screen := false
+var list_tab := 0
+var list_scroll := {}  # tab -> {"page": scroll, "rows": {row name: sideways scroll}}
+
+
+## Leaving the Home or Library page (for a game's Info, Settings...): note where it was.
+func _remember_list() -> void:
+	if not list_on_screen or body == null:
+		return
+	list_on_screen = false
+	var sc := current_scroll()
+	if sc == null:
+		return
+	var rows := {}
+	for r in sc.find_children("Row_*", "ScrollContainer", true, false):
+		rows[String(r.name)] = r.scroll_horizontal
+	list_scroll[list_tab] = {"page": sc.scroll_vertical, "rows": rows}
+
+
+## Coming back: scroll to where it was (once the page has been laid out).
+func _restore_list() -> void:
+	if not list_scroll.has(tab):
+		return
+	var saved: Dictionary = list_scroll[tab]
+	for i in 3:
+		await get_tree().process_frame
+	var sc := current_scroll()
+	if sc == null or page != "list":
+		return
+	for r in sc.find_children("Row_*", "ScrollContainer", true, false):
+		if saved["rows"].has(String(r.name)):
+			r.scroll_horizontal = saved["rows"][String(r.name)]
+	sc.scroll_vertical = saved["page"]
 
 
 ## A drop-down filter. The first entry means "no filter" (empty value).

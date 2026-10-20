@@ -179,6 +179,7 @@ func load_city():
 	gridmap.clear()
 	map = CityDataMap.new()
 	if not FileAccess.file_exists(SAVE_PATH):
+		_starter_land()
 		return
 	var data = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
 	if not data is Dictionary:
@@ -189,6 +190,30 @@ func load_city():
 			var item := int(c[2])
 			if item >= 0 and item < structures.size():
 				gridmap.set_cell_item(Vector3i(int(c[0]), 0, int(c[1])), item, int(c[3]))
+
+# [Lab Arcade] a new city starts on a piece of land (grass with some trees around the
+# edge), so there's ground to build on instead of an empty grey void; building on a
+# square replaces the grass, as in the original
+const LAND := 7  # squares from the middle to the edge
+func _starter_land():
+	var grass := _structure_index("grass")
+	var trees := _structure_index("grass-trees")
+	var tall := _structure_index("grass-trees-tall")
+	if grass < 0:
+		return
+	for x in range(-LAND, LAND + 1):
+		for z in range(-LAND, LAND + 1):
+			var edge := maxi(absi(x), absi(z)) == LAND
+			var item := grass
+			if edge and (x * 7 + z * 3) % 4 == 0:
+				item = tall if (x + z) % 2 == 0 else trees
+			gridmap.set_cell_item(Vector3i(x, 0, z), item, 0)
+
+func _structure_index(model_name: String) -> int:
+	for i in structures.size():
+		if structures[i].model.resource_path.get_file().get_basename() == model_name:
+			return i
+	return -1
 
 func new_city():
 	if not confirm_new:

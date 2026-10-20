@@ -21,7 +21,8 @@ static func setup(scene: Node, pause := false) -> void:
 		_themed(c)
 	if not scene.get_tree().node_added.is_connected(_themed):
 		scene.get_tree().node_added.connect(_themed)
-	var cfg := {"on_exit": _leave.bind(scene.get_tree())}
+	var cfg := {"on_exit": _leave.bind(scene.get_tree()),
+		"help": "res://external/deck_builder/lab_arcade_help.json", "help_id": "deck_builder"}  # "?": how to play
 	if pause:
 		# during a run "< MENU" would cover the health; II opens the pause menu,
 		# whose "Save and quit" leads to the main menu and its Exit to the arcade

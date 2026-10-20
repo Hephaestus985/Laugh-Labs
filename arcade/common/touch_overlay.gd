@@ -34,7 +34,7 @@ static func covers(p: Vector2) -> bool:
 	if not is_instance_valid(current) or not current.is_inside_tree():
 		return false
 	for b in current.buttons:
-		if (b[0] as Rect2).grow(14).has_point(p):
+		if (b[0] as Rect2).grow(14 * current.k).has_point(p):
 			return true
 	return false
 
@@ -53,6 +53,13 @@ var k := 1.0  # size factor, see layout()
 
 func setup(cfg: Dictionary) -> void:
 	config = cfg
+	# "help": the game's help.json -> a "?" button that opens it (and it opens by itself
+	# the first time the game is played)
+	if cfg.has("help"):
+		var path: String = cfg["help"]
+		var small: Array = cfg.get("small", []).duplicate()
+		small.append(["?", func(): HelpPage.open(self, path)])
+		config["small"] = small
 	layer = 20
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	stick_actions = config.get("stick", [])
@@ -92,6 +99,8 @@ func layout(size: Vector2) -> void:
 
 func _ready() -> void:
 	current = self
+	if config.has("help"):
+		HelpPage.open_first_time(self, str(config.get("help_id", config["help"])), config["help"])
 	draw_node = Control.new()
 	draw_node.set_anchors_preset(Control.PRESET_FULL_RECT)
 	draw_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -116,7 +125,7 @@ func _input(event: InputEvent) -> void:
 		var p := to_canvas(event.position)
 		if event.pressed:
 			for b in buttons:
-				if (b[0] as Rect2).grow(14).has_point(p):
+				if (b[0] as Rect2).grow(14 * k).has_point(p):
 					get_viewport().set_input_as_handled()
 					if b[1] is Callable:
 						(b[1] as Callable).call()
@@ -181,7 +190,7 @@ func back_to_launcher() -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not HelpPage.is_open():
 		back_to_launcher()
 
 

@@ -1,0 +1,25 @@
+{
+	"title": "Minesweeper: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Open every square that has no mine under it. Open a mine and the round is lost."
+		],
+		[
+			"What the numbers mean",
+			"A number tells how many mines touch that square, counting all 8 squares around it (also diagonally). A blank square has no mines around it, so the game opens its neighbours for you."
+		],
+		[
+			"Controls",
+			"Tap a square to open it. Long-press a square, or switch on Flag mode, to put a flag on a square you think hides a mine (do it again to take the flag off). Tap a number whose mines are all flagged to open all its other neighbours at once."
+		],
+		[
+			"Tips",
+			"Your first tap is always safe. Start from the edges of open areas: a 1 with only one closed neighbour means that neighbour is a mine. When a number already has all its mines flagged, its other neighbours are safe. 'Mines left' counts mines minus your flags."
+		],
+		[
+			"Difficulty and score",
+			"Easy: 10 x 7 with 10 mines. Normal: 14 x 9 with 22 mines. Hard: 16 x 10 with 35 mines. Harder boards and faster wins score more."
+		]
+	]
+}

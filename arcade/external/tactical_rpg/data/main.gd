@@ -39,6 +39,7 @@ func _ready() -> void:
 		"dpad": ["trpg_camera_left", "trpg_camera_right", "trpg_camera_forward", "trpg_camera_backwards"],
 		"small_left": true,
 		"small": [["<<", _rotate_camera.bind(-90)], [">>", _rotate_camera.bind(90)], ["+", _zoom_camera.bind(-1.0)], ["-", _zoom_camera.bind(1.0)]],
+		"help": "res://external/tactical_rpg/lab_arcade_help.json", "help_id": "tactical_rpg",  # "?": how to play
 	})
 	if DisplayServer.is_touchscreen_available():
 		$TacticsControls/Hints.visible = false # keyboard / gamepad picture

@@ -1,0 +1,29 @@
+{
+	"title": "Duel Defense: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Tanks and mechs drive along the road to your base. Destroy them before they get there: every enemy that reaches your base takes away base health. Survive all the waves of a map to win. You earn 1 to 5 stars, one for every 20% of base health you have left."
+		],
+		[
+			"Waves",
+			"Tap Play (bottom right) to start the first wave; after that a new wave comes every few seconds on its own. Play also pauses and resumes, and >> speeds the game up."
+		],
+		[
+			"Building turrets",
+			"Tap a turret at the bottom, then drag it to a free spot beside the road and lift your finger to build it there (red means you can't build there). Destroyed enemies pay money for more turrets."
+		],
+		[
+			"The turrets",
+			"Gun (200): a cheap, quick gun; upgrade it to a heavier Gun II and Gun III, or into a Laser. Laser (400): a beam that keeps burning its target; it upgrades too. Missile (500): slow but hits hard from far away. Bomb (300) and Jet (500) are one-off attacks you can drop anywhere."
+		],
+		[
+			"Upgrading and selling",
+			"Tap a built turret to see its options: upgrade it (the price is on the button), repair it, or sell it to get money back."
+		],
+		[
+			"Tips",
+			"Build near bends in the road, where turrets can hit enemies for longer. Upgrading is often better value than buying many weak guns. Keep some money for a Bomb when a big wave comes."
+		]
+	]
+}

@@ -14,6 +14,7 @@ const W := 1280.0
 const H := 720.0
 const MENU_SCENE := "res://menu.tscn"
 const MENU_BTN := Rect2(10, 10, 120, 56)
+const HELP_BTN := Rect2(10, 76, 66, 56)  # "?" under "< MENU", for games with a help.json
 const STICK_R := 90.0
 const BTN_A_C := Vector2(1150, 600)
 const BTN_B_C := Vector2(1010, 640)
@@ -26,6 +27,7 @@ var use_b := false
 var tap_is_a := false
 var show_a := true  # draw the A touch button
 var custom_keys := false  # true: the game reads its own keys (base only handles Esc)
+var help_btn := Rect2(10, 76, 66, 56)  # where "?" goes (a game may move it)
 
 var font: Font
 var t := 0.0
@@ -53,6 +55,7 @@ func _enter_tree() -> void:
 	font = ThemeDB.fallback_font
 	is_mobile = OS.has_feature("mobile")
 	use_game_screen(get_window())
+	_first_help.call_deferred()
 	# opened from the game's start screen with Play: skip the game's own title
 	if Engine.get_meta("auto_start", false):
 		Engine.set_meta("auto_start", false)
@@ -131,8 +134,27 @@ func back_to_menu() -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not HelpPage.is_open():
 		back_to_menu()
+
+
+## The game's own help page (help.json next to its scene), if it has one.
+func help_path() -> String:
+	return scene_file_path.get_base_dir() + "/help.json"
+
+
+func has_help() -> bool:
+	return FileAccess.file_exists(help_path())
+
+
+func open_help() -> void:
+	HelpPage.open(self, help_path())
+
+
+# the first time a game is played, its help opens by itself
+func _first_help() -> void:
+	if is_inside_tree() and has_help():
+		HelpPage.open_first_time(self, game_id, help_path())
 
 
 # ---------------------------------------------------------------- input
@@ -222,6 +244,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.pressed and MENU_BTN.has_point(event.position):
 			back_to_menu()
 			return
+		if event.pressed and has_help() and help_btn.has_point(event.position):
+			open_help()
+			return
 		if event.pressed:
 			_tap_just = true
 		if event.button_index == MOUSE_BUTTON_LEFT:
@@ -240,6 +265,9 @@ func _touch(idx: int, pos: Vector2, down: bool) -> void:
 		pointer_down = true
 		if MENU_BTN.has_point(pos):
 			back_to_menu()
+			return
+		if has_help() and help_btn.grow(8).has_point(pos):
+			open_help()
 			return
 		_tap_just = true
 		if show_a and pos.distance_to(BTN_A_C) < BTN_A_R * 1.3:
@@ -298,6 +326,9 @@ func text(pos: Vector2, s: String, size: int, c: Color, center := false) -> void
 func draw_overlay(a_label := "A", b_label := "B") -> void:
 	draw_rect(MENU_BTN, Color(0, 0, 0, 0.3))
 	text(MENU_BTN.position + Vector2(14, 37), "< MENU", 22, Color(1, 1, 1, 0.9))
+	if has_help():
+		draw_rect(help_btn, Color(0, 0, 0, 0.3))
+		draw_string(font, Vector2(help_btn.position.x, help_btn.get_center().y + 11), "?", HORIZONTAL_ALIGNMENT_CENTER, help_btn.size.x, 32, Color(1, 1, 1, 0.9))
 	if not is_mobile:
 		return
 	if use_stick and _stick_idx != -1:

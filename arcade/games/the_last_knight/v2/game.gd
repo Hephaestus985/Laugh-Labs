@@ -87,6 +87,7 @@ var title_cam := 0.0
 
 func _ready() -> void:
 	game_id = "the_last_knight"
+	help_btn = Rect2(10, 92, 66, 56)  # "?" just below the score bar
 	use_stick = true
 	use_b = true
 	custom_keys = true

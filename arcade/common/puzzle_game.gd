@@ -131,6 +131,7 @@ func apply_screen(force := false) -> void:
 	win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 	sw = 720.0 if portrait else 1280.0
 	sh = 1280.0 if portrait else 720.0
+	help_btn = Rect2(sw - 76, 10, 66, 56)  # "?" top right, clear of the board
 	_place_areas()
 	layout()
 
@@ -473,5 +474,5 @@ func draw_stats(lines: Array) -> void:
 	var x := 150.0 if portrait else panel_rect.position.x
 	var y := 36.0 if portrait else 50.0
 	for line in lines:
-		draw_string(font, Vector2(x, y), str(line), HORIZONTAL_ALIGNMENT_LEFT, sw - x - 16, 24 if portrait else 26, DIM)
+		draw_string(font, Vector2(x, y), str(line), HORIZONTAL_ALIGNMENT_LEFT, sw - x - 90, 24 if portrait else 26, DIM)  # room for "?"
 		y += 28

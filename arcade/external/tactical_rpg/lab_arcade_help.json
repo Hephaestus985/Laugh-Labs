@@ -1,0 +1,33 @@
+{
+	"title": "Tactical RPG: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Your team of heroes fights a team of skeletons on a 3D battlefield. Defeat every enemy unit to win; if all of your heroes fall, you lose."
+		],
+		[
+			"Turns",
+			"You and the enemy take turns. In your turn each hero can move once and act once. Tap a hero to pick it, then Move and tap a blue tile, or Attack and tap an enemy in range. Wait ends that hero's turn; End turn ends your whole turn and the skeletons move."
+		],
+		[
+			"Your heroes",
+			"Knight: lots of health and a strong attack, but only hits enemies right next to him. Archer: moves far and shoots from a long range, but hits less hard. Cleric and Chemist: medium range and good damage, but more fragile."
+		],
+		[
+			"The enemies",
+			"Skeletons shoot from long range but break easily. Skeleton mages cast at medium range. The skeleton captain is slow but hits as hard as your knight."
+		],
+		[
+			"Height",
+			"Tiles have different heights. Every unit can only climb a certain height in one step (the archer climbs best, the knight worst), so the path you can take depends on who moves."
+		],
+		[
+			"Camera",
+			"The arrow buttons move the camera, << and >> turn it, + and - zoom. Turn the camera when a unit is hidden behind a wall."
+		],
+		[
+			"Tips",
+			"Put the knight in front to take the hits, and keep the archer at a distance. Gang up on one enemy at a time: a defeated enemy can't strike back."
+		]
+	]
+}

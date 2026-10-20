@@ -1,0 +1,29 @@
+{
+	"title": "Outpost Assault: how to play",
+	"sections": [
+		[
+			"Goal",
+			"Waves of enemies march towards your outpost. Stop them before they reach it: every enemy that gets in damages the outpost, and when its health is gone you lose. Survive all three waves to win."
+		],
+		[
+			"Building turrets",
+			"Tap an empty turret slot to open the build menu, then tap a turret to buy it. Turrets fire on their own at enemies in range; while a turret is selected its range is shown."
+		],
+		[
+			"Which turret for which enemy",
+			"Gatling (250): very fast small bullets, hits infantry and tanks. Single-shot (400): one heavy shell every few seconds, tanks only. Missile (800): homing missiles against helicopters only. You need missile turrets before the helicopters arrive."
+		],
+		[
+			"Money",
+			"Every enemy you destroy pays money. Tap a turret you built to repair it (you pay for the damage) or to remove it (you get back half its value, less if it is damaged)."
+		],
+		[
+			"Controls",
+			"Drag with one finger to move the map, pinch or use + and - to zoom, II pauses. On a PC: click, drag with the middle mouse button, scroll wheel to zoom, Esc to pause."
+		],
+		[
+			"Tips",
+			"Put gatlings where the enemy path bends, so they stay in range longer. Spend your first money on gatlings, then add single-shots for tanks and missiles for helicopters. Repair turrets between waves."
+		]
+	]
+}
