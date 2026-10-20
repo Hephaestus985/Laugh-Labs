@@ -37,9 +37,15 @@ static func phone(rt: Node, play: Node, name: String) -> void:
 	await rt.tap(cam.unproject_position(w.global_position + Vector3(0, 0.3, 0)))
 	await rt.frames(5)
 	rt.check(name, "a tap on a unit selects it (phone)", w.is_in_group("selected_units"))
-	var target := w.global_position + Vector3(3, 0, 3)
-	await rt.tap(cam.unproject_position(target))
-	await rt.frames(5)
+	# (a spot next to it; another unit or a building there would make it a different order)
+	for off in [Vector3(3, 0, 3), Vector3(-3, 0, 3), Vector3(3, 0, -3), Vector3(-3, 0, -3)]:
+		if not w.is_in_group("selected_units"):
+			await rt.tap(cam.unproject_position(w.global_position + Vector3(0, 0.3, 0)))
+			await rt.frames(5)
+		await rt.tap(cam.unproject_position(w.global_position + off))
+		await rt.frames(5)
+		if w.get("action") != null:
+			break
 	rt.check(name, "a tap on the ground sends the selected unit there (phone)", w.get("action") != null, str(w.get("action")))
 	var ov: TouchOverlay = m.find_children("*", "TouchOverlay", true, false)[0]
 	var btn := func(label): return (ov.buttons.filter(func(b): return b[2] == label)[0][0] as Rect2).get_center()

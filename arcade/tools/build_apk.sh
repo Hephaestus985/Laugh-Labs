@@ -1,6 +1,8 @@
 #!/bin/bash
 # Build and sign the Android APK, then run the test suite on an exported
 # build. Run from anywhere: tools/build_apk.sh [report_dir]
+# GAMES_ONLY=1: game updates without a new app. No APK; refused when the launcher's
+# own files changed since the last app release (tools/store.py check).
 # Clearing .godot/exported matters: a stale export cache once shipped
 # scenes without their scripts (games that would not start).
 set -e
@@ -14,12 +16,16 @@ rm -rf .godot/exported
 trap 'python3 -I tools/packs.py restore' EXIT
 python3 -I tools/catalog.py
 python3 -I tools/whats_new.py
-python3 -I tools/packs.py build --linux sudoku/v1,racing/v1
-source <(sed 's/^/K_/' ~/Android/keys/key.txt)
+python3 -I tools/packs.py build --linux sudoku/v1,racing/v1,deck_builder/v1,open_rts/v1
 mkdir -p ../builds/linux ../builds/linuxbase
-flatpak run --filesystem=home --env=GODOT_ANDROID_KEYSTORE_RELEASE_PATH="$K_keystore" --env=GODOT_ANDROID_KEYSTORE_RELEASE_USER="$K_alias" --env=GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD="$K_password" org.godotengine.Godot --headless --path . --export-release "Android" ../builds/LabArcade.apk 2>&1 | grep -iE "error" || true
-rm -f ../builds/*.idsig
-PATH=~/Android/jdk17/bin:$PATH ~/Android/sdk/build-tools/35.0.1/apksigner verify ../builds/LabArcade.apk
+if [ "${GAMES_ONLY:-0}" = "1" ]; then
+  python3 -I tools/store.py check
+else
+  source <(sed 's/^/K_/' ~/Android/keys/key.txt)
+  flatpak run --filesystem=home --env=GODOT_ANDROID_KEYSTORE_RELEASE_PATH="$K_keystore" --env=GODOT_ANDROID_KEYSTORE_RELEASE_USER="$K_alias" --env=GODOT_ANDROID_KEYSTORE_RELEASE_PASSWORD="$K_password" org.godotengine.Godot --headless --path . --export-release "Android" ../builds/LabArcade.apk 2>&1 | grep -iE "error" || true
+  rm -f ../builds/*.idsig
+  PATH=~/Android/jdk17/bin:$PATH ~/Android/sdk/build-tools/35.0.1/apksigner verify ../builds/LabArcade.apk
+fi
 # Run the test suite inside a Linux build made by the same export pipeline.
 # The build fails (exit 1) if any test fails.
 $GODOT --headless --path . --export-debug "LinuxTest" ../builds/linux/LabArcade.x86_64 >/dev/null 2>&1

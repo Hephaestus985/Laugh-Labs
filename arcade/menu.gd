@@ -467,7 +467,7 @@ func button(txt: String, c: Color, size := 22, expand := true) -> Button:
 ## Its height follows its width, so it keeps its shape on any screen.
 func cover_art(g: Dictionary, on_tap := Callable()) -> Control:
 	var path: String = g.get("cover", "")
-	var tex: Texture2D = load(path) if path != "" and ResourceLoader.exists(path) else null
+	var tex: Texture2D = Store.texture(path)  # in the app, or downloaded with a newer game list
 	return picture(tex, on_tap, Color(g["color"]).darkened(0.3))
 
 
@@ -994,6 +994,20 @@ func check_for_update(force := false) -> void:
 			show_settings())
 	if req.request(UPDATE_URL) != OK:
 		update_status = "Couldn't check"
+	# the game list: game updates and new games come without a new app
+	Store.check_online(self, func(changed: bool, _msg: String):
+		if changed and is_inside_tree():
+			_games_changed())
+
+
+## A newer game list arrived: show it.
+func _games_changed() -> void:
+	Packs.refresh()
+	match page:
+		"list":
+			show_list()
+		"settings":
+			show_settings()
 
 
 func handle_update_info(d) -> void:
@@ -1377,9 +1391,9 @@ func show_info(g: Dictionary) -> void:
 		strip.add_theme_constant_override("separation", 10)
 		inner.add_child(strip)
 		for path in shots:
-			if not ResourceLoader.exists(path):
+			var tex: Texture2D = Store.texture(path)
+			if tex == null:
 				continue
-			var tex: Texture2D = load(path)
 			var shot := picture(tex, func(): show_picture(tex))
 			shot.get_node("Cover").name = "Shot"
 			strip.add_child(shot)

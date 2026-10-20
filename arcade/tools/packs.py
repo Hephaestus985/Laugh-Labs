@@ -7,7 +7,8 @@ Usage (from anywhere): python3 -I arcade/tools/packs.py plan|build|prune|ensure|
   build    export every pack that changed (Android), write packs/manifest.json and
            arcade/packs.json (the copy the app trusts), then set up the export presets
            so the APK only holds the launcher
-  prune    keep only the packs the newest app and the app before it use
+  prune    keep only the packs the newest app, the app before it and the online
+           game list (store.json) use
   ensure   make sure builds/downloads holds the "downloads" branch (APK + packs)
   restore  put export_presets.cfg back the way it is in git
 
@@ -31,7 +32,7 @@ PLAN = os.path.join(BUILDS, "pack_plan.json")
 PRESETS = os.path.join(ARCADE, "export_presets.cfg")
 BACKUP = os.path.join(BUILDS, "export_presets.backup.cfg")
 GODOT = ["flatpak", "run", "--filesystem=home", "--filesystem=/tmp", "org.godotengine.Godot"]
-FORMAT = "pack-format-1"
+FORMAT = "pack-format-2"  # 2: game code is in the packs
 
 
 def godot(*args, timeout=900):
@@ -63,6 +64,7 @@ def uids_of(files):
     for f in files:
         lp = local(f)
         cands = [lp + ".uid", lp + ".import"] if not f.endswith((".tscn", ".tres")) else [lp]
+
         for c in cands:
             if not os.path.exists(c):
                 continue
@@ -90,6 +92,10 @@ def src_fingerprint(files, version):
                 with open(p, "rb") as fh:
                     h.update(fh.read())
     return h.hexdigest()
+
+
+def build_number():
+    return int(re.search(r"config/build=(\d+)", open(PRESETS.replace("export_presets.cfg", "project.godot")).read()).group(1))
 
 
 def sha256(path):
@@ -181,6 +187,10 @@ def prune():
     for path in (os.path.join(ARCADE, "packs.json"), os.path.join(DOWNLOADS, "packs.json")):
         if os.path.exists(path):
             keep |= {m["file"] for m in json.load(open(path)).values()}
+    # and the packs of the game list phones have now (store.json, before it's replaced)
+    store = os.path.join(DOWNLOADS, "store.json")
+    if os.path.exists(store):
+        keep |= {m["file"] for m in json.load(open(store)).get("packs", {}).values()}
     for f in os.listdir(PACKS):
         if f.endswith(".pck") and f not in keep:
             os.remove(os.path.join(PACKS, f))
@@ -201,7 +211,8 @@ def build(linux_keys):
         src = src_fingerprint(files, version)
         prev = old.get(key)
         if prev and prev.get("src") == src and os.path.exists(os.path.join(PACKS, prev["file"])):
-            prev["uids"] = uids_of(files)
+            prev["uids"] = {**uids_of(files), **info.get("uids", {})}
+            prev["classes"] = info.get("classes", [])
             manifest[key] = prev
             print("unchanged  %-28s %s" % (key, prev["file"]))
             continue
@@ -210,10 +221,14 @@ def build(linux_keys):
         sha = sha256(tmp)
         name = "%s-%s.pck" % (safe(key), sha[:12])
         shutil.move(tmp, os.path.join(PACKS, name))
-        manifest[key] = {"file": name, "sha256": sha, "size": os.path.getsize(os.path.join(PACKS, name)), "src": src, "scene": info["scene"], "uids": uids_of(files)}
+        # a pack built now may use the launcher's current shared code: older apps keep
+        # their own copy of this version instead (see common/store.gd)
+        manifest[key] = {"file": name, "sha256": sha, "size": os.path.getsize(os.path.join(PACKS, name)), "src": src, "scene": info["scene"], "uids": {**uids_of(files), **info.get("uids", {})},
+                         "classes": info.get("classes", []), "min_build": build_number()}
         print("built      %-28s %s (%.1f MB)" % (key, name, manifest[key]["size"] / 1e6))
     json.dump(manifest, open(mpath, "w"), indent=1, sort_keys=True)
-    app = {k: {"file": v["file"], "sha256": v["sha256"], "size": v["size"], "scene": v["scene"], "uids": v.get("uids", {})} for k, v in manifest.items()}
+    app = {k: {"file": v["file"], "sha256": v["sha256"], "size": v["size"], "scene": v["scene"], "uids": v.get("uids", {}),
+               "classes": v.get("classes", []), "min_build": v.get("min_build", 0)} for k, v in manifest.items()}
     json.dump(app, open(os.path.join(ARCADE, "packs.json"), "w"), indent=1, sort_keys=True)
     # Linux packs for the pack test (not published)
     for key in linux_keys:

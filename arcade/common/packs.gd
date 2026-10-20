@@ -3,9 +3,15 @@ extends RefCounted
 # Game downloads. The APK holds the launcher; every game version is a pack (.pck)
 # that the launcher downloads from the public Laugh-Labs repo on first play.
 #
-# Safety: res://packs.json, built into the app, lists each pack's SHA-256. A pack
-# is only installed and loaded when its bytes match that fingerprint, so the app
-# never runs anything that wasn't built and reviewed for this version.
+# Safety: the game list (Store: res://packs.json built into the app, or a newer list
+# signed on the PC that publishes) gives each pack's SHA-256. A pack is only installed
+# and loaded when its bytes match that fingerprint, so the app never runs anything that
+# wasn't built, reviewed and signed for it.
+#
+# Code: a pack holds its game's scripts too. Godot only knows script classes
+# (class_name) listed in the app's class list, so after loading packs the app writes
+# that list again with the packs' classes added (as a tiny pack of its own, made on
+# the phone from the signed game list) and loads it over the built-in one.
 #
 # Updates: an app update only asks to download a game again when that game's pack
 # changed. Unchanged packs are rebuilt byte for byte the same (tools/packs.py
@@ -19,20 +25,37 @@ static var manifest := {}  # key ("<id>/v<N>") -> {file, sha256, size, scene}
 static var mounted := {}  # packs loaded this session
 static var builtin := {}  # games that are inside this build (PC, tests): no download needed
 static var _ready := false
+static var _base_classes: Array = []  # the app's own script classes
+static var _class_packs := 0
 
 
 static func setup() -> void:
 	if _ready:
 		return
 	_ready = true
-	if FileAccess.file_exists("res://packs.json"):
-		var m = JSON.parse_string(FileAccess.get_file_as_string("res://packs.json"))
-		if typeof(m) == TYPE_DICTIONARY:
-			manifest = m
-	for key in manifest:
-		if ResourceLoader.exists(manifest[key]["scene"]):
-			builtin[key] = true
+	Store.setup()
+	_base_classes = ProjectSettings.get_global_class_list()
 	DirAccess.make_dir_recursive_absolute(DIR)
+	for f in DirAccess.get_files_at(DIR):
+		if f.begins_with("classes"):
+			DirAccess.remove_absolute(DIR.path_join(f))
+	reload()
+
+
+## After the game list in use changed (Store.accept / reset_to_builtin): the packs and
+## the games are taken from it again.
+static func refresh() -> void:
+	reload()
+	load("res://games.gd").reload()
+
+
+## Take the packs from the game list in use.
+static func reload() -> void:
+	manifest = Store.packs
+	builtin = {}
+	for key in manifest:
+		if not mounted.has(key) and ResourceLoader.exists(manifest[key]["scene"]):
+			builtin[key] = true
 	mount_all()
 
 
@@ -85,12 +108,15 @@ static func size_text(bytes: int) -> String:
 ## Load every downloaded pack that matches this app's fingerprints.
 static func mount_all() -> void:
 	var s := state()
+	var added := false
 	for key in s:
-		if manifest.has(key) and s[key] == manifest[key]["sha256"] and FileAccess.file_exists(path_for(key)):
-			_mount(key)
+		if manifest.has(key) and not mounted.has(key) and s[key] == manifest[key]["sha256"] and FileAccess.file_exists(path_for(key)):
+			added = _mount(key, false) or added
+	if added:
+		_update_classes()
 
 
-static func _mount(key: String) -> bool:
+static func _mount(key: String, classes := true) -> bool:
 	if mounted.has(key):
 		return true
 	# replace_files = false: a pack never overrides the launcher's own files
@@ -102,8 +128,39 @@ static func _mount(key: String) -> bool:
 			var id := ResourceUID.text_to_id(u)
 			if id != ResourceUID.INVALID_ID and not ResourceUID.has_id(id):
 				ResourceUID.add_id(id, uids[u])
+		if classes:
+			_update_classes()
 		return true
 	return false
+
+
+## The app's class list plus the classes of every loaded pack, loaded over the app's.
+static func _update_classes() -> void:
+	var list: Array = []
+	var seen := {}
+	for key in mounted:
+		for c in manifest.get(key, {}).get("classes", []):
+			if c is Dictionary and str(c.get("path", "")).begins_with("res://") and not seen.has(c.get("class")):
+				seen[c["class"]] = true
+				list.append({"class": StringName(c["class"]), "base": StringName(c.get("base", "")), "icon": str(c.get("icon", "")), "is_abstract": bool(c.get("is_abstract", false)), "is_tool": false, "language": &"GDScript", "path": str(c["path"])})
+	if list.is_empty():
+		return
+	for c in _base_classes:
+		if not seen.has(c["class"]):
+			list.append(c)
+	var cfg := ConfigFile.new()
+	cfg.set_value("", "list", list)
+	var cfg_path := DIR.path_join("classes.cfg")
+	cfg.save(cfg_path)
+	_class_packs += 1
+	var pck := DIR.path_join("classes%d.pck" % _class_packs)
+	var pk := PCKPacker.new()
+	if pk.pck_start(pck) != OK:
+		return
+	pk.add_file("res://.godot/global_script_class_cache.cfg", cfg_path)
+	pk.flush()
+	# replace_files = true for this one file only: the class list the app made itself
+	ProjectSettings.load_resource_pack(pck, true)
 
 
 ## Check a downloaded file against the fingerprint, then keep and load it.

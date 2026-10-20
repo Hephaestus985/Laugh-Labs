@@ -1,5 +1,17 @@
 [
 	{
+		"version": "2.4",
+		"date": "2026-10-20",
+		"notes": [
+			"Game updates and new games no longer need a new app: the app reads a signed game list from GitHub, and each game's download now carries the game's code too",
+			"  - the list is only used when its signature checks out (the signing key stays on the PC that publishes) and it is newer than the one in the app, so a changed or old list is ignored",
+			"  - every download is still checked against its fingerprint before it's loaded",
+			"  - covers and screenshots of new games come with the list",
+			"  - a game update that needs newer shared code waits for an app update; until then the app keeps its own copy",
+			"The launcher is smaller: game code moved out of it into the game downloads (every game downloads once more after this update)"
+		]
+	},
+	{
 		"version": "2.3",
 		"date": "2026-10-20",
 		"notes": [
@@ -52,19 +64,6 @@
 			"  - fixed: the phone's back button in Sock Escape and in Outpost Assault (game and its menu) changed scene while the app was still busy, which logged errors and could fail",
 			"  - fixed: 10 title screens still said difficulty is changed \"in the menu\"; it's on the game's start screen now",
 			"  - the full test suite also ran with real rendering: no shader or drawing errors"
-		]
-	},
-	{
-		"version": "1.27",
-		"date": "2026-10-20",
-		"notes": [
-			"Help pages inside 12 games: a \"?\" button opens the game's own page with its goal, controls, rules and tips (the game pauses while it's open; \"Got it\" or the back button closes it). It also opens by itself the first time you play the game",
-			"  - Puzzles: Minesweeper, Nonogram, Sudoku, Mahjong, Solitaire, Sokoban",
-			"  - The Last Knight, Outpost Assault, Open RTS, Deck Crawler, Duel Defense, Tactical RPG",
-			"The text lives in each game's own folder (help.json, or lab_arcade_help.json for games by others), shown by common/help_page.gd",
-			"Small fix: on tiny pixel-art screens (Deck Crawler) the phone buttons' touch areas no longer overlap",
-			"Back from a game's Info page, Home and Library return to where you were scrolled (rows on Home too) instead of the top",
-			"City Builder: a new city starts on a piece of grass land with trees around the edge, instead of an empty grey space; new cover art showing a town on its land"
 		]
 	}
 ]

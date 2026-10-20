@@ -2,7 +2,8 @@
 #
 # Each game describes itself in its own folder: games/<id>/arcade_info.json (made for
 # the arcade) or external/<id>/arcade_info.json (games by others). tools/catalog.py
-# checks them and joins them into catalog.json, which is what the app reads here.
+# checks them and joins them into catalog.json, which is what the app reads here
+# (or a newer, signed game list from GitHub: see common/store.gd).
 # Adding a game = adding its folder; see "Adding a game" in the README.
 #
 # Each version lives in its own folder (games/<id>/v<N>/) and stays playable, so a
@@ -19,14 +20,23 @@ static var EXTERNAL: Array = _load("external")
 
 
 static func _load(kind: String) -> Array:
-	var data = JSON.parse_string(FileAccess.get_file_as_string("res://catalog.json"))
-	if typeof(data) != TYPE_DICTIONARY:
+	# the game list in use: the app's own catalog.json, or a newer signed one (see Store)
+	Store.setup()
+	var data: Dictionary = Store.catalog
+	if data.is_empty():
 		push_error("catalog.json is missing or broken: run tools/catalog.py")
 		return []
 	var out: Array = []
 	for g in data.get(kind, []):
+		g = g.duplicate(true)
 		g["color"] = Color(str(g["color"]))
 		for v in g["versions"]:
 			v["v"] = int(v["v"])
 		out.append(g)
 	return out
+
+
+## After a newer game list arrived.
+static func reload() -> void:
+	LIST = _load("lab")
+	EXTERNAL = _load("external")

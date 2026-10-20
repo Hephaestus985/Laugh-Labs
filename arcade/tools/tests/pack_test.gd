@@ -42,16 +42,31 @@ func _ready() -> void:
 	for g in Games.EXTERNAL:
 		if g.has("park"):
 			load(g["park"]).park(get_tree())
-	# start clean: no downloads on this "phone"
+	# the always-loaded helpers of games by others start with the app, before any
+	# download: everything they need must be inside the launcher
+	var broken := []
+	for prop in ProjectSettings.get_property_list():
+		var k: String = prop["name"]
+		if k.begins_with("autoload/"):
+			var n := get_tree().root.get_node_or_null(NodePath(k.trim_prefix("autoload/")))
+			if n == null or (str(ProjectSettings.get_setting(k)).ends_with(".gd") and n.get_script() == null):
+				broken.append(k.trim_prefix("autoload/"))
+	check("the launcher's always-loaded helpers all start (no downloads yet)", broken.is_empty(), ", ".join(broken))
+	# start clean: no downloads and no downloaded game list on this "phone"
 	for f in DirAccess.get_files_at(Packs.DIR):
 		DirAccess.remove_absolute(Packs.DIR.path_join(f))
+	Store.reset_to_builtin()
 	Packs.setup()
+	Packs.refresh()
 	var sha: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(dir.path_join("sha.json")))
 	check("the app lists every game version as a pack", Packs.manifest.size() >= Games.LIST.size() + Games.EXTERNAL.size(), "%d packs" % Packs.manifest.size())
 	for key in sha:
 		var scene: String = Packs.manifest[key]["scene"]
 		var e0 := errors.size()
 		check("%s is not inside the launcher" % key, not ResourceLoader.exists(scene) and Packs.status(key) == "download")
+		var cls: Array = Packs.manifest[key].get("classes", [])
+		if not cls.is_empty():
+			check("%s: its code comes with the download (%d classes)" % [key, cls.size()], not ResourceLoader.exists(cls[0]["path"]))
 		# the test packs are built for Linux: trust their fingerprints instead of the Android ones
 		Packs.manifest[key]["sha256"] = sha[key]
 		var src := dir.path_join(key.replace("/", "_") + ".pck")

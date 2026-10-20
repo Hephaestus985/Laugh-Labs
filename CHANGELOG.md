@@ -2,6 +2,14 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 2.4 (2026-10-20)
+- Game updates and new games no longer need a new app: the app reads a signed game list from GitHub, and each game's download now carries the game's code too
+  - the list is only used when its signature checks out (the signing key stays on the PC that publishes) and it is newer than the one in the app, so a changed or old list is ignored
+  - every download is still checked against its fingerprint before it's loaded
+  - covers and screenshots of new games come with the list
+  - a game update that needs newer shared code waits for an app update; until then the app keeps its own copy
+- The launcher is smaller: game code moved out of it into the game downloads (every game downloads once more after this update)
+
 ## Lab Arcade 2.3 (2026-10-20)
 - Kenney Racing 2.0 is a kart racer (1.0, the free drive, stays playable from its Versions page):
   - five tracks (Oval, Classic, Hairpins, Snake, Grand Tour) built from the kit's pieces, with bumps

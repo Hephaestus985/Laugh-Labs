@@ -2,7 +2,7 @@ extends SceneTree
 # Works out how the app is split into the launcher (inside the APK) and one
 # download pack per game version. Run headless from the arcade folder:
 #   godot --headless --path . -s res://tools/pack_plan.gd -- <out.json>
-# Writes {"base": [files], "packs": {"<id>/v<N>": {"dir": ..., "files": [...]}}}.
+# Writes {"base": [files], "packs": {"<id>/v<N>": {"dir": ..., "files": [...], "classes": [...]}}}.
 #
 # The launcher keeps: menu, common code, games.gd, icons, and everything the
 # always-loaded helpers (autoloads) need when the app starts. A pack holds the
@@ -41,15 +41,12 @@ func _init() -> void:
 			for f in _files_in(root.trim_suffix("/")):
 				_add(base, f)
 		_add(base, path)
-	# All game scripts live in the launcher too: Godot only knows a script class
-	# (class_name) if its script is in the app itself, and game code refers to its
-	# classes by name. Scripts are small; the art, sound and scenes stay in the packs.
+	# A game's code goes in its pack (the app adds the pack's script classes to its
+	# class list when it loads the pack: see common/packs.gd). Only cover art and
+	# screenshots stay here: the launcher shows them before a game is downloaded.
 	for root in ["res://games", "res://external"]:
 		for f in _files_in(root):
-			if f.ends_with(".gd") and f.get_file() != "arcade_tests.gd":
-				base[f] = true
-			# cover art and screenshots: the launcher shows them before a game is downloaded
-			elif f.get_file() == "cover.jpg" or (f.get_base_dir().get_file() == "shots" and f.ends_with(".jpg")):
+			if f.get_file() == "cover.jpg" or (f.get_base_dir().get_file() == "shots" and f.ends_with(".jpg")):
 				base[f] = true
 	var packs := {}
 	for g in Games.LIST:
@@ -60,6 +57,24 @@ func _init() -> void:
 		var dir: String = "res://external/" + str(g["id"])
 		for v in g["versions"]:
 			packs["%s/v%d" % [g["id"], v["v"]]] = {"dir": dir, "scene": g.get("main", v["scene"]), "files": _pack_files(dir, base)}
+	# the script classes each pack brings
+	var class_list := ProjectSettings.get_global_class_list()
+	for key in packs:
+		var files := {}
+		for f in packs[key]["files"]:
+			files[f] = true
+		var cl := []
+		for c in class_list:
+			if files.has(c["path"]):
+				cl.append({"class": str(c["class"]), "base": str(c["base"]), "icon": str(c["icon"]), "is_abstract": c.get("is_abstract", false), "path": c["path"]})
+		packs[key]["classes"] = cl
+		# resource IDs Godot knows for the pack's files (also those inside binary files)
+		var uids := {}
+		for f in packs[key]["files"]:
+			var id := ResourceLoader.get_resource_uid(f)
+			if id != ResourceUID.INVALID_ID:
+				uids[ResourceUID.id_to_text(id)] = f
+		packs[key]["uids"] = uids
 	var base_list := base.keys()
 	base_list.sort()
 	var f := FileAccess.open(out, FileAccess.WRITE)
@@ -119,6 +134,14 @@ func _add(base: Dictionary, path: String) -> void:
 		# files the code preloads (needed as soon as the script is loaded)
 		var re2 := RegEx.create_from_string("preload\\(\"(res://[^\"]+)\"")
 		for m in re2.search_all(src):
+			var p := m.get_string(1)
+			if FileAccess.file_exists(p) and path.ends_with(".gd") and path != "res://games.gd":
+				_add(base, p)
+		# scripts named by path: `extends "res://..."` (needed to load the script at all)
+		# and scripts loaded by path at runtime; the always-loaded helpers start before
+		# any download is loaded, so they need theirs in the launcher
+		var re3 := RegEx.create_from_string("\"(res://[^\"]+\\.gd)\"")
+		for m in re3.search_all(src):
 			var p := m.get_string(1)
 			if FileAccess.file_exists(p) and path.ends_with(".gd") and path != "res://games.gd":
 				_add(base, p)

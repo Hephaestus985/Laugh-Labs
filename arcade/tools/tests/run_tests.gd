@@ -236,6 +236,8 @@ func spawn(scene_path: String) -> Node:
 
 func run_all() -> void:
 	Engine.set_meta("no_update_check", true)
+	Store.reset_to_builtin()  # a game list downloaded by an earlier run must not change the tests
+	Packs.refresh()
 	# help pages open by themselves the first time a game is played; tests open them on purpose
 	var all_ids := (Games.LIST + Games.EXTERNAL).map(func(g): return g["id"])
 	GameData.set_setting("help", "seen", all_ids)
@@ -274,6 +276,7 @@ func run_all() -> void:
 	await test_menu()
 	await test_hubs()
 	await test_launcher_extras()
+	await test_store()
 	await test_help()
 	if "menu" in OS.get_cmdline_user_args():
 		return  # quick run: launcher only
@@ -760,6 +763,49 @@ func test_launcher_extras() -> void:
 
 ## Each game's own start screen: play buttons, difficulty, high scores, saved game,
 ## sound, back to the arcade; and that Play really starts the game.
+## The signed game list: only a list signed with the right key and newer than the one
+## in use is taken; packs that need a newer app fall back to the app's own copy.
+func test_store() -> void:
+	var errs := log_counter.errors.size()
+	var crypto := Crypto.new()
+	var key := crypto.generate_rsa(2048)
+	var pem := key.save_to_string(true)
+	var own_serial := Store.serial
+	var lab: Array = Store.catalog["lab"].duplicate(true)
+	var packs: Dictionary = Store.packs.duplicate(true)
+	# a list where sudoku v1's pack needs a far newer app, and a new game only it has
+	var first: String = packs.keys()[0]
+	packs["sudoku/v1"]["min_build"] = 999999
+	packs["sudoku/v1"]["sha256"] = "changed"
+	var newgame: Dictionary = lab[0].duplicate(true)
+	newgame["id"] = "test_new_game"
+	newgame["name"] = "Test New Game"
+	lab.append(newgame)
+	var nv: Dictionary = newgame["versions"][0]
+	packs["test_new_game/v%d" % int(nv["v"])] = packs[first].duplicate(true)
+	var later := {"format": 1, "serial": own_serial + 5, "catalog": {"lab": lab, "external": Store.catalog["external"]}, "packs": packs, "art": {}}
+	var data := JSON.stringify(later).to_utf8_buffer()
+	var h := HashingContext.new()
+	h.start(HashingContext.HASH_SHA256)
+	h.update(data)
+	var sig := crypto.sign(HashingContext.HASH_SHA256, h.finish(), key)
+	check("store", "the app's public key reads", CryptoKey.new().load_from_string(Store.PUBLIC_KEY, true) == OK)
+	check("store", "a list signed with another key is refused", Store.accept(data, sig) != "" and Store.serial == own_serial)
+	var bad := data.duplicate()
+	bad[10] = bad[10] ^ 1
+	check("store", "a changed list is refused", Store.accept(bad, sig, pem) != "" and Store.serial == own_serial)
+	check("store", "a signed, newer list is taken", Store.accept(data, sig, pem) == "" and Store.serial == own_serial + 5)
+	Packs.refresh()
+	check("store", "a new game in the list shows up", Games.LIST.any(func(g): return g["id"] == "test_new_game"))
+	check("store", "a pack that needs a newer app falls back to the app's own copy", Packs.manifest.has("sudoku/v1") and Packs.manifest["sudoku/v1"]["sha256"] != "changed", "%d packs, store %d, sent %d, own %d, has %s" % [Packs.manifest.size(), Store.packs.size(), packs.size(), Store._builtin["packs"].size(), Store._builtin["packs"].has("sudoku/v1")])
+	check("store", "the list is kept for the next start", FileAccess.file_exists("user://store/store.json"))
+	check("store", "the same list again is not taken (no going back)", Store.accept(data, sig, pem) == "not newer")
+	Store.reset_to_builtin()
+	Packs.refresh()
+	check("store", "back to the app's own list", Store.serial == own_serial and not Games.LIST.any(func(g): return g["id"] == "test_new_game"))
+	check("store", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))
+
+
 func test_hubs() -> void:
 	var all_ok := {"opens": true, "play": true, "back": true, "ach": true}
 	for g in Games.LIST + Games.EXTERNAL:
