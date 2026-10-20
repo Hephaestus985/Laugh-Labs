@@ -1,0 +1,10 @@
+{
+ "version": "2.7",
+ "label": "2.7",
+ "build": 37,
+ "apk": "https://github.com/Hephaestus985/Laugh-Labs/raw/downloads/apks/LabArcade.apk",
+ "size": 43619133,
+ "notes": [
+  "Fixed: on a phone the download screen hung off the bottom right, so only half of the progress bar showed; it's now a box in the middle of the screen"
+ ]
+}
