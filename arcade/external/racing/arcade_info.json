@@ -4,25 +4,30 @@
 	"name": "Kenney Racing",
 	"publisher": "Kenney",
 	"genre": "Racing",
-	"tagline": "Arcade driving around a track with a bouncy little truck.",
-	"about": "A tiny arcade racer by Kenney: drift a toy truck around a track, bump into the other cars and enjoy the skid marks. There's no lap timer yet; it's a driving toy.",
-	"controls": "Drag on the left half and point where the truck should go on screen; it turns that way and drives. GAS and BRAKE work too (BRAKE also reverses). PC: WASD or arrow keys.",
-	"length": "Free play (no end)",
+	"tagline": "Kart racing with boosts, bananas and shells on five tracks.",
+	"about": "Kenney's toy truck goes kart racing: five tracks, three computer drivers, 3 laps, boost pads, item boxes (mushroom, banana, shell), a drift boost and a start boost. Race one track, drive the whole cup, or race your own ghost in time trial. Version 1.0 is the original free drive.",
+	"controls": "Drag on the left half and point where the truck should go; it steers and drives that way. ITEM uses your item, REVERSE backs up, II pauses. PC: WASD or arrow keys.",
+	"length": "About 2 minutes a race, 10 for the cup",
 	"effort": "Open-source starter kit by Kenney",
 	"credit": "Starter Kit Racing by Kenney (kenney.nl), github.com/KenneyNL/Starter-Kit-Racing. Code and art: MIT license. Added to Lab Arcade with touch controls and a back button.",
 	"godot_time": "~10 min to review and add",
 	"color": "#b35940",
-	"no_difficulty": true,
-	"no_score": true,
 	"aspect": "expand",
-	"main": "res://external/racing/scenes/main.tscn",
+	"main": "res://external/racing/scenes/race.tscn",
 	"versions": [
 		{
 			"v": 1,
 			"date": "2026-10-19",
 			"scene": "res://external/racing/scenes/main.tscn",
 			"notes": "Kenney's Starter Kit Racing (commit 2f2e5f2, 2026-08-21), security-reviewed, with on-screen steering and gas / brake buttons."
+		},
+		{
+			"v": 2,
+			"date": "2026-10-20",
+			"scene": "res://external/racing/scenes/race.tscn",
+			"notes": "Kart racing: 5 tracks, 3 computer drivers (Easy / Normal / Hard), laps, positions, finish line and score, boost pads, item boxes with mushroom, banana and shell, drift and start boosts, a 5-track cup, and time trial against the ghost of your best time per track. GAS / BRAKE replaced by REVERSE and ITEM; help page inside the game."
 		}
 	],
-	"web": []
+	"web": [],
+	"wins": true
 }

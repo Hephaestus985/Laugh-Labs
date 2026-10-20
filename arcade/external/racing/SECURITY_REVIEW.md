@@ -14,3 +14,9 @@ What was checked, and the result:
 Verdict: no malicious or risky code found.
 
 Changes made for Lab Arcade (marked `[Lab Arcade]` in the code): resource paths moved to `res://external/racing/`, on-screen steering with GAS and BRAKE buttons, back button, and screen-space indirect light (SSIL) turned off because the phone renderer doesn't support it.
+
+## Version 2.0 (Lab Arcade race mode, 2026-10-20)
+Written for Lab Arcade (scripts/race.gd, scenes/race.tscn), no outside code. The only file it
+writes is the best time and ghost per track, `user://racing/<track>.json`: plain JSON numbers
+read with JSON.parse_string and checked to be a Dictionary, never a Godot resource, so a
+changed file can't run code. No network, no file loading by name from the save.

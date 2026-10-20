@@ -1,0 +1,29 @@
+{
+ "title": "Kenney Racing",
+ "sections": [
+  [
+   "Goal",
+   "Race 3 laps against three computer drivers and cross the finish line first. In time trial you race alone against a see-through ghost of your best lap time on that track."
+  ],
+  [
+   "Driving",
+   "Drag on the left half of the screen and point where the truck should go: it turns that way and drives. Push further for more speed. REVERSE backs up when you're stuck against a fence. II pauses."
+  ],
+  [
+   "Boosts",
+   "Drive over the orange arrow pads for a burst of speed. Hold the stick to the side through a long bend, then straighten: the drift gives a small boost. Be on the stick the moment GO appears for a start boost."
+  ],
+  [
+   "Items",
+   "Drive through a blue ? box to get an item, then tap ITEM. Mushroom: a boost. Banana: dropped behind you, whoever hits it spins out. Shell: flies at the driver ahead of you. Drivers at the back get more mushrooms."
+  ],
+  [
+   "Modes",
+   "Race: one track. Time trial: your best time and ghost are saved per track. Cup: all five tracks in a row, 10 / 6 / 3 / 1 points for 1st to 4th. Difficulty (Easy, Normal, Hard) sets how fast the others drive."
+  ],
+  [
+   "Score",
+   "Each race scores points for your place and your time; winning counts as a win in the Arcade."
+  ]
+ ]
+}

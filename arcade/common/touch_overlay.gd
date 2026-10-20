@@ -27,6 +27,17 @@ var held := {}  # touch index -> action name
 var buttons: Array = []  # [Rect2, action, label, is_small]
 var draw_node: Control
 static var current: TouchOverlay
+## Only "< MENU" and the small buttons: a game showing its own menu over the controls
+## (Kenney Racing's track list) hides the stick and the big buttons with this.
+var menu_only := false:
+	set(v):
+		menu_only = v
+		stick_idx = -1
+		stick_vec = Vector2.ZERO
+		if stick_actions.size() == 4:
+			apply_stick()
+		if is_instance_valid(draw_node):
+			draw_node.queue_redraw()
 
 
 ## True when a point (in viewport coordinates) is on one of the overlay's controls.
@@ -34,6 +45,8 @@ static func covers(p: Vector2) -> bool:
 	if not is_instance_valid(current) or not current.is_inside_tree():
 		return false
 	for b in current.buttons:
+		if current.menu_only and not b[3] and not (b[1] is String and b[1] == "__menu"):
+			continue
 		if (b[0] as Rect2).grow(14 * current.k).has_point(p):
 			return true
 	return false
@@ -125,6 +138,8 @@ func _input(event: InputEvent) -> void:
 		var p := to_canvas(event.position)
 		if event.pressed:
 			for b in buttons:
+				if menu_only and not b[3] and not (b[1] is String and b[1] == "__menu"):
+					continue
 				if (b[0] as Rect2).grow(14 * k).has_point(p):
 					get_viewport().set_input_as_handled()
 					if b[1] is Callable:
@@ -135,7 +150,7 @@ func _input(event: InputEvent) -> void:
 						held[event.index] = b[1]
 						Input.action_press(b[1])
 					return
-			if stick_actions.size() == 4 and p.x < laid_out_for.x * 0.45 and p.y > 120 and stick_idx == -1:
+			if stick_actions.size() == 4 and not menu_only and p.x < laid_out_for.x * 0.45 and p.y > 120 and stick_idx == -1:
 				stick_idx = event.index
 				stick_origin = p
 				stick_vec = Vector2.ZERO
@@ -204,7 +219,7 @@ func _exit_tree() -> void:
 
 func _draw_controls() -> void:
 	var font := ThemeDB.fallback_font
-	if stick_actions.size() == 4:
+	if stick_actions.size() == 4 and not menu_only:
 		if stick_idx != -1:
 			draw_node.draw_circle(stick_origin, STICK_R, Color(1, 1, 1, 0.15))
 			draw_node.draw_arc(stick_origin, STICK_R, 0, TAU, 40, Color(1, 1, 1, 0.5), 3.0)
@@ -212,6 +227,8 @@ func _draw_controls() -> void:
 		else:
 			draw_node.draw_string(font, Vector2(40, laid_out_for.y - 30), "drag here to move", HORIZONTAL_ALIGNMENT_LEFT, -1, 22, Color(1, 1, 1, 0.5))
 	for b in buttons:
+		if menu_only and not b[3] and not (b[1] is String and b[1] == "__menu"):
+			continue
 		var r: Rect2 = b[0]
 		var down: bool = b[1] is String and held.values().has(b[1])
 		var col := Color(0, 0, 0, 0.45 if down else 0.3)

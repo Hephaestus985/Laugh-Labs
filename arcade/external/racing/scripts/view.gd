@@ -8,6 +8,10 @@ extends Node3D
 
 # [Lab Arcade] phone controls: stick to steer (up = gas, down = brake), GAS / BRAKE buttons
 func _ready():
+	# the race (v2) brings its own buttons (ITEM, REVERSE, pause); free drive keeps these
+	if get_parent().has_method("touch_config"):
+		TouchOverlay.add_to(self, get_parent().touch_config())
+		return
 	TouchOverlay.add_to(self, {
 		"stick": ["left", "right", "forward", "back"],
 		"buttons": [["GAS", "forward"], ["BRAKE", "back"]],

@@ -2,6 +2,16 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 2.3 (2026-10-20)
+- Kenney Racing 2.0 is a kart racer (1.0, the free drive, stays playable from its Versions page):
+  - five tracks (Oval, Classic, Hairpins, Snake, Grand Tour) built from the kit's pieces, with bumps
+  - three computer drivers, 3 laps, a 3-2-1-GO countdown, finish line, live position, lap and time
+  - boost pads, a drift boost and a start boost; item boxes with mushroom (boost), banana (spins out whoever hits it) and shell (flies at the car ahead), more mushrooms for whoever is behind
+  - Race, a 5-track Cup with points, and Time trial against the ghost of your best time on each track
+  - score and wins count in the Arcade; Easy / Normal / Hard sets how fast the others drive
+  - GAS / BRAKE were the same as the stick, so they're replaced by ITEM and REVERSE; a help page inside the game
+- The on-screen controls can hide the stick and big buttons while a game shows its own menu
+
 ## Lab Arcade 2.2 (2026-10-20)
 - Duel Defense made for phones:
   - fixed: picking a level did nothing, so you couldn't start a game (a link was lost when the online mods screen was removed); the pop-ups' close buttons work again too

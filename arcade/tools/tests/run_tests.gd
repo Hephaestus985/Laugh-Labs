@@ -1304,7 +1304,7 @@ func test_help() -> void:
 		with_help += 1
 		var d := HelpPage.read(path)
 		check("help", "%s has a readable help page" % g["id"], d.get("sections", []).size() >= 3)
-	check("help", "12 games have a help page", with_help == 12, "%d" % with_help)
+	check("help", "13 games have a help page", with_help == 13, "%d" % with_help)
 	for gid in ["sudoku", "minesweeper", "nonogram", "mahjong", "solitaire", "sokoban", "the_last_knight"]:
 		var g: Dictionary = Games.LIST.filter(func(x): return x["id"] == gid)[0]
 		var vs: Array = g["versions"]
@@ -1404,6 +1404,9 @@ func overlay_checks(name: String, game: Node) -> void:
 	if not check(name, "has on-screen phone controls", ov_list.size() > 0):
 		return
 	var ov: TouchOverlay = ov_list[0]
+	if game.has_method("lab_test_drive"):  # a game that starts on its own menu (Kenney Racing 2)
+		game.lab_test_drive()
+		await frames(6)
 	await frames(2)
 	var mover: Node3D = null
 	for n in game.find_children("*", "CharacterBody3D", true, false) + game.find_children("*", "RigidBody3D", true, false):
