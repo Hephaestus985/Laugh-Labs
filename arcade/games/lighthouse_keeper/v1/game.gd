@@ -651,7 +651,7 @@ func _draw() -> void:
 			"Swing a very expensive laser beam across a night sea so captains can see",
 			"the rocks. Lit captains learn where the rocks are and steer around them.",
 			"Touch / move the mouse to aim, or use left / right.",
-			"Difficulty: %s   (change it on the start screen, or with left / right here)" % DFS[diff]["label"],
+			"Difficulty: %s   (change it with the gear button, or with left / right here)" % DFS[diff]["label"],
 		], "Tap or press SPACE to light up")
 		draw_overlay()
 		return

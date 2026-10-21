@@ -10,6 +10,7 @@ const GRAVITY := 2800.0
 const JUMP_V := -1000.0
 const DJUMP_V := -880.0
 const MENU_BTN := Rect2(10, 10, 120, 60)
+const OPT_BTN := Rect2(10, 80, 66, 56)  # gear: difficulty and sound (GameOptions)
 const SAVE_PATH := "user://sock_escape_best.dat"
 const MENU_SCENE := "res://menu.tscn"
 
@@ -155,6 +156,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.pressed and MENU_BTN.has_point(event.position):
 			back_to_menu()
 			return
+		if event.pressed and OPT_BTN.grow(8).has_point(event.position):
+			GameOptions.open_for(self, "sock_escape")
+			return
 		if event.pressed and event.position.x < W * 0.33 and state == State.PLAY:
 			touch_duck = event.index
 		elif not event.pressed and event.index == touch_duck:
@@ -166,6 +170,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and not is_mobile:
 		if event.pressed and MENU_BTN.has_point(event.position):
 			back_to_menu()
+			return
+		if event.pressed and OPT_BTN.has_point(event.position):
+			GameOptions.open_for(self, "sock_escape")
 			return
 		if event.pressed:
 			pressed_jump = true
@@ -190,7 +197,7 @@ func back_to_menu() -> void:
 
 
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST:  # Android back button
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST and not HelpPage.is_open():  # Android back button (the options close themselves)
 		back_to_menu.call_deferred()  # not while the tree is busy delivering the notification
 
 
@@ -435,6 +442,8 @@ func _draw() -> void:
 	draw_hud()
 	draw_rect(MENU_BTN, Color(0, 0, 0, 0.25))
 	text(MENU_BTN.position + Vector2(14, 40), "< MENU", 22, Color(1, 1, 1, 0.85))
+	draw_rect(OPT_BTN, Color(0, 0, 0, 0.25))
+	GameOptions.draw_gear(self, OPT_BTN.get_center(), 17, Color(1, 1, 1, 0.85))
 
 
 func draw_background() -> void:
@@ -594,7 +603,7 @@ func draw_hud() -> void:
 				text(Vector2(0, 340), "SPACE / UP / click  =  jump   (press again in the air to double jump)", 24, white, true)
 				text(Vector2(0, 378), "DOWN / S  =  duck under bubbles, or slam back to the floor", 24, white, true)
 			text(Vector2(0, 416), "Grab the yellow lost socks for bonus points. ESC = menu.", 24, white, true)
-			text(Vector2(0, 454), "Difficulty: %s (change it on the start screen)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty("sock_escape")], 22, white, true)
+			text(Vector2(0, 454), "Difficulty: %s (change it with the gear button)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty("sock_escape")], 22, white, true)
 			if int(t * 2.0) % 2 == 0:
 				text(Vector2(0, 500), "Tap to run!" if is_mobile else "Press SPACE to run!", 40, Color(0.6, 1.0, 0.6), true)
 			if best > 0:

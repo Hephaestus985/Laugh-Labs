@@ -1,6 +1,7 @@
 extends Control
-# A game's own start screen: Play / Continue / New game, difficulty, high scores,
-# the saved game, settings (sound) and how to play. The launcher only opens it
+# A game's own start screen: Play / Continue / New game, high scores, achievements,
+# the saved game and how to play. Difficulty and sound are in the game itself (its
+# gear button, common/game_options.gd). The launcher only opens it
 # (Engine meta "hub_game" = game id, "hub_scene" = version to play); "< MENU" in the
 # game comes back here, and "< Arcade" here goes back to the launcher.
 
@@ -98,7 +99,12 @@ func play(mode: String) -> void:
 		launch_hook.call(g["id"], scene, mode)
 		return
 	GameData.record_play(g["id"])
-	GameData.apply_sound(g["id"])
+	# games with the gear button (options) have their own sound switch; games by others
+	# have their own sound settings, so the arcade doesn't mute them
+	if GameOptions.has_gear(g["id"]):
+		GameData.apply_sound(g["id"])
+	else:
+		AudioServer.set_bus_mute(0, false)
 	if external:
 		# games made by others: full landscape screen, their own layout
 		get_window().content_scale_size = Vector2i(1280, 720)
@@ -172,8 +178,8 @@ func build() -> void:
 	side.add_theme_constant_override("separation", 10)
 	hero.add_child(side)
 	_play_buttons(side)
-	if not g.get("no_difficulty", false):
-		_difficulty(side)
+	if not g.get("no_difficulty", false):  # chosen in the game itself (its gear button)
+		side.add_child(label("Difficulty: %s  (change it in the game: gear button)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty(g["id"])], 18, MUTED))
 	_scores()
 	_achievements()
 	_saved_game()
@@ -342,19 +348,14 @@ func _saved_game() -> void:
 
 
 func _settings() -> void:
-	section("Settings")
+	# difficulty and sound are in the game itself (its gear button)
+	if g.get("no_score", false):
+		return
+	section("Your data")
 	var row := HFlowContainer.new()
 	row.add_theme_constant_override("h_separation", 10)
 	row.add_theme_constant_override("v_separation", 10)
 	body.add_child(row)
-	var on := GameData.sound_on(g["id"])
-	var snd := button("Sound: on" if on else "Sound: off", PANEL, 20, false)
-	snd.name = "Sound"
-	snd.custom_minimum_size = Vector2(170, 52)
-	snd.pressed.connect(func():
-		GameData.set_sound(g["id"], not GameData.sound_on(g["id"]))
-		build())
-	row.add_child(snd)
 	if not g.get("no_score", false):
 		var rs := button("Tap again to clear the high scores" if confirm_reset else "Clear high scores", Color(0.45, 0.18, 0.22) if confirm_reset else PANEL, 20, false)
 		rs.name = "ClearScores"

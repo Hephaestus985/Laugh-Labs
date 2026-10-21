@@ -1,10 +1,10 @@
 {
  "bend_it_like_einstein/v1": {
   "classes": [],
-  "file": "bend_it_like_einstein_v1-1e7a6f29a452.pck",
-  "min_build": 34,
+  "file": "bend_it_like_einstein_v1-0e8e60fa0df6.pck",
+  "min_build": 36,
   "scene": "res://games/bend_it_like_einstein/v1/game.tscn",
-  "sha256": "1e7a6f29a452f3d1ba4e5f776e161bd67e39d3aa28dc3362854921684cd56284",
+  "sha256": "0e8e60fa0df61483939cfdb7be80caf150027a7f782a8367a63a7446c3a6b2ac",
   "size": 343976,
   "uids": {
    "uid://6400wgxcfumf": "res://games/bend_it_like_einstein/v1/game.gd"
@@ -111,10 +111,10 @@
  },
  "cleanroom_parkour/v1": {
   "classes": [],
-  "file": "cleanroom_parkour_v1-8d2b507a0da1.pck",
-  "min_build": 34,
+  "file": "cleanroom_parkour_v1-2ae38ab07250.pck",
+  "min_build": 36,
   "scene": "res://games/cleanroom_parkour/v1/game.tscn",
-  "sha256": "8d2b507a0da1044014b0604936af7cf41a75cab9668a3064d0128db4a878a6e2",
+  "sha256": "2ae38ab07250c461a25777e3bf2c4fbad3c35f77193974b6048a3a8535d68b2b",
   "size": 341036,
   "uids": {
    "uid://b8c5w071pw80e": "res://games/cleanroom_parkour/v1/game.gd"
@@ -1070,21 +1070,21 @@
  },
  "escape_the_cavity/v1": {
   "classes": [],
-  "file": "escape_the_cavity_v1-6842af5b9183.pck",
-  "min_build": 34,
+  "file": "escape_the_cavity_v1-22be780e3be5.pck",
+  "min_build": 36,
   "scene": "res://games/escape_the_cavity/v1/game.tscn",
-  "sha256": "6842af5b9183a0293d87953993760fa3f8d8c977c26574b6c978ded947d81f28",
-  "size": 347596,
+  "sha256": "22be780e3be5a9f9e7e1a1a5a0499bae2743fbfaee7e9d3a6c8db953ac910374",
+  "size": 347580,
   "uids": {
    "uid://vfxclr0cx7xk": "res://games/escape_the_cavity/v1/game.gd"
   }
  },
  "escape_velocity/v1": {
   "classes": [],
-  "file": "escape_velocity_v1-12c051a9f1cb.pck",
-  "min_build": 34,
+  "file": "escape_velocity_v1-d9323b6ae408.pck",
+  "min_build": 36,
   "scene": "res://games/escape_velocity/v1/game.tscn",
-  "sha256": "12c051a9f1cbc1f611660eb1f883c8a674e6f20808f3bf1c734afe8c942a70da",
+  "sha256": "d9323b6ae408f86a5f006ed699e22c5d11152c3a1dab86db803e6cf473c80cf5",
   "size": 368376,
   "uids": {
    "uid://b11ie1n03xdu6": "res://games/escape_velocity/v1/game.gd"
@@ -1114,11 +1114,11 @@
  },
  "lighthouse_keeper/v1": {
   "classes": [],
-  "file": "lighthouse_keeper_v1-0708f22a6448.pck",
-  "min_build": 34,
+  "file": "lighthouse_keeper_v1-9274cd0463d4.pck",
+  "min_build": 36,
   "scene": "res://games/lighthouse_keeper/v1/game.tscn",
-  "sha256": "0708f22a644893654ce944bea669c8731a78d6ff2e57e92d366dc03cf218a904",
-  "size": 364268,
+  "sha256": "9274cd0463d47a663e02dd22c99a33db6fcf9e1875d3902a22485df2d611793a",
+  "size": 364284,
   "uids": {
    "uid://b74qx6ive0s5k": "res://games/lighthouse_keeper/v1/game.gd"
   }
@@ -1158,11 +1158,11 @@
  },
  "never_ask_for_directions/v1": {
   "classes": [],
-  "file": "never_ask_for_directions_v1-b59f32f23666.pck",
-  "min_build": 34,
+  "file": "never_ask_for_directions_v1-5bab3c982689.pck",
+  "min_build": 36,
   "scene": "res://games/never_ask_for_directions/v1/game.tscn",
-  "sha256": "b59f32f236664de51760c6a964cc6f59261eb312e2c425d8c94997633a779094",
-  "size": 343316,
+  "sha256": "5bab3c982689e9d2b46e99441608b705fa8464667410ed696e5c3bcfcdf36305",
+  "size": 343332,
   "uids": {
    "uid://k47rom8sdkco": "res://games/never_ask_for_directions/v1/game.gd"
   }
@@ -2099,10 +2099,10 @@
  },
  "orbit_courier/v1": {
   "classes": [],
-  "file": "orbit_courier_v1-fa5cd5ea7750.pck",
-  "min_build": 34,
+  "file": "orbit_courier_v1-3731cd8bb17a.pck",
+  "min_build": 36,
   "scene": "res://games/orbit_courier/v1/game.tscn",
-  "sha256": "fa5cd5ea77503ecf0d89f1337a632707e757fa7e7a02a384798ed7fd8c4cb7b2",
+  "sha256": "3731cd8bb17a39853d8a9fc1f75252ce6aef8807bc82dd028d325a514f665017",
   "size": 341376,
   "uids": {
    "uid://dc5k1t47nwpw3": "res://games/orbit_courier/v1/game.gd"
@@ -2760,11 +2760,11 @@
     "path": "res://external/racing/scripts/vehicle.gd"
    }
   ],
-  "file": "racing_v1-f676fc80646e.pck",
-  "min_build": 34,
+  "file": "racing_v1-d1ca3551e18f.pck",
+  "min_build": 36,
   "scene": "res://external/racing/scenes/race.tscn",
-  "sha256": "f676fc80646e690e01b3c23659b05477beb71a5a31112e77cc3f6ac69bc70239",
-  "size": 1656008,
+  "sha256": "d1ca3551e18fcb73e01316d887fccfbbc57cee2aca1a2bb17432ebb1f73ff2a5",
+  "size": 1656104,
   "uids": {
    "uid://2in1jtv5bh0y": "res://external/racing/audio/skid.ogg",
    "uid://b24bstassw26s": "res://external/racing/scripts/view.gd",
@@ -2809,11 +2809,11 @@
     "path": "res://external/racing/scripts/vehicle.gd"
    }
   ],
-  "file": "racing_v2-f676fc80646e.pck",
-  "min_build": 34,
+  "file": "racing_v2-d1ca3551e18f.pck",
+  "min_build": 36,
   "scene": "res://external/racing/scenes/race.tscn",
-  "sha256": "f676fc80646e690e01b3c23659b05477beb71a5a31112e77cc3f6ac69bc70239",
-  "size": 1656008,
+  "sha256": "d1ca3551e18fcb73e01316d887fccfbbc57cee2aca1a2bb17432ebb1f73ff2a5",
+  "size": 1656104,
   "uids": {
    "uid://2in1jtv5bh0y": "res://external/racing/audio/skid.ogg",
    "uid://b24bstassw26s": "res://external/racing/scripts/view.gd",
@@ -2858,11 +2858,11 @@
     "path": "res://external/racing/scripts/vehicle.gd"
    }
   ],
-  "file": "racing_v3-f676fc80646e.pck",
-  "min_build": 34,
+  "file": "racing_v3-d1ca3551e18f.pck",
+  "min_build": 36,
   "scene": "res://external/racing/scenes/race.tscn",
-  "sha256": "f676fc80646e690e01b3c23659b05477beb71a5a31112e77cc3f6ac69bc70239",
-  "size": 1656008,
+  "sha256": "d1ca3551e18fcb73e01316d887fccfbbc57cee2aca1a2bb17432ebb1f73ff2a5",
+  "size": 1656104,
   "uids": {
    "uid://2in1jtv5bh0y": "res://external/racing/audio/skid.ogg",
    "uid://b24bstassw26s": "res://external/racing/scripts/view.gd",
@@ -2910,11 +2910,11 @@
  },
  "sock_escape/v1": {
   "classes": [],
-  "file": "sock_escape_v1-75ad643082fe.pck",
-  "min_build": 34,
+  "file": "sock_escape_v1-22930d5bcaba.pck",
+  "min_build": 36,
   "scene": "res://games/sock_escape/v1/game.tscn",
-  "sha256": "75ad643082fefbfc6546a1d709a96ea710144bd88559ed8f87c3e628f04d0d0d",
-  "size": 351612,
+  "sha256": "22930d5bcaba2c585bfc7c2de6ab9ec92275c3be6784761693dc3a5de8690d51",
+  "size": 352060,
   "uids": {
    "uid://da5rp3jfficx1": "res://games/sock_escape/v1/game.gd"
   }
@@ -5355,10 +5355,10 @@
  },
  "the_last_knight/v1": {
   "classes": [],
-  "file": "the_last_knight_v1-c7825faf12ec.pck",
-  "min_build": 34,
+  "file": "the_last_knight_v1-52cc8145676b.pck",
+  "min_build": 36,
   "scene": "res://games/the_last_knight/v1/game.tscn",
-  "sha256": "c7825faf12ecbd69f35ba590b5ec8f7493159131d034587df8fddd36c1ed9600",
+  "sha256": "52cc8145676b12ccac2fd365c60071cdd6bf13d1cbc1efd7973880bdab7e5c0f",
   "size": 422292,
   "uids": {
    "uid://ciqrm3xn13ksn": "res://games/the_last_knight/v1/game.gd"
@@ -5366,10 +5366,10 @@
  },
  "waveguide_snake/v1": {
   "classes": [],
-  "file": "waveguide_snake_v1-feef6091893b.pck",
-  "min_build": 34,
+  "file": "waveguide_snake_v1-730c81ca8a06.pck",
+  "min_build": 36,
   "scene": "res://games/waveguide_snake/v1/game.tscn",
-  "sha256": "feef6091893b933c4a5004a4e9187aa4d8a49d3f217cc5089b917c055cb9b7d5",
+  "sha256": "730c81ca8a0635d4716dc95ea30e7a21752f9a2388c5c57ce61c57d47e178f6e",
   "size": 338808,
   "uids": {
    "uid://b5l7yt23315rm": "res://games/waveguide_snake/v1/game.gd"

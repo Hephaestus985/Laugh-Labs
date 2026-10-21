@@ -11,6 +11,7 @@ extends CanvasLayer
 #       "small": [["<", "camera_left"], [">", "camera_right"]],  # optional, above them
 #       "small_left": true,  # optional: put the small buttons under "< MENU" instead
 #       "dpad": ["left", "right", "up", "down"],  # optional: arrow buttons bottom left
+#       "help": "res://.../help.json", "options": "<game id>",  # optional: "?" and a gear
 #   })
 # An action can also be a Callable, which is called once per tap.
 # Games that read mouse clicks can ask TouchOverlay.covers(point) to ignore
@@ -73,6 +74,11 @@ func setup(cfg: Dictionary) -> void:
 		var small: Array = cfg.get("small", []).duplicate()
 		small.append(["?", func(): HelpPage.open(self, path)])
 		config["small"] = small
+	# "options": the game's id -> a gear button with its difficulty and sound
+	if cfg.has("options"):
+		var small2: Array = config.get("small", []).duplicate()
+		small2.append(["__gear", func(): GameOptions.open_for(self, str(cfg["options"]))])
+		config["small"] = small2
 	layer = 20
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	stick_actions = config.get("stick", [])
@@ -238,4 +244,7 @@ func _draw_controls() -> void:
 		else:
 			draw_node.draw_circle(r.get_center(), r.size.x / 2, col)
 			draw_node.draw_arc(r.get_center(), r.size.x / 2, 0, TAU, 40, Color(1, 1, 1, 0.6), 3.0)
+		if b[2] == "__gear":  # the game's options (GameOptions)
+			GameOptions.draw_gear(draw_node, r.get_center(), 17 * k, Color(1, 1, 1, 0.9))
+			continue
 		draw_node.draw_string(font, Vector2(r.position.x, r.get_center().y + 9 * k), b[2], HORIZONTAL_ALIGNMENT_CENTER, r.size.x, int(26 * k), Color(1, 1, 1, 0.9))

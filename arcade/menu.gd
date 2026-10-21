@@ -1470,8 +1470,19 @@ func show_info(g: Dictionary) -> void:
 		section(inner, "Credits")
 		inner.add_child(label(g["credit"], 19, Color(0.9, 0.9, 1)))
 	section(inner, "Versions")
+	# A version is playable when it has its own folder. Games by others are updated in
+	# place (every version shares one folder), so their older versions would only play the
+	# newest code: those, and the old web versions, are listed under "Archived versions".
+	var archived := []
 	for i in range(vs.size() - 1, -1, -1):
 		var v: Dictionary = vs[i]
+		var replaced_by := ""
+		for j in range(i + 1, vs.size()):
+			if vs[j]["scene"] == v["scene"]:
+				replaced_by = GameData.version_name(vs[vs.size() - 1])
+		if replaced_by != "":
+			archived.append("v%s  ·  %s  (updated in place: it plays as v%s now)\n%s" % [GameData.version_name(v), v["date"], replaced_by, v["notes"]])
+			continue
 		var vk := Packs.key_for(g, v["scene"])
 		var get_txt := "" if Packs.status(vk) == "ready" else "  ·  download %s" % Packs.size_text(Packs.size_of(vk))
 		var b := button("Play v%s%s  ·  %s%s\n%s" % [GameData.version_name(v), "  (newest)" if i == vs.size() - 1 else "", v["date"], get_txt, v["notes"]], Color(0.15, 0.21, 0.29) if i == vs.size() - 1 else Color(0.12, 0.16, 0.22), 19)
@@ -1480,6 +1491,25 @@ func show_info(g: Dictionary) -> void:
 		var vscene: String = v["scene"]
 		b.pressed.connect(func(): launch(g, vscene))
 		inner.add_child(b)
+	for w in g.get("web", []):
+		archived.append(str(w) + "  (web version in Laugh Lab, not playable here)")
+	if not archived.is_empty():
+		var box := VBoxContainer.new()
+		box.name = "Archived"
+		box.visible = false
+		box.add_theme_constant_override("separation", 6)
+		var ab := button("Archived versions (%d)  ·  tap to show" % archived.size(), PANEL, 19)
+		ab.name = "ArchivedToggle"
+		ab.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		ab.pressed.connect(func():
+			box.visible = not box.visible
+			ab.text = "Archived versions (%d)  ·  tap to %s" % [archived.size(), "hide" if box.visible else "show"])
+		inner.add_child(ab)
+		inner.add_child(box)
+		for t in archived:
+			var l := label(t, 18, MUTED)
+			l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			box.add_child(l)
 	var downloaded := []
 	for v in vs:
 		var vk := Packs.key_for(g, v["scene"])
@@ -1496,11 +1526,6 @@ func show_info(g: Dictionary) -> void:
 				Packs.remove(vk)
 			show_info(g))
 		inner.add_child(del)
-	var web: Array = g.get("web", [])
-	if web.size() > 0:
-		inner.add_child(label("Earlier web versions in Laugh Lab (not playable here):", 19, MUTED))
-		for w in web:
-			inner.add_child(label("•  " + str(w), 19, MUTED))
 
 
 ## Put a game in (or out of) your collections, or start a new one.

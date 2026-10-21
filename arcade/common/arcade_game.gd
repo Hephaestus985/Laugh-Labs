@@ -147,6 +147,18 @@ func has_help() -> bool:
 	return FileAccess.file_exists(help_path())
 
 
+## The gear button (difficulty, sound): next to "?", on the side away from the edge.
+func options_btn() -> Rect2:
+	if not has_help():
+		return help_btn
+	var step := 76.0 if help_btn.position.x < W * 0.5 else -76.0
+	return Rect2(help_btn.position + Vector2(step, 0), help_btn.size)
+
+
+func open_options() -> void:
+	GameOptions.open_for(self, game_id)
+
+
 func open_help() -> void:
 	HelpPage.open(self, help_path())
 
@@ -247,6 +259,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.pressed and has_help() and help_btn.has_point(event.position):
 			open_help()
 			return
+		if event.pressed and options_btn().has_point(event.position):
+			open_options()
+			return
 		if event.pressed:
 			_tap_just = true
 		if event.button_index == MOUSE_BUTTON_LEFT:
@@ -268,6 +283,9 @@ func _touch(idx: int, pos: Vector2, down: bool) -> void:
 			return
 		if has_help() and help_btn.grow(8).has_point(pos):
 			open_help()
+			return
+		if options_btn().grow(8).has_point(pos):
+			open_options()
 			return
 		_tap_just = true
 		if show_a and pos.distance_to(BTN_A_C) < BTN_A_R * 1.3:
@@ -329,6 +347,9 @@ func draw_overlay(a_label := "A", b_label := "B") -> void:
 	if has_help():
 		draw_rect(help_btn, Color(0, 0, 0, 0.3))
 		draw_string(font, Vector2(help_btn.position.x, help_btn.get_center().y + 11), "?", HORIZONTAL_ALIGNMENT_CENTER, help_btn.size.x, 32, Color(1, 1, 1, 0.9))
+	var ob := options_btn()
+	draw_rect(ob, Color(0, 0, 0, 0.3))
+	GameOptions.draw_gear(self, ob.get_center(), 17, Color(1, 1, 1, 0.9))
 	if not is_mobile:
 		return
 	if use_stick and _stick_idx != -1:

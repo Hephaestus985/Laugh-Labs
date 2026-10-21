@@ -474,5 +474,5 @@ func draw_stats(lines: Array) -> void:
 	var x := 150.0 if portrait else panel_rect.position.x
 	var y := 36.0 if portrait else 50.0
 	for line in lines:
-		draw_string(font, Vector2(x, y), str(line), HORIZONTAL_ALIGNMENT_LEFT, sw - x - 90, 24 if portrait else 26, DIM)  # room for "?"
+		draw_string(font, Vector2(x, y), str(line), HORIZONTAL_ALIGNMENT_LEFT, sw - x - 166, 24 if portrait else 26, DIM)  # room for the gear and "?"
 		y += 28

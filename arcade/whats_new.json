@@ -1,5 +1,15 @@
 [
 	{
+		"version": "2.6",
+		"date": "2026-10-21",
+		"notes": [
+			"Game settings are in the games now, not on the start screens: every game made for the arcade (and Kenney Racing) has a gear button next to \"?\" with its difficulty (Easy / Normal / Hard) and sound on/off; the game pauses while it's open, and a new difficulty starts with your next round",
+			"The start screens keep Play / Continue / New game, high scores, achievements and the saved game",
+			"Games by others keep their own sound settings (the arcade no longer mutes them)",
+			"A game's Versions list only shows versions you can really play; versions that were updated in place (games by others keep one folder) and old web versions are under \"Archived versions\", closed until you tap it"
+		]
+	},
+	{
 		"version": "2.5",
 		"date": "2026-10-21",
 		"notes": [
@@ -51,16 +61,6 @@
 		"notes": [
 			"Every game starts at version 1.0: The Last Knight, Escape the Cavity and Bend It Like Einstein were numbered v2 (their v1 was the old web version, never in the app) and are now v1.0 like all the others",
 			"Game versions are shown as v1.0, v1.1... on the game pages and start screens"
-		]
-	},
-	{
-		"version": "2.0",
-		"date": "2026-10-20",
-		"notes": [
-			"Lab Arcade 2.0: 32 games in one app, every one playable by touch: 10 arcade games remade from Laugh Lab, 12 puzzle and board games, and 10 open-source games by others, each security-reviewed",
-			"What 2.0 is built on: a Steam-style Home and Library with search, filters, ratings and collections; games as downloads that only update when they changed; a start screen per game with difficulty, high scores, saves and achievements; help pages inside 12 games; your profile, save backup, in-app updates, keyboard and controller support",
-			"Updates now compare build numbers, so version names can move on freely",
-			"The tests no longer depend on what's online at that moment, and the Library only jumps back to where you were when you come back from another page"
 		]
 	}
 ]

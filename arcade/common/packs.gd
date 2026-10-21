@@ -62,7 +62,8 @@ static func reload() -> void:
 
 static func key_for(g: Dictionary, scene: String) -> String:
 	var vs: Array = g["versions"]
-	for v in vs:
+	for i in range(vs.size() - 1, -1, -1):  # the newest version with that scene (games by others share one)
+		var v: Dictionary = vs[i]
 		if v["scene"] == scene:
 			return "%s/v%d" % [g["id"], v["v"]]
 	return "%s/v%d" % [g["id"], vs[vs.size() - 1]["v"]]

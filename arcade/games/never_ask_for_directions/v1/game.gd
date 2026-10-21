@@ -325,7 +325,7 @@ func _draw() -> void:
 			"Steer a Viking longship through fjords, gusts, icebergs and a kraken,",
 			"without once asking for directions. Grab loot. Three shields.",
 			"Hold the screen above or below the ship to steer, or use up / down.",
-			"Difficulty: %s   (change it on the start screen, or with left / right here)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it with the gear button, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap or press SPACE to sail")
 	elif state == State.OVER and t > 0.5:
 		card("VALHALLA", [

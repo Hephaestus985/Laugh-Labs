@@ -94,6 +94,7 @@ func touch_config() -> Dictionary:
 		"small": [["II", toggle_pause]],
 		"help": "res://external/racing/lab_arcade_help.json",
 		"help_id": "racing",
+		"options": "racing",  # gear: difficulty (how fast the others drive) and sound
 	}
 
 
@@ -400,6 +401,7 @@ func _spin(v: Vehicle) -> void:
 func start_race(n: int, race_mode: String) -> void:
 	mode = race_mode
 	get_tree().paused = false
+	skill = [0.84, 0.91, 0.98][ArcadeGame.get_difficulty("racing")]  # set with the gear button
 	build_track(n)
 	info.clear()
 	var grid_slots := [Vector2(-1.3, 0.0), Vector2(1.3, 1.6), Vector2(-1.3, 3.2), Vector2(1.3, 4.8)]
@@ -819,7 +821,7 @@ func show_menu() -> void:
 			v.controls_on = false
 	var v := _panel(menu, Vector2(720, 0))
 	_label(v, "KENNEY RACING", 52, Color(1, 0.85, 0.3))
-	_label(v, "Race: 3 laps against 3 drivers.  Time trial: beat your ghost.", 20, Color(0.8, 0.85, 0.95))
+	_label(v, "Race: 3 laps against 3 drivers.  Time trial: beat your ghost.\nDifficulty: %s (gear button, top right)" % ArcadeGame.DIFF_NAMES[ArcadeGame.get_difficulty("racing")], 20, Color(0.8, 0.85, 0.95))
 	var grid_box := GridContainer.new()
 	grid_box.columns = 2
 	grid_box.add_theme_constant_override("h_separation", 10)

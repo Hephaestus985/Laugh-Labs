@@ -311,7 +311,7 @@ func _draw() -> void:
 			"into the fiber. Don't let them fall in: spaghettified photons cost a point.",
 			"Hold the screen (or mouse) where the black hole should be.",
 			"On a PC: arrows move it, hold SPACE to switch it on.",
-			"Difficulty: %s   (change it on the start screen, or with left / right here)" % DIFFS[diff]["name"],
+			"Difficulty: %s   (change it with the gear button, or with left / right here)" % DIFFS[diff]["name"],
 		], "Tap or press SPACE to start")
 	elif state == State.OVER:
 		var eff := int(round(100.0 * coupled / emitted)) if emitted > 0 else 0

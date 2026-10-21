@@ -803,6 +803,24 @@ func test_store() -> void:
 	Store.reset_to_builtin()
 	Packs.refresh()
 	check("store", "back to the app's own list", Store.serial == own_serial and not Games.LIST.any(func(g): return g["id"] == "test_new_game"))
+	# a game by others updated in place: only the newest version can be played, older ones
+	# are listed (not tappable) under Archived versions
+	var m: Node = spawn("res://menu.tscn")
+	await frames(3)
+	var racing: Dictionary = Games.EXTERNAL.filter(func(x): return x["id"] == "racing")[0]
+	m.show_info(racing)
+	await frames(3)
+	var plays: Array = m.find_children("*", "Button", true, false).filter(func(b): return b.text.begins_with("Play v"))
+	var arch: Button = m.find_child("ArchivedToggle", true, false)
+	var box: Control = m.find_child("Archived", true, false)
+	# v1.0 (free drive) has its own scene and stays playable; 2.0 was updated in place by 2.1
+	check("versions", "Kenney Racing: free drive and the newest race are playable, 2.0 is archived", plays.size() == 2 and arch != null and box != null and not box.visible and box.get_child_count() == 1, "%d playable" % plays.size())
+	if arch:
+		arch.emit_signal("pressed")
+		await frames(1)
+		check("versions", "tapping Archived versions shows them", box.visible)
+	m.queue_free()
+	await frames(2)
 	check("store", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))
 
 
@@ -842,9 +860,22 @@ func test_hubs() -> void:
 	Engine.set_meta("hub_scene", "")
 	var h: Control = spawn("res://common/game_hub.tscn")
 	await frames(2)
-	(h.find_child("Diff2", true, false) as Button).emit_signal("pressed")
+	check("start screens", "no difficulty or sound buttons on the start screen (they're in the game)", h.find_child("Diff2", true, false) == null and h.find_child("Sound", true, false) == null)
+	# the game's own options (gear button): difficulty and sound, the game paused meanwhile
+	var opt := GameOptions.open_for(h, "the_last_knight")
+	await frames(2)
+	check("game options", "the gear opens the game's options and pauses it", opt != null and get_tree().paused and HelpPage.is_open())
+	(opt.find_child("Diff2", true, false) as Button).emit_signal("pressed")
 	await frames(1)
-	check("start screens", "difficulty is set on the start screen", ArcadeGame.get_difficulty("the_last_knight") == 2)
+	check("game options", "difficulty is set in the game's options", ArcadeGame.get_difficulty("the_last_knight") == 2)
+	(opt.find_child("Sound", true, false) as Button).emit_signal("pressed")
+	await frames(1)
+	check("game options", "sound can be switched off per game", not GameData.sound_on("the_last_knight"))
+	(opt.find_child("Done", true, false) as Button).emit_signal("pressed")
+	await frames(2)
+	check("game options", "Done closes them and the game goes on", not HelpPage.is_open() and not get_tree().paused)
+	GameData.set_sound("the_last_knight", true)
+	GameData.apply_sound("the_last_knight")
 	ArcadeGame.set_difficulty("the_last_knight", 1)
 	GameData.add_score("the_last_knight", 4321, 2)
 	GameData.add_score("the_last_knight", 99, 0)
@@ -862,10 +893,6 @@ func test_hubs() -> void:
 	(h.find_child("DeleteSave", true, false) as Button).emit_signal("pressed")
 	await frames(1)
 	check("start screens", "the saved game can be deleted", not FileAccess.file_exists(knight["save_file"]) and h.find_child("Play", true, false) != null)
-	(h.find_child("Sound", true, false) as Button).emit_signal("pressed")
-	await frames(1)
-	check("start screens", "sound can be switched off per game", not GameData.sound_on("the_last_knight"))
-	GameData.set_sound("the_last_knight", true)
 	GameData.clear_scores(knight)
 	h.queue_free()
 	Engine.remove_meta("hub_game")
@@ -1366,6 +1393,16 @@ func test_help() -> void:
 		get_tree().root.propagate_notification(NOTIFICATION_WM_GO_BACK_REQUEST)
 		await frames(4)
 		check("help", "%s: ? opens its help, back closes it and stays in the game (phone)" % gid, opened and not HelpPage.is_open() and not get_tree().paused and is_instance_valid(n) and n.is_inside_tree())
+		# the gear next to it: the game's own options (difficulty, sound)
+		var orect: Rect2 = n.options_btn()
+		await tap(orect.get_center())
+		await frames(4)
+		var oopen := HelpPage.current is GameOptions and get_tree().paused
+		var done: Button = HelpPage.current.find_child("Done", true, false) if HelpPage.current else null
+		if done:
+			await tap(done.get_global_rect().get_center())
+			await frames(4)
+		check("help", "%s: the gear opens its options (difficulty, sound), Done closes them (phone)" % gid, oopen and not HelpPage.is_open() and not get_tree().paused and not orect.intersects(r), "gear %s, ? %s" % [orect, r])
 		n.queue_free()
 		await frames(2)
 	# the first time a game is played its help opens by itself, once
