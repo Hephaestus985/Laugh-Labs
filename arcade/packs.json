@@ -2760,11 +2760,11 @@
     "path": "res://external/racing/scripts/vehicle.gd"
    }
   ],
-  "file": "racing_v1-1aa09b5a64ba.pck",
+  "file": "racing_v1-f676fc80646e.pck",
   "min_build": 34,
   "scene": "res://external/racing/scenes/race.tscn",
-  "sha256": "1aa09b5a64ba096aa9b1c486774a3a9e8d9aa0e13c4eb50e7d4b2e5428c1b0c5",
-  "size": 1655768,
+  "sha256": "f676fc80646e690e01b3c23659b05477beb71a5a31112e77cc3f6ac69bc70239",
+  "size": 1656008,
   "uids": {
    "uid://2in1jtv5bh0y": "res://external/racing/audio/skid.ogg",
    "uid://b24bstassw26s": "res://external/racing/scripts/view.gd",
@@ -2809,11 +2809,60 @@
     "path": "res://external/racing/scripts/vehicle.gd"
    }
   ],
-  "file": "racing_v2-1aa09b5a64ba.pck",
+  "file": "racing_v2-f676fc80646e.pck",
   "min_build": 34,
   "scene": "res://external/racing/scenes/race.tscn",
-  "sha256": "1aa09b5a64ba096aa9b1c486774a3a9e8d9aa0e13c4eb50e7d4b2e5428c1b0c5",
-  "size": 1655768,
+  "sha256": "f676fc80646e690e01b3c23659b05477beb71a5a31112e77cc3f6ac69bc70239",
+  "size": 1656008,
+  "uids": {
+   "uid://2in1jtv5bh0y": "res://external/racing/audio/skid.ogg",
+   "uid://b24bstassw26s": "res://external/racing/scripts/view.gd",
+   "uid://b34e2pvbemfac": "res://external/racing/models/vehicle-truck-red.glb",
+   "uid://b6myd2b7l2o2j": "res://external/racing/models/Library/mesh-library.tres",
+   "uid://badoy1c127yhf": "res://external/racing/scenes/vehicle.tscn",
+   "uid://bpj6m4vpmv626": "res://external/racing/models/track-straight.glb",
+   "uid://bqite16pastgo": "res://external/racing/scripts/vehicle.gd",
+   "uid://bvv2vgyrhi8d": "res://external/racing/models/track-corner.glb",
+   "uid://bwt82amsh0q8g": "res://external/racing/scripts/race.gd",
+   "uid://bynb5jk1d478y": "res://external/racing/models/vehicle-truck-yellow.glb",
+   "uid://byqqbebrbr4l2": "res://external/racing/splash-screen.png",
+   "uid://c026qrhqxgw3n": "res://external/racing/sprites/smoke.png",
+   "uid://c10tlsn1xsnu6": "res://external/racing/icon.png",
+   "uid://c3bs0wfxpri8g": "res://external/racing/scenes/main-environment.tres",
+   "uid://c44tfiddyjjm1": "res://external/racing/models/vehicle-truck-green.glb",
+   "uid://c5e64mpylh1ge": "res://external/racing/models/vehicle-truck-purple.glb",
+   "uid://cd4a6ymdn58xu": "res://external/racing/models/vehicle-motorcycle.glb",
+   "uid://ch83y7b822ibm": "res://external/racing/models/decoration-tents.glb",
+   "uid://ck8rhvuaa76a5": "res://external/racing/models/track-finish.glb",
+   "uid://clq7nox1juh3a": "res://external/racing/scenes/main.tscn",
+   "uid://cn1tfklahvwc0": "res://external/racing/models/Textures/colormap.png",
+   "uid://crryafm176p4a": "res://external/racing/models/track-bump.glb",
+   "uid://cxotjqn50aokg": "res://external/racing/scenes/vehicle-motorcycle.tscn",
+   "uid://dbxlwm3ctpl6a": "res://external/racing/models/track-tents.glb",
+   "uid://dffh13ujx0tmi": "res://external/racing/models/decoration-empty.glb",
+   "uid://dicg0lx722won": "res://external/racing/scripts/vehicle-motorcycle.gd",
+   "uid://dk7race2lab0q": "res://external/racing/scenes/race.tscn",
+   "uid://dnonb1wl5fs0h": "res://external/racing/models/decoration-forest.glb",
+   "uid://io4pmr3lo1dy": "res://external/racing/audio/impact.ogg",
+   "uid://j6x2is8pyt8y": "res://external/racing/audio/engine.ogg",
+   "uid://oentynl734ox": "res://external/racing/audio/engine-motorcycle.ogg"
+  }
+ },
+ "racing/v3": {
+  "classes": [
+   {
+    "base": "Node3D",
+    "class": "Vehicle",
+    "icon": "",
+    "is_abstract": false,
+    "path": "res://external/racing/scripts/vehicle.gd"
+   }
+  ],
+  "file": "racing_v3-f676fc80646e.pck",
+  "min_build": 34,
+  "scene": "res://external/racing/scenes/race.tscn",
+  "sha256": "f676fc80646e690e01b3c23659b05477beb71a5a31112e77cc3f6ac69bc70239",
+  "size": 1656008,
   "uids": {
    "uid://2in1jtv5bh0y": "res://external/racing/audio/skid.ogg",
    "uid://b24bstassw26s": "res://external/racing/scripts/view.gd",

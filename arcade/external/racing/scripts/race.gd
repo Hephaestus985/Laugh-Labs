@@ -66,7 +66,13 @@ var rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
-	lib = grid.mesh_library
+	# Kenney's bump piece (track-ramp) has no collision in the kit, so its fences could be
+	# driven through and its bump wasn't there: it gets a shape made from its mesh
+	lib = grid.mesh_library.duplicate()
+	for id in lib.get_item_list():
+		if lib.get_item_name(id).begins_with("track-") and lib.get_item_shapes(id).is_empty():
+			lib.set_item_shapes(id, [lib.get_item_mesh(id).create_trimesh_shape(), Transform3D.IDENTITY])
+	grid.mesh_library = lib
 	rng.randomize()
 	skill = [0.84, 0.91, 0.98][ArcadeGame.get_difficulty("racing")]
 	props = Node3D.new()

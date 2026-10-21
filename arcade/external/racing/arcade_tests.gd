@@ -15,6 +15,11 @@ static func phone(rt: Node, race: Node, name: String) -> void:
 		race.build_track(i)
 		var cells: int = race.grid.get_used_cells().size()
 		rt.check(name, "track %s is built (%d cells)" % [race.TRACKS[i]["name"], race.path.size()], race.path.size() > 10 and cells > race.path.size() and race.grid.get_cell_item(Vector3i.ZERO) == race._item_id("track-finish"))
+	var solid := true
+	for id in race.lib.get_item_list():
+		if race.lib.get_item_name(id).begins_with("track-") and race.lib.get_item_shapes(id).is_empty():
+			solid = false
+	rt.check(name, "every track piece has solid fences (also the bumps)", solid)
 	race.show_menu()
 	await rt.frames(3)
 	# by touch: tap Race on the first track

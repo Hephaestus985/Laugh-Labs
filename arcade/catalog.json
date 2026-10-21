@@ -748,6 +748,13 @@
 					"date": "2026-10-20",
 					"scene": "res://external/racing/scenes/race.tscn",
 					"notes": "Kart racing: 5 tracks, 3 computer drivers (Easy / Normal / Hard), laps, positions, finish line and score, boost pads, item boxes with mushroom, banana and shell, drift and start boosts, a 5-track cup, and time trial against the ghost of your best time per track. GAS / BRAKE replaced by REVERSE and ITEM; help page inside the game."
+				},
+				{
+					"v": 3,
+					"name": "2.1",
+					"date": "2026-10-21",
+					"scene": "res://external/racing/scenes/race.tscn",
+					"notes": "Fixed: the fences of the bump pieces could be driven through (Kenney's bump piece had no collision); the bumps are now real bumps too."
 				}
 			],
 			"web": [],

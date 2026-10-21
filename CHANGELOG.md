@@ -2,6 +2,10 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Game update: Kenney Racing 2.1 (2026-10-21, no new app needed)
+- Fixed: the fences on the track pieces with a bump could be driven through (that piece of Kenney's kit had no collision); the bumps are real bumps now too
+- A new test checks every track piece is solid, and a 3-lap run on three tracks keeps all cars on the track
+
 ## Game update: Duel Defense 1.1 (2026-10-20, no new app needed)
 - The turret shop is a column on the right with big turret buttons and prices, money on top and menu / play / fast forward below, so nothing covers the map any more
 - The map keeps its shape on wide phones (it was stretched sideways) and fits beside the shop
