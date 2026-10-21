@@ -27,6 +27,7 @@ static var builtin := {}  # games that are inside this build (PC, tests): no dow
 static var _ready := false
 static var _base_classes: Array = []  # the app's own script classes
 static var _class_packs := 0
+static var _stale := {}  # games whose older version's files were loaded before an update
 
 
 static func setup() -> void:
@@ -119,8 +120,16 @@ static func mount_all() -> void:
 static func _mount(key: String, classes := true) -> bool:
 	if mounted.has(key):
 		return true
-	# replace_files = false: a pack never overrides the launcher's own files
-	if ProjectSettings.load_resource_pack(path_for(key), false):
+	# replace_files = false: a pack never overrides the launcher's own files. But when an
+	# older version of the same game is loaded already (an update downloaded while the app
+	# runs; games by others keep all versions in one folder), the new pack's files must
+	# win over that older pack's: it only holds its game's folder and its fingerprint was
+	# checked against the signed list. Code already loaded stays until the app restarts.
+	var game := key.get_slice("/", 0)
+	var older := mounted.keys().any(func(k): return k.get_slice("/", 0) == game)
+	if older:
+		_stale[game] = true
+	if ProjectSettings.load_resource_pack(path_for(key), older):
 		mounted[key] = true
 		# teach the app the pack's resource IDs (scenes refer to files by uid://)
 		var uids: Dictionary = manifest[key].get("uids", {})
@@ -187,6 +196,12 @@ static func install_file(key: String, file: String) -> String:
 	if not _mount(key):
 		return "could not open the game"
 	return ""
+
+
+## True when an update of this game was downloaded while the app was running: its new
+## code only runs after Lab Arcade is closed and opened again.
+static func needs_restart(game_id: String) -> bool:
+	return _stale.has(game_id)
 
 
 ## Remove a download. It stays playable until the app restarts.

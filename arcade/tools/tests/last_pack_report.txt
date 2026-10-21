@@ -1,5 +1,5 @@
 Lab Arcade pack test
-28 checks, 0 failed
+30 checks, 0 failed
 
 PASS  the launcher's always-loaded helpers all start (no downloads yet)  
 PASS  the app lists every game version as a pack  35 packs
@@ -26,6 +26,8 @@ PASS  open_rts/v1: a damaged download is refused
 PASS  open_rts/v1: the real pack installs  
 PASS  open_rts/v1: its game starts with its code  
 PASS  open_rts/v1: plays without errors  
+PASS  an update while the old version is loaded installs  
+PASS  ... and asks to restart the app for it  
 PASS  downloads are loaded again on the next start  
 PASS  an app update keeps unchanged games  
 PASS  an app update asks again only for changed games  

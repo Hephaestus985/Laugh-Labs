@@ -94,6 +94,16 @@ func _ready() -> void:
 			await frames(3)
 		var new_errs := errors.slice(e0)
 		check("%s: plays without errors" % key, new_errs.is_empty(), ", ".join(new_errs.slice(0, 2)))
+	# an update of a game downloaded while an older version of it is loaded: the new
+	# files win, and the app says to restart for the new code
+	if sha.has("racing/v1") and Packs.manifest.has("racing/v2"):
+		Packs.manifest["racing/v2"]["sha256"] = sha["racing/v1"]
+		var again := Packs.DIR.path_join("again.part")
+		DirAccess.copy_absolute(dir.path_join("racing_v1.pck"), again)
+		check("an update while the old version is loaded installs", Packs.install_file("racing/v2", again) == "" and Packs.mounted.has("racing/v2"))
+		check("... and asks to restart the app for it", Packs.needs_restart("racing") and not Packs.needs_restart("sudoku"))
+		Packs.remove("racing/v2")
+		Packs.mounted.erase("racing/v2")
 	# next app start: downloads are loaded again from the phone
 	Packs.mounted.clear()
 	Packs.mount_all()

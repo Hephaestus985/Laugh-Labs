@@ -2,6 +2,10 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 2.5 (2026-10-21)
+- Fixed: a game update downloaded while the app was running could keep playing the old version until the app was restarted (games by others keep all versions in one folder, and the older files stayed in charge). The new files now take over, and the app tells you to close and reopen it when the update changed the game's code
+- A download test covers updating a game while its older version is loaded
+
 ## Game update: Kenney Racing 2.1 (2026-10-21, no new app needed)
 - Fixed: the fences on the track pieces with a bump could be driven through (that piece of Kenney's kit had no collision); the bumps are real bumps now too
 - A new test checks every track piece is solid, and a 3-lap run on three tracks keeps all cars on the track

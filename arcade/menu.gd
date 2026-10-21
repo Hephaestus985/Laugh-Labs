@@ -119,6 +119,8 @@ func row_at(p: Vector2) -> ScrollContainer:
 
 func _input(event: InputEvent) -> void:
 	UiFx.note_input(event)
+	if has_node("Notice"):
+		return  # a message is open: its OK button gets the tap
 	if event is InputEventJoypadButton and event.pressed and page == "list" and event.button_index in [JOY_BUTTON_LEFT_SHOULDER, JOY_BUTTON_RIGHT_SHOULDER]:
 		# controller shoulder buttons switch between Home and Library
 		tab = 0 if event.button_index == JOY_BUTTON_LEFT_SHOULDER else 1
@@ -854,9 +856,45 @@ func launch(g: Dictionary, scene: String, mode: String = "") -> void:
 	if Packs.status(pk) != "ready":
 		download(pk, func(): launch(g, scene, mode))
 		return
+	if Packs.needs_restart(g["id"]) and not Engine.has_meta("restart_told_" + g["id"]):
+		Engine.set_meta("restart_told_" + g["id"], true)
+		notice("%s was updated. Close Lab Arcade completely and open it again to play the new version." % g["name"], func(): launch(g, scene, mode))
+		return
 	Engine.set_meta("hub_game", g["id"])
 	Engine.set_meta("hub_scene", scene)
 	get_tree().change_scene_to_file(GameData.HUB)
+
+
+## A message with an OK button over the page; `then` runs after OK.
+func notice(text: String, then := Callable()) -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "Notice"
+	layer.layer = 40
+	add_child(layer)
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.6)
+	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(dim)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(center)
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", flat(PANEL, 18, 26))
+	p.custom_minimum_size = Vector2(minf(640, get_viewport().get_visible_rect().size.x - 40), 0)
+	center.add_child(p)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 18)
+	p.add_child(v)
+	var l := label(text, 24)
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	v.add_child(l)
+	var ok := button("OK", Color(0.33, 0.62, 0.10), 24)
+	ok.name = "NoticeOK"
+	ok.pressed.connect(func():
+		layer.queue_free()
+		if then.is_valid():
+			then.call())
+	v.add_child(ok)
 
 
 # ---------------------------------------------------------------- home: a Steam-style front page

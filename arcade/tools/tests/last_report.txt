@@ -1,4 +1,4 @@
-Lab Arcade test report  2026-10-21T07:55:21
+Lab Arcade test report  2026-10-21T08:15:41
 746 checks, 0 failed
 
 PASS  menu                       games.gd is complete           22 games
@@ -82,7 +82,7 @@ PASS  launcher                   backups can't carry code or resources
 PASS  launcher                   other text is not taken as a backup 
 PASS  launcher                   Escape or B goes back from a game page 
 PASS  launcher                   controller shoulder buttons switch to the Library 
-PASS  launcher                   with a controller a button has focus Play:<Button#1861230791296>
+PASS  launcher                   with a controller a button has focus Play:<Button#1861180460923>
 PASS  launcher                   collections can be deleted     
 PASS  store                      the app's public key reads     
 PASS  store                      a list signed with another key is refused 
@@ -384,7 +384,7 @@ PASS  lights_out v1 portrait     tap flips a light and its neighbours (phone)
 PASS  lights_out v1              portrait: touch play works (phone) 
 PASS  lights_out v1              new Easy round starts          
 PASS  lights_out v1              new Normal round starts        
-PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1440
+PASS  lights_out v1              solving it wins and saves the best score state 2 won true best 1600
 PASS  lights_out v1              new Hard round starts          
 PASS  lights_out v1              no errors while solving        0: 
 PASS  sliding_puzzle v1          scene loads                    
@@ -506,7 +506,7 @@ PASS  block_stacker v1 portrait  swipe down drops the piece (phone)
 PASS  block_stacker v1           portrait: touch play works (phone) 
 PASS  block_stacker v1           new Easy round starts          
 PASS  block_stacker v1           new Normal round starts        
-PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 326
+PASS  block_stacker v1           solving it wins and saves the best score state 2 won true best 330
 PASS  block_stacker v1           new Hard round starts          
 PASS  block_stacker v1           no errors while solving        0: 
 PASS  connect_four v1            scene loads                    
@@ -679,9 +679,9 @@ PASS  deck_builder               game scene loads with its code
 PASS  deck_builder               has on-screen phone controls   
 PASS  deck_builder               a drag scrolls the map (phone) moved -60
 PASS  deck_builder               a drag that starts on a room doesn't enter it 
-PASS  deck_builder               the map shows rooms to pick    60 rooms, type 0, map 15
+PASS  deck_builder               the map shows rooms to pick    56 rooms, type 0, map 15
 PASS  deck_builder               a tap on a room starts the battle (phone) 
-PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 0
+PASS  deck_builder               dragging a card onto an enemy plays it (phone) mana 3 -> 2
 PASS  deck_builder               II pauses the run (phone)      
 PASS  deck_builder               the run saves                  
 PASS  deck_builder               a save with code in it is refused 

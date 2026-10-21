@@ -1,5 +1,13 @@
 [
 	{
+		"version": "2.5",
+		"date": "2026-10-21",
+		"notes": [
+			"Fixed: a game update downloaded while the app was running could keep playing the old version until the app was restarted (games by others keep all versions in one folder, and the older files stayed in charge). The new files now take over, and the app tells you to close and reopen it when the update changed the game's code",
+			"A download test covers updating a game while its older version is loaded"
+		]
+	},
+	{
 		"version": "2.4",
 		"date": "2026-10-20",
 		"notes": [
@@ -53,17 +61,6 @@
 			"What 2.0 is built on: a Steam-style Home and Library with search, filters, ratings and collections; games as downloads that only update when they changed; a start screen per game with difficulty, high scores, saves and achievements; help pages inside 12 games; your profile, save backup, in-app updates, keyboard and controller support",
 			"Updates now compare build numbers, so version names can move on freely",
 			"The tests no longer depend on what's online at that moment, and the Library only jumps back to where you were when you come back from another page"
-		]
-	},
-	{
-		"version": "1.28",
-		"date": "2026-10-20",
-		"notes": [
-			"Bug fixing round over all 32 games:",
-			"  - a new stress test (tools/test.sh stress, optional diff=0..2 and only=) starts every game from its start screen like a player, plays 40 s with taps, swipes, long presses, two fingers and keys, turns the phone halfway, then presses back and tries Continue; run on Normal and on Hard",
-			"  - fixed: the phone's back button in Sock Escape and in Outpost Assault (game and its menu) changed scene while the app was still busy, which logged errors and could fail",
-			"  - fixed: 10 title screens still said difficulty is changed \"in the menu\"; it's on the game's start screen now",
-			"  - the full test suite also ran with real rendering: no shader or drawing errors"
 		]
 	}
 ]
