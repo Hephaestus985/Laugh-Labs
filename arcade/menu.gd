@@ -1281,12 +1281,19 @@ func _open_download_ui() -> void:
 	shade.color = Color(0, 0, 0, 0.75)
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	dl_layer.add_child(shade)
+	# centred on any screen (it was anchored to the centre and then moved by half its
+	# size again, so on a phone it hung off the bottom right)
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dl_layer.add_child(center)
+	var panel := PanelContainer.new()
+	panel.add_theme_stylebox_override("panel", flat(PANEL, 18, 24))
+	center.add_child(panel)
 	var box := VBoxContainer.new()
-	box.set_anchors_preset(Control.PRESET_CENTER)
-	box.custom_minimum_size = Vector2(560, 0)
-	box.position = get_viewport().get_visible_rect().size / 2 - Vector2(280, 110)
+	box.name = "DownloadBox"
+	box.custom_minimum_size = Vector2(minf(560, get_viewport().get_visible_rect().size.x - 80), 0)
 	box.add_theme_constant_override("separation", 16)
-	dl_layer.add_child(box)
+	panel.add_child(box)
 	dl_label = label("", 26, Color(1, 1, 1), true)
 	dl_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(dl_label)

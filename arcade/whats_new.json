@@ -1,5 +1,12 @@
 [
 	{
+		"version": "2.7",
+		"date": "2026-10-21",
+		"notes": [
+			"Fixed: on a phone the download screen hung off the bottom right, so only half of the progress bar showed; it's now a box in the middle of the screen"
+		]
+	},
+	{
 		"version": "2.6",
 		"date": "2026-10-21",
 		"notes": [
@@ -53,14 +60,6 @@
 			"  - everything is 1.5x bigger, pop-ups (levels, settings, achievements, about) fill most of the screen with bigger text, and the phone's back button closes them",
 			"  - the menu has \"How to play\" and \"Back to Arcade\" (was \"Quit\"); the map editor, which needs a mouse, is hidden on phones",
 			"  - a new phone test taps Level select, closes it with back, taps a level and plays it"
-		]
-	},
-	{
-		"version": "2.1",
-		"date": "2026-10-20",
-		"notes": [
-			"Every game starts at version 1.0: The Last Knight, Escape the Cavity and Bend It Like Einstein were numbered v2 (their v1 was the old web version, never in the app) and are now v1.0 like all the others",
-			"Game versions are shown as v1.0, v1.1... on the game pages and start screens"
 		]
 	}
 ]

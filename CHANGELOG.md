@@ -2,6 +2,9 @@
 
 Every game keeps all its versions: each lives in `arcade/games/<game>/v<N>/` and stays playable from the game's **Versions** page in the app. Each game version also has a git tag `<game>-v<N>`, and each app build has a tag `arcade-<version>`.
 
+## Lab Arcade 2.7 (2026-10-21)
+- Fixed: on a phone the download screen hung off the bottom right, so only half of the progress bar showed; it's now a box in the middle of the screen
+
 ## Lab Arcade 2.6 (2026-10-21)
 - Game settings are in the games now, not on the start screens: every game made for the arcade (and Kenney Racing) has a gear button next to "?" with its difficulty (Easy / Normal / Hard) and sound on/off; the game pauses while it's open, and a new difficulty starts with your next round
 - The start screens keep Play / Continue / New game, high scores, achievements and the saved game

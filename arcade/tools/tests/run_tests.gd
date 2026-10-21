@@ -819,6 +819,13 @@ func test_store() -> void:
 		arch.emit_signal("pressed")
 		await frames(1)
 		check("versions", "tapping Archived versions shows them", box.visible)
+	# the download screen sits in the middle of the screen, inside it
+	m._open_download_ui()
+	await frames(3)
+	var dbox: Control = m.find_child("DownloadBox", true, false)
+	var vr := get_viewport().get_visible_rect()
+	check("downloads", "the download screen is centred and fits the screen", dbox != null and dbox.get_global_rect().get_center().distance_to(vr.get_center()) < vr.size.y * 0.1 and vr.encloses(dbox.get_global_rect()), str(dbox.get_global_rect() if dbox else null))
+	m._close_download_ui()
 	m.queue_free()
 	await frames(2)
 	check("store", "no errors", new_errors(errs).is_empty(), ", ".join(new_errors(errs).slice(0, 3)))
